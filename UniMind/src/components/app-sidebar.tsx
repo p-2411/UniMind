@@ -44,7 +44,7 @@ const items = [
 
 export function AppSidebar() {
   return (
-    <Sidebar collapsible="none" variant="sidebar" className="!h-screen border-r sticky top-0">
+    <Sidebar variant="sidebar" className="!h-screen border-r sticky top-0">
       <SidebarHeader className="flex pt-6 pb-4 px-8">
           <a href="#" className="flex items-center font-bold text-2xl">
             <img src={logo} alt="UniMind Logo" className="h-15 w-15" />
@@ -53,7 +53,6 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (

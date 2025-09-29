@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "UniMind",
+  "version": "1.0.0",
+  "description": "Answer questions to access distracting websites",
+  "permissions": [
+    "storage",
+    "tabs",
+    "webNavigation"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["index.html", "assets/*"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "externally_connectable": {
+    "matches": ["http://localhost:*/*"]
+  }
+}

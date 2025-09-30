@@ -15,7 +15,10 @@ from backend.models.attempt import QuestionAttempt
 from backend.models.topic import Topic
 from backend.models.progress import TopicProgress
 from backend.models.user import User
+from backend.models.assessment import Assessment
 from backend.schemas import AttemptCreate, AttemptResult, CourseOut, EnrolRequest, ProgressItem
+from backend.schemas.topic import TopicOut, TopicPriorityOut
+from backend.schemas.assessment import AssessmentOut
 from backend.services.progress import apply_attempt, ensure_topic_progress, stage_from_percent
 from backend.services.streaks import update_streak
 
@@ -180,3 +183,172 @@ def get_progress(
         stage=stage,
         percent_complete=percent,
     )
+
+
+@router.get("/{user_id}/priority-topics", response_model=list[TopicPriorityOut])
+def get_priority_topics(
+    user_id: str,
+    limit: int = 5,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Get priority topics for the user based on their progress and course enrolments."""
+    _assert_same_user(user_id, current_user)
+
+    # Get all topics from enrolled courses
+    enrolled_topics = (
+        db.query(Topic)
+        .join(Course, Topic.course_code == Course.code)
+        .join(Enrolment, Enrolment.course_code == Course.code)
+        .filter(Enrolment.user_id == current_user.id)
+        .all()
+    )
+
+    # Get user's progress for these topics
+    progress_map = {
+        p.topic_id: p
+        for p in db.query(TopicProgress)
+        .filter(TopicProgress.user_id == current_user.id)
+        .all()
+    }
+
+    # Calculate priority score for each topic
+    topic_scores = []
+    for topic in enrolled_topics:
+        progress = progress_map.get(topic.id)
+        if progress:
+            # Prioritize topics that are started but not completed
+            if progress.percent_complete < 100:
+                priority_score = 100 - progress.percent_complete
+            else:
+                priority_score = -1  # Completed topics get low priority
+        else:
+            # Unseen topics get medium priority
+            priority_score = 50
+
+        topic_scores.append((topic, priority_score))
+
+    # Sort by priority score (highest first) and return top N
+    topic_scores.sort(key=lambda x: x[1], reverse=True)
+    priority_topics: list[TopicPriorityOut] = []
+    for topic, score in topic_scores[:limit]:
+        if score < 0:
+            continue
+        priority_topics.append(
+            TopicPriorityOut(
+                id=topic.id,
+                course_code=topic.course_code,
+                name=topic.name,
+                description=topic.description,
+                created_at=topic.created_at,
+                priority_score=float(score),
+            )
+        )
+
+    return priority_topics
+
+
+@router.get("/{user_id}/upcoming-assessments", response_model=list[AssessmentOut])
+def get_upcoming_assessments(
+    user_id: str,
+    limit: int = 10,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Get upcoming assessments for the user's enrolled courses."""
+    _assert_same_user(user_id, current_user)
+
+    # Get all assessments from enrolled courses, ordered by due date
+    # This shows both past and future assessments for demonstration purposes
+    assessments = (
+        db.query(Assessment)
+        .join(Course, Assessment.course_code == Course.code)
+        .join(Enrolment, Enrolment.course_code == Course.code)
+        .filter(Enrolment.user_id == current_user.id)
+        .filter(Assessment.due_at.isnot(None))
+        .order_by(Assessment.due_at.asc())
+        .limit(limit)
+        .all()
+    )
+
+    return assessments
+
+
+@router.get("/{user_id}/questions-for-extension")
+def get_questions_for_extension(
+    user_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Get all questions from enrolled courses with attempt metadata for the extension algorithm."""
+    _assert_same_user(user_id, current_user)
+
+    # Get all questions from enrolled courses
+    questions_query = (
+        db.query(Question, Topic)
+        .join(Topic, Question.topic_id == Topic.id)
+        .join(Course, Topic.course_code == Course.code)
+        .join(Enrolment, Enrolment.course_code == Course.code)
+        .filter(Enrolment.user_id == current_user.id)
+        .all()
+    )
+
+    # Get user's attempts for these questions
+    question_ids = [q.id for q, _ in questions_query]
+    attempts_query = (
+        db.query(QuestionAttempt)
+        .filter(
+            QuestionAttempt.user_id == current_user.id,
+            QuestionAttempt.question_id.in_(question_ids)
+        )
+        .all()
+    )
+
+    # Calculate metadata for each question
+    attempts_by_question = {}
+    for attempt in attempts_query:
+        if attempt.question_id not in attempts_by_question:
+            attempts_by_question[attempt.question_id] = []
+        attempts_by_question[attempt.question_id].append(attempt)
+
+    result = []
+    for question, topic in questions_query:
+        question_attempts = attempts_by_question.get(question.id, [])
+
+        # Calculate rolling accuracy (EMA with alpha=0.2)
+        rolling_accuracy = 0.5  # default
+        if question_attempts:
+            acc = rolling_accuracy
+            for attempt in sorted(question_attempts, key=lambda a: a.answered_at):
+                target = 1.0 if attempt.was_correct else 0.0
+                acc = 0.2 * target + 0.8 * acc
+            rolling_accuracy = acc
+
+        # Calculate last_seen_at and next_due_at
+        last_seen_at = None
+        next_due_at = None
+        if question_attempts:
+            last_attempt = max(question_attempts, key=lambda a: a.answered_at)
+            last_seen_at = int(last_attempt.answered_at.timestamp() * 1000)  # ms
+
+            # Simple spaced repetition: if last was correct, due in 24h, else 6h
+            if last_attempt.was_correct:
+                next_due_at = last_seen_at + (24 * 60 * 60 * 1000)
+            else:
+                next_due_at = last_seen_at + (6 * 60 * 60 * 1000)
+
+        result.append({
+            "id": str(question.id),
+            "topic": topic.name,
+            "prompt": question.prompt,
+            "options": question.choices,
+            "correctAnswer": question.correct_index,
+            "difficulty": question.difficulty,
+            "explanation": question.explanation,
+            "last_seen_at": last_seen_at,
+            "next_due_at": next_due_at,
+            "rolling_accuracy": rolling_accuracy,
+            "attempts": len(question_attempts),
+        })
+
+    return result

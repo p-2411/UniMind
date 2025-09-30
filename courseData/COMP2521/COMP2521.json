@@ -1,0 +1,748 @@
+{
+  "course": {
+    "code": "COMP2521_T3",
+    "name": "Data Structures and Algorithms (T3 2025)",
+    "description": "Core UNSW computer science course on algorithm analysis, sorting, abstract data types, graphs, hashing, and tries, with an emphasis on reasoning about correctness and efficiency."
+  },
+  "assessments": [
+    {
+      "title": "Lab 1",
+      "weight": 1.875,
+      "due_at": "2025-09-15T09:00:00+10:00",
+      "description": "Weekly lab with short C programming and analysis tasks."
+    },
+    {
+      "title": "Lab 2",
+      "weight": 1.875,
+      "due_at": "2025-09-22T09:00:00+10:00",
+      "description": "Weekly lab with short C programming and analysis tasks."
+    },
+    {
+      "title": "Quiz 1",
+      "weight": 1.25,
+      "due_at": "2025-09-22T09:00:00+10:00",
+      "description": "WebCMS quiz on the first week of material."
+    },
+    {
+      "title": "Lab 3",
+      "weight": 1.875,
+      "due_at": "2025-09-29T09:00:00+10:00",
+      "description": "Weekly lab with short C programming and analysis tasks."
+    },
+    {
+      "title": "Quiz 2",
+      "weight": 1.25,
+      "due_at": "2025-09-29T09:00:00+10:00",
+      "description": "WebCMS quiz revising sorting basics."
+    },
+    {
+      "title": "Lab 4",
+      "weight": 1.875,
+      "due_at": "2025-10-06T09:00:00+11:00",
+      "description": "Weekly lab with short C programming and analysis tasks."
+    },
+    {
+      "title": "Quiz 3",
+      "weight": 1.25,
+      "due_at": "2025-10-06T09:00:00+11:00",
+      "description": "WebCMS quiz on ADTs and stacks/queues."
+    },
+    {
+      "title": "Lab 5",
+      "weight": 1.875,
+      "due_at": "2025-10-13T09:00:00+11:00",
+      "description": "Weekly lab with short C programming and analysis tasks."
+    },
+    {
+      "title": "Quiz 4",
+      "weight": 1.25,
+      "due_at": "2025-10-13T09:00:00+11:00",
+      "description": "WebCMS quiz on balanced trees and rotations."
+    },
+    {
+      "title": "Lab 6",
+      "weight": 1.875,
+      "due_at": "2025-10-20T09:00:00+11:00",
+      "description": "Weekly lab with short C programming and analysis tasks."
+    },
+    {
+      "title": "Quiz 5",
+      "weight": 1.25,
+      "due_at": "2025-10-20T09:00:00+11:00",
+      "description": "WebCMS quiz on graphs and traversal."
+    },
+    {
+      "title": "Assignment 1",
+      "weight": 15.0,
+      "due_at": "2025-10-20T09:00:00+11:00",
+      "description": "Individual assignment applying divide-and-conquer or recursive problem solving."
+    },
+    {
+      "title": "Lab 7",
+      "weight": 1.875,
+      "due_at": "2025-10-27T09:00:00+11:00",
+      "description": "Weekly lab with short C programming and analysis tasks."
+    },
+    {
+      "title": "Quiz 6",
+      "weight": 1.25,
+      "due_at": "2025-10-27T09:00:00+11:00",
+      "description": "WebCMS quiz on shortest paths and MST ideas."
+    },
+    {
+      "title": "Lab 8",
+      "weight": 1.875,
+      "due_at": "2025-11-03T09:00:00+11:00",
+      "description": "Weekly lab with short C programming and analysis tasks."
+    },
+    {
+      "title": "Quiz 7",
+      "weight": 1.25,
+      "due_at": "2025-11-03T09:00:00+11:00",
+      "description": "WebCMS quiz on hashing with chaining."
+    },
+    {
+      "title": "Quiz 8",
+      "weight": 1.25,
+      "due_at": "2025-11-10T09:00:00+11:00",
+      "description": "WebCMS quiz on heaps and tries."
+    },
+    {
+      "title": "Assignment 2",
+      "weight": 15.0,
+      "due_at": "2025-11-24T09:00:00+11:00",
+      "description": "Late-term assignment designing and analysing an efficient data structure solution."
+    },
+    {
+      "title": "Final Exam",
+      "weight": 45.0,
+      "due_at": "2025-12-15T09:00:00+11:00",
+      "description": "Three-hour in-person exam with theory and programming sections."
+    }
+  ],
+  "topics": [
+    {
+      "name": "Algorithm Foundations & Analysis",
+      "description": "Review of C tooling, algorithmic thinking, and asymptotic analysis used throughout the course.",
+      "order_index": 1,
+      "subtopics": [
+        {
+          "name": "Course structure and tools",
+          "description": "People, expectations, and the C workflows used in COMP2521."
+        },
+        {
+          "name": "Cost models and asymptotic notation",
+          "description": "Counting primitive operations and classifying growth using Big-O, Theta, and Omega."
+        },
+        {
+          "name": "Reasoning about correctness",
+          "description": "Loop invariants, pre/post conditions, and when to benchmark."
+        }
+      ],
+      "contents": [
+        {
+          "title": "Week 1 Orientation & Analysis",
+          "summary": "Slides cover staff introductions, teaching modes, assessment overview, and a refresher on why we analyse algorithms in addition to benchmarking.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "When we talk about asymptotic notation (Big-O, Theta, Omega), what are we really doing?",
+          "choices": [
+            "Predicting the exact running time for any input size.",
+            "Grouping algorithms by how fast their running time grows, while ignoring constant factors and tiny lower-order terms.",
+            "Describing only recursive algorithms.",
+            "Measuring memory use but not time."
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "Asymptotic notation focuses on the dominant growth term so we can compare how algorithms scale without worrying about constant factors."
+        },
+        {
+          "prompt": "Why do we still analyse an algorithm if we can run a quick benchmark?",
+          "choices": [
+            "Benchmarks always fail on modern hardware.",
+            "Analysis lets us predict behaviour on any input size, not just the small samples we happened to measure.",
+            "Benchmarking is illegal in UNSW labs.",
+            "Analysis only matters for recursive programs."
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "Benchmarks can miss worst cases or larger inputs, whereas analysis lets us reason about growth for any input size."
+        },
+        {
+          "prompt": "What does a loop invariant help us prove?",
+          "choices": [
+            "That the compiler will optimise the loop.",
+            "That the loop maintains a key property every time it iterates so the final result is correct.",
+            "That the loop will always terminate.",
+            "That the loop uses no extra memory."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "Loop invariants capture a property that stays true each iteration and support a correctness proof."
+        },
+        {
+          "prompt": "Why do we ignore constant factors when comparing Big-O classes?",
+          "choices": [
+            "Constants never exist in code.",
+            "Constant factors do not change which algorithm grows faster for very large inputs.",
+            "Big-O cannot include numbers.",
+            "Because compilers remove all constants."
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "For large inputs, growth rate dominates constants, so Big-O focuses on the term that grows the quickest."
+        },
+        {
+          "prompt": "What is a good reason to profile (measure) code after doing asymptotic analysis?",
+          "choices": [
+            "Big-O says everything about real run times.",
+            "Profiling can reveal constant-factor differences and implementation issues that analysis does not capture.",
+            "Profiling is required before writing pseudocode.",
+            "Analysis is only useful if profiling fails."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "Analysis gives growth trends, but profiling shows real constant factors and bottlenecks in actual code."
+        }
+      ]
+    },
+    {
+      "name": "Sorting Strategies",
+      "description": "Elementary sorting algorithms, divide-and-conquer techniques, and linear-time counting strategies.",
+      "order_index": 2,
+      "subtopics": [
+        {
+          "name": "Elementary comparison sorts",
+          "description": "Selection, insertion, and bubble sort characteristics."
+        },
+        {
+          "name": "Divide-and-conquer sorting",
+          "description": "Mergesort and quicksort recurrences, pivot choices, and stability."
+        },
+        {
+          "name": "Counting and radix sorting",
+          "description": "When linear-time sorting applies and how digit-based methods work."
+        }
+      ],
+      "contents": [
+        {
+          "title": "Week 2 Sorting Notes",
+          "summary": "Slides discuss why we sort, detail the mechanics of simple sorts, and derive the mergesort recurrence T(n) = 2T(n/2) + n.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "Which recurrence matches the worst-case running time of mergesort on an array of size n?",
+          "choices": [
+            "T(n) = T(n-1) + O(1)",
+            "T(n) = 2T(n/2) + O(n)",
+            "T(n) = T(n/2) + O(1)",
+            "T(n) = T(n/2) + O(n^2)"
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "Mergesort splits the array in half, sorts each half, and merges in linear time, giving T(n) = 2T(n/2) + O(n)."
+        },
+        {
+          "prompt": "Why is insertion sort often faster than mergesort on tiny arrays?",
+          "choices": [
+            "Insertion sort has O(1) complexity.",
+            "Small arrays make constant factors and memory overhead dominate, favouring the simple inner loop of insertion sort.",
+            "Mergesort cannot handle arrays under 10 elements.",
+            "Insertion sort uses parallel threads automatically."
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "For small inputs, the overhead of recursion and extra arrays can outweigh the theoretical advantage of mergesort."
+        },
+        {
+          "prompt": "What makes quicksort unstable in its basic form?",
+          "choices": [
+            "It always uses the same pivot value.",
+            "Partitioning can swap equal keys and change their relative order.",
+            "It only works on arrays of integers.",
+            "It requires extra memory for stability."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "During partitioning equal keys can be placed on either side, breaking original ordering unless we add extra bookkeeping."
+        },
+        {
+          "prompt": "When is counting sort a good choice?",
+          "choices": [
+            "When keys are arbitrary strings.",
+            "When keys are integers in a small, known range.",
+            "When recursion is forbidden.",
+            "When we sort linked lists."
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "Counting sort shines when the key range is small so we can count occurrences directly in linear time."
+        },
+        {
+          "prompt": "What simple improvement helps quicksort avoid its worst-case behaviour?",
+          "choices": [
+            "Always use the first element as the pivot.",
+            "Pick the pivot randomly or use median-of-three to avoid already-sorted inputs.",
+            "Swap the array halves before partitioning.",
+            "Use counting sort on every partition."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "Randomising or sampling the pivot reduces the chance of consistently uneven partitions."
+        }
+      ]
+    },
+    {
+      "name": "Abstract Data Types & Balanced Trees",
+      "description": "Stacks, queues, binary search trees, and AVL rotations for keeping trees balanced.",
+      "order_index": 3,
+      "subtopics": [
+        {
+          "name": "Stack and queue ADTs",
+          "description": "LIFO vs FIFO behaviour and common use cases."
+        },
+        {
+          "name": "Binary search tree operations",
+          "description": "Recursive insertion, search, join, split, and deletion scenarios."
+        },
+        {
+          "name": "AVL balancing",
+          "description": "Rotation patterns (LL, RR, LR, RL) to keep tree height logarithmic."
+        }
+      ],
+      "contents": [
+        {
+          "title": "Week 3 ADTs & AVL Trees",
+          "summary": "Slides introduce abstraction, present stack/queue behaviours, revisit BST traversal, and step through AVL rebalancing with diagrams.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "If you push the numbers 1, then 2, then 3 onto a stack, in what order do they come back out when you pop?",
+          "choices": [
+            "1, 2, 3",
+            "2, 1, 3",
+            "3, 2, 1",
+            "3, 1, 2"
+          ],
+          "correct_index": 2,
+          "difficulty": "easy",
+          "explanation": "A stack is last-in, first-out, so the last pushed value (3) pops first, followed by 2 then 1."
+        },
+        {
+          "prompt": "What property must always hold for a binary search tree?",
+          "choices": [
+            "Every node has at most two children.",
+            "All keys in the left subtree are smaller than the node's key, and all keys in the right subtree are larger.",
+            "The tree is perfectly balanced.",
+            "Every level is fully filled."
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "BST ordering requires left subtree keys to be less, right subtree keys to be greater, enabling binary search."
+        },
+        {
+          "prompt": "An AVL tree becomes unbalanced in a left-right (LR) pattern. What fix do we apply?",
+          "choices": [
+            "Do one left rotation at the parent node.",
+            "Do one right rotation at the parent node.",
+            "Rotate the left child to the left, then rotate the parent to the right.",
+            "Rotate the left child to the right, then rotate the parent to the left."
+          ],
+          "correct_index": 2,
+          "difficulty": "medium",
+          "explanation": "An LR imbalance needs a double rotation: left rotation on the left child, then right rotation on the parent."
+        },
+        {
+          "prompt": "Why can an AVL tree guarantee efficient search?",
+          "choices": [
+            "It is always perfectly balanced.",
+            "Its height stays logarithmic in the number of nodes by restoring balance after each update.",
+            "It only stores sorted arrays.",
+            "It uses hashing for lookups."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "AVL rotations ensure the height grows like log n, so search costs stay logarithmic."
+        },
+        {
+          "prompt": "What is a common use for a queue in algorithms?",
+          "choices": [
+            "Tracking recursion depth.",
+            "Breadth-first search exploration order.",
+            "Storing sorted data.",
+            "Evaluating postfix expressions."
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "BFS uses a FIFO queue to visit nodes level by level."
+        }
+      ]
+    },
+    {
+      "name": "Graph Theory & Traversal",
+      "description": "Graph terminology, adjacency representations, and traversal strategies such as BFS and DFS.",
+      "order_index": 4,
+      "subtopics": [
+        {
+          "name": "Graph basics",
+          "description": "Vertices, edges, directed vs undirected, and real-world examples."
+        },
+        {
+          "name": "Representations",
+          "description": "Adjacency matrices versus lists and their trade-offs."
+        },
+        {
+          "name": "Traversal patterns",
+          "description": "Breadth-first and depth-first search behaviour."
+        }
+      ],
+      "contents": [
+        {
+          "title": "Week 4 Graph Fundamentals",
+          "summary": "Slides motivate graphs through real examples, formalise terminology, and compare adjacency list and matrix storage.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "You need the shortest path in an unweighted graph. Which traversal finds it every time?",
+          "choices": [
+            "Depth-first search",
+            "Breadth-first search",
+            "Pre-order traversal",
+            "Random walk"
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "BFS explores the graph layer by layer, so the first time you reach a node you have the minimum number of edges."
+        },
+        {
+          "prompt": "What is an advantage of an adjacency list over an adjacency matrix?",
+          "choices": [
+            "It always uses more memory.",
+            "It stores only the edges that actually exist, saving space on sparse graphs.",
+            "It allows O(1) edge checks.",
+            "It removes the need for edge weights."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "Adjacency lists only store neighbours, so sparse graphs use much less memory compared to n×n matrices."
+        },
+        {
+          "prompt": "Which scenario best suits a depth-first search?",
+          "choices": [
+            "Finding shortest unweighted paths.",
+            "Checking if a graph has a cycle or exploring all possible paths.",
+            "Scheduling tasks by urgency.",
+            "Comparing edge weights."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "DFS naturally dives down paths and is great for detecting cycles, topological sorting, and exploring all possibilities."
+        },
+        {
+          "prompt": "What does it mean for a graph to be directed?",
+          "choices": [
+            "Edges have a direction, so (u, v) is different from (v, u).",
+            "Every edge has a weight.",
+            "The graph forms a tree.",
+            "Edges cannot cross."
+          ],
+          "correct_index": 0,
+          "difficulty": "easy",
+          "explanation": "Directed graphs treat each edge as an ordered pair, so travel is only allowed in the specified direction."
+        },
+        {
+          "prompt": "Why might we store vertex discovery and finishing times during DFS?",
+          "choices": [
+            "To sort vertices alphabetically.",
+            "To classify edges (tree, back, forward, cross) and support algorithms like topological sort.",
+            "To measure memory usage.",
+            "To detect negative cycles."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "DFS timestamps reveal structure about paths and help with edge classification and topological sorting."
+        }
+      ]
+    },
+    {
+      "name": "Shortest Paths & Minimum Spanning Trees",
+      "description": "Weighted graphs, Dijkstra's algorithm, and strategies for building minimum spanning trees.",
+      "order_index": 5,
+      "subtopics": [
+        {
+          "name": "Single-source shortest paths",
+          "description": "Dijkstra's algorithm and relaxation invariants."
+        },
+        {
+          "name": "Minimum spanning trees",
+          "description": "Prim's and Kruskal's algorithms compared."
+        },
+        {
+          "name": "Cut and cycle properties",
+          "description": "Why greedy picks work for MSTs."
+        }
+      ],
+      "contents": [
+        {
+          "title": "Week 5 Shortest Paths & MSTs",
+          "summary": "Slides walk through Dijkstra with a priority queue and detail how cuts and cycles justify Prim's and Kruskal's choices.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "For Dijkstra's algorithm to work the way we wrote it, what must be true about the edge weights?",
+          "choices": [
+            "Every edge must have weight 1.",
+            "Edges can be negative as long as there are no cycles.",
+            "All edge weights must be zero or positive.",
+            "The graph has to be a tree."
+          ],
+          "correct_index": 2,
+          "difficulty": "medium",
+          "explanation": "Dijkstra assumes distances only decrease in a predictable way, which is only safe when all weights are non-negative."
+        },
+        {
+          "prompt": "Which structure do we rely on in Prim's algorithm to pick the next cheapest edge?",
+          "choices": [
+            "A max stack",
+            "A priority queue / min-heap",
+            "A basic FIFO queue",
+            "A sorted adjacency matrix"
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "Prim's algorithm keeps a min-heap of candidate edges keyed by weight so we can grab the cheapest connection to the current tree."
+        },
+        {
+          "prompt": "What does \"relaxing\" an edge mean in shortest path algorithms?",
+          "choices": [
+            "Removing the edge from the graph.",
+            "Checking whether going through this edge gives a shorter path and updating the distance if it does.",
+            "Swapping the edge direction.",
+            "Setting its weight to zero."
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "Relaxation compares the current best distance with the distance through a neighbouring edge and keeps the smaller value."
+        },
+        {
+          "prompt": "Why does Kruskal's algorithm sort edges by weight first?",
+          "choices": [
+            "To ensure the graph becomes directed.",
+            "So it can consider the lightest edges first and build an MST greedily.",
+            "To remove heavy edges from the graph.",
+            "Because sorting is required by Dijkstra."
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "Kruskal's algorithm grows an MST by adding the next lightest edge that doesn't form a cycle."
+        },
+        {
+          "prompt": "What does the cut property tell us about MSTs?",
+          "choices": [
+            "Every cut must contain exactly one edge.",
+            "The lightest edge crossing any cut can safely be part of some MST.",
+            "Cycles must be avoided at all costs.",
+            "The graph must be connected only after building the tree."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "The cut property justifies why choosing the smallest crossing edge keeps us on track for an MST."
+        }
+      ]
+    },
+    {
+      "name": "Hash Tables & Dictionaries",
+      "description": "Implementing the map ADT, designing hash functions, and managing collisions with chaining.",
+      "order_index": 6,
+      "subtopics": [
+        {
+          "name": "Map ADT operations",
+          "description": "Insert, lookup, and delete key-value pairs."
+        },
+        {
+          "name": "Hash function design",
+          "description": "Spreading keys evenly and keeping load factor under control."
+        },
+        {
+          "name": "Chaining collision handling",
+          "description": "Linked-list buckets and when to rehash."
+        }
+      ],
+      "contents": [
+        {
+          "title": "Week 8 Hash Tables",
+          "summary": "Slides revisit the map ADT, show examples of good hash functions, and demonstrate chaining with real code snippets.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "What is the goal of a good hash function?",
+          "choices": [
+            "Produce the same value for every key.",
+            "Spread keys evenly across buckets so chains stay short.",
+            "Sort the keys as they arrive.",
+            "Create longer linked lists."
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "Even distribution keeps chains short and operations near constant time."
+        },
+        {
+          "prompt": "If a chaining hash table starts to show very long buckets, what can we do?",
+          "choices": [
+            "Do nothing; performance cannot improve.",
+            "Resize the table with more buckets and recompute the hash for every key.",
+            "Switch each bucket to a stack.",
+            "Delete half of the entries."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "Rehashing into a larger table reduces load factor and shortens the chains."
+        },
+        {
+          "prompt": "What does the load factor of a hash table measure?",
+          "choices": [
+            "How many hash functions you use.",
+            "The average number of entries per bucket (items divided by buckets).",
+            "Whether keys are sorted alphabetically.",
+            "The depth of recursion in hashing."
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "Load factor tells us how crowded the table is so we can decide when to rehash."
+        },
+        {
+          "prompt": "Which data structure do we usually use inside each bucket when chaining?",
+          "choices": [
+            "A linked list or dynamic array of key-value pairs.",
+            "A binary search tree.",
+            "A priority queue.",
+            "A postfix calculator."
+          ],
+          "correct_index": 0,
+          "difficulty": "easy",
+          "explanation": "Chaining typically uses linked lists (or sometimes dynamic arrays) to hold the colliding entries."
+        },
+        {
+          "prompt": "What is a common downside of chaining compared with perfect hashing?",
+          "choices": [
+            "Chaining cannot handle string keys.",
+            "Worst-case lookups can degrade to O(length of the chain).",
+            "Chaining requires every key to be unique.",
+            "Chaining forces us to rebuild the table every insert."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "If many keys fall into the same bucket, a lookup may walk a longer chain, so we monitor load factor to keep chains short."
+        }
+      ]
+    },
+    {
+      "name": "Priority Queues & Tries",
+      "description": "Using binary heaps for priority queues and storing string sets with tries.",
+      "order_index": 7,
+      "subtopics": [
+        {
+          "name": "Binary heap mechanics",
+          "description": "Maintaining the heap invariant and running heapsort."
+        },
+        {
+          "name": "Decrease-key and scheduling",
+          "description": "Adjusting priorities and bubbling values."
+        },
+        {
+          "name": "Trie operations",
+          "description": "Insertion, lookup, and autocomplete behaviour."
+        }
+      ],
+      "contents": [
+        {
+          "title": "Week 9 Priority Queues & Tries",
+          "summary": "Slides demonstrate heap push/pop, show how decrease-key works, and motivate tries for predictive text and dictionary lookups.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "We decrease a key inside a binary heap priority queue. How do we fix the heap afterward?",
+          "choices": [
+            "Swap the node with its larger child over and over.",
+            "Rebuild the whole heap from scratch.",
+            "Bubble the node up while it is smaller than its parent.",
+            "Run mergesort on the underlying array."
+          ],
+          "correct_index": 2,
+          "difficulty": "medium",
+          "explanation": "After decrease-key we bubble the node toward the root until the parent is no longer greater."
+        },
+        {
+          "prompt": "Why does a binary heap make a good priority queue implementation?",
+          "choices": [
+            "Insertions and removing the minimum both run in logarithmic time while using only an array.",
+            "It sorts the entire array automatically.",
+            "It stores elements in sorted order all the time.",
+            "It only works for integers."
+          ],
+          "correct_index": 0,
+          "difficulty": "easy",
+          "explanation": "Heaps support efficient insert and delete-min operations and can be stored compactly in an array."
+        },
+        {
+          "prompt": "Ignoring alphabet size, how long does it take to look up a word of length L in a trie?",
+          "choices": [
+            "O(1)",
+            "O(log L)",
+            "O(L)",
+            "O(L^2)"
+          ],
+          "correct_index": 2,
+          "difficulty": "easy",
+          "explanation": "The lookup follows one edge per character, so the cost grows linearly with the word length."
+        },
+        {
+          "prompt": "What is the main trade-off when using a trie instead of a hash table for storing words?",
+          "choices": [
+            "Tries use more memory but can answer prefix queries quickly.",
+            "Tries only work for numbers.",
+            "Tries cannot insert new keys after building.",
+            "Tries always require sorting."
+          ],
+          "correct_index": 0,
+          "difficulty": "medium",
+          "explanation": "Tries store characters along paths, which can cost more memory but allows fast prefix lookup and autocomplete."
+        },
+        {
+          "prompt": "What does heapsort do after it builds a heap from the input array?",
+          "choices": [
+            "Removes the minimum repeatedly, placing each element at the end of the array.",
+            "Switches to quicksort.",
+            "Runs insertion sort on the heap.",
+            "Rebuilds the heap multiple times with random pivots."
+          ],
+          "correct_index": 0,
+          "difficulty": "medium",
+          "explanation": "Heapsort turns the array into a heap then repeatedly extracts the min (or max) and writes it to the end of the array to produce a sorted order."
+        }
+      ]
+    }
+  ]
+}

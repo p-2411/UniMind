@@ -6,8 +6,15 @@ from datetime import datetime
 from sqlalchemy import Boolean, DateTime, String, func
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from typing import TYPE_CHECKING
 
 from . import Base
+
+if TYPE_CHECKING:
+    from .enrolment import Enrolment
+    from .attempt import QuestionAttempt
+    from .progress import TopicProgress
+    from .streak import DailyStreak
 
 
 class User(Base):
@@ -37,7 +44,7 @@ class User(Base):
         back_populates="user",
         cascade="all, delete-orphan",
     )
-    streak: Mapped["DailyStreak"] | None = relationship(
+    streak: Mapped["DailyStreak | None"] = relationship(
         back_populates="user",
         uselist=False,
         cascade="all, delete-orphan",

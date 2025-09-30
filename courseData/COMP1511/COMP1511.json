@@ -1,0 +1,457 @@
+{
+  "course": {
+    "code": "COMP1511_T3",
+    "name": "Programming Fundamentals (T3 2025)",
+    "description": "Entry-level UNSW computing course introducing C programming, problem-solving, and core software engineering practices."
+  },
+  "assessments": [
+    { "title": "Lab 1", "weight": 2.5, "due_at": "2025-09-22T09:00:00+10:00", "description": "Weekly lab focused on setting up the toolchain and practising basic C syntax." },
+    { "title": "Quiz 1", "weight": 1.25, "due_at": "2025-09-22T09:00:00+10:00", "description": "Short WebCMS quiz covering Week 1 concepts." },
+    { "title": "Lab 2", "weight": 2.5, "due_at": "2025-09-29T09:00:00+10:00", "description": "Weekly lab on expressions, stdin/stdout, and simple branching." },
+    { "title": "Quiz 2", "weight": 1.25, "due_at": "2025-09-29T09:00:00+10:00", "description": "Quiz on variables, types, and conditional logic." },
+    { "title": "Lab 3", "weight": 2.5, "due_at": "2025-10-06T09:00:00+11:00", "description": "Weekly lab drilling loops and basic debugging techniques." },
+    { "title": "Quiz 3", "weight": 1.25, "due_at": "2025-10-06T09:00:00+11:00", "description": "Quiz on while/for loops and tracing code." },
+    { "title": "Lab 4", "weight": 2.5, "due_at": "2025-10-13T09:00:00+11:00", "description": "Weekly lab on writing and testing reusable functions." },
+    { "title": "Quiz 4", "weight": 1.25, "due_at": "2025-10-13T09:00:00+11:00", "description": "Quiz on function decomposition and parameter passing." },
+    { "title": "Lab 5", "weight": 2.5, "due_at": "2025-10-20T09:00:00+11:00", "description": "Weekly lab covering arrays, strings, and pointer basics." },
+    { "title": "Quiz 5", "weight": 1.25, "due_at": "2025-10-20T09:00:00+11:00", "description": "Quiz on arrays, pointer arithmetic, and string manipulation." },
+    { "title": "Lab 6", "weight": 2.5, "due_at": "2025-10-27T09:00:00+11:00", "description": "Weekly lab on structs and dynamic memory allocation." },
+    { "title": "Quiz 6", "weight": 1.25, "due_at": "2025-10-27T09:00:00+11:00", "description": "Quiz on structs, typedef, and heap management." },
+    { "title": "Assignment 1 – C Basics", "weight": 10.0, "due_at": "2025-10-06T18:00:00+11:00", "description": "Individual assignment reinforcing core C syntax, IO, and branching." },
+    { "title": "Lab 7", "weight": 2.5, "due_at": "2025-11-03T09:00:00+11:00", "description": "Weekly lab practising linked structures and modular design." },
+    { "title": "Quiz 7", "weight": 1.25, "due_at": "2025-11-03T09:00:00+11:00", "description": "Quiz on linked lists and modular program organisation." },
+    { "title": "Lab 8", "weight": 2.5, "due_at": "2025-11-10T09:00:00+11:00", "description": "Weekly lab focusing on file IO and project scaffolding." },
+    { "title": "Quiz 8", "weight": 1.25, "due_at": "2025-11-10T09:00:00+11:00", "description": "Quiz on file handling and larger program structure." },
+    { "title": "Assignment 2 – Modular C Programming", "weight": 15.0, "due_at": "2025-11-03T18:00:00+11:00", "description": "Individual assignment emphasising modularity, testing, and pointers." },
+    { "title": "Assignment 3 – Capstone Project", "weight": 20.0, "due_at": "2025-11-24T18:00:00+11:00", "description": "Team-based C project applying course concepts to a larger codebase." },
+    { "title": "Midterm Practical Test", "weight": 5.0, "due_at": "2025-10-17T10:00:00+11:00", "description": "In-lab practical assessing mid-semester programming skills." },
+    { "title": "Final Exam", "weight": 20.0, "due_at": "2025-12-12T09:00:00+11:00", "description": "Final written exam covering the breadth of COMP1511 concepts." }
+  ],
+  "topics": [
+    {
+      "name": "Getting Started with C",
+      "description": "Course logistics, the C toolchain, standard IO, and first C programs.",
+      "order_index": 1,
+      "subtopics": [
+        { "name": "Course overview", "description": "Staff, expectations, and assessment structure." },
+        { "name": "Tooling", "description": "gcc/clang, make, and the provided COMP1511 environment." },
+        { "name": "First C program", "description": "Hello world, using printf, and returning from main." }
+      ],
+      "contents": [
+        {
+          "title": "Week 1 Orientation & Tooling",
+          "summary": "Slides introduce teaching staff, demonstrate the course website, and walk through compiling your first C program from the command line.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "What does the command `gcc hello.c -o hello` do?",
+          "choices": [
+            "Runs the C program directly.",
+            "Compiles hello.c into an executable called hello.",
+            "Creates a text file with the program output.",
+            "Only checks the program for style issues."
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "gcc takes the source file and produces an executable when you use the -o flag to name it."
+        },
+        {
+          "prompt": "Which header do you include to use printf?",
+          "choices": ["<math.h>", "<stdio.h>", "<stdbool.h>", "<unistd.h>"],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "printf lives in the Standard IO library, <stdio.h>."
+        },
+        {
+          "prompt": "What does returning 0 from main indicate?",
+          "choices": [
+            "The program crashed.",
+            "The program finished successfully.",
+            "The program printed 0.",
+            "The compiler issued a warning."
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "By convention, returning 0 means the program exited without errors."
+        },
+        {
+          "prompt": "Which command helps you see compiler warnings before running the program?",
+          "choices": [
+            "gcc -Wall file.c",
+            "touch file.c",
+            "cat file.c",
+            "rm a.out"
+          ],
+          "correct_index": 0,
+          "difficulty": "easy",
+          "explanation": "The -Wall flag enables helpful warnings so you can fix issues early."
+        },
+        {
+          "prompt": "Why do we care about the course style guide from Week 1?",
+          "choices": [
+            "Because style has no impact on marks.",
+            "Consistent style makes code easier to read, debug, and get approved in labs.",
+            "It is only for tutors.",
+            "It replaces the need for comments."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "Following the agreed style keeps your code readable and meets the marking expectations."
+        }
+      ]
+    },
+    {
+      "name": "Expressions, Types, and Branching",
+      "description": "Variables, arithmetic, scanning input, and making decisions with if/else and switch.",
+      "order_index": 2,
+      "subtopics": [
+        { "name": "Variables and types", "description": "Declaring ints, doubles, chars, and using scanf." },
+        { "name": "Expressions", "description": "Operator precedence and mixed-type arithmetic." },
+        { "name": "Branching", "description": "if/else chains and switch statements." }
+      ],
+      "contents": [
+        {
+          "title": "Week 2 Expressions & Conditionals",
+          "summary": "Slides walk through reading numbers with scanf, performing calculations, and making decisions with nested if/else blocks or switch.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "Which format specifier reads an integer using scanf?",
+          "choices": ["%d", "%lf", "%c", "%s"],
+          "correct_index": 0,
+          "difficulty": "easy",
+          "explanation": "%d is used for reading int values." }
+        ,
+        {
+          "prompt": "What happens when you divide two ints in C?",
+          "choices": [
+            "You always get a double.",
+            "The result is truncated to an int (fractional part discarded).",
+            "It causes a compiler error.",
+            "The program crashes if the result is not an int."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "Integer division truncates the decimal portion."
+        },
+        {
+          "prompt": "Which keyword lets you perform different actions based on the value of an expression?",
+          "choices": ["loop", "switch", "return", "case"],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "The switch statement handles multi-way branching." }
+        ,
+        {
+          "prompt": "Why is the `else if` pattern often clearer than deeply nested if statements?",
+          "choices": [
+            "It compiles faster.",
+            "It shows the mutually-exclusive conditions in a single chain, improving readability.",
+            "It uses less memory.",
+            "It automatically handles input validation."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "Chaining else-if statements makes the control flow easier to follow."
+        },
+        {
+          "prompt": "Which statement safely handles unexpected user input?",
+          "choices": [
+            "Assume the user always types correctly.",
+            "Check the return value of scanf and provide fallback behaviour.",
+            "Ignore scanf errors.",
+            "Restart the program manually."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "Checking scanf's return value lets you detect and react to bad input."
+        }
+      ]
+    },
+    {
+      "name": "Loops and Program Flow",
+      "description": "while, for, and do-while loops, loop invariants, and basic debugging strategies.",
+      "order_index": 3,
+      "subtopics": [
+        { "name": "while loops", "description": "Looping while a condition holds." },
+        { "name": "for loops", "description": "Counting loops, off-by-one errors, and tracing." },
+        { "name": "Debugging", "description": "Using printf, asserts, and gdb to inspect loop behaviour." }
+      ],
+      "contents": [
+        {
+          "title": "Week 3 Loops & Debugging",
+          "summary": "Slides compare while versus for loops, explain when to choose each, and demonstrate using gdb/printf to step through iterations.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "Which loop is best when you know exactly how many times to iterate?",
+          "choices": ["while", "for", "do-while", "goto"],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "for loops naturally express a fixed number of iterations." }
+        ,
+        {
+          "prompt": "What common bug happens when your loop bounds are off by one?",
+          "choices": ["Segmentation fault", "Off-by-one error", "Pointer leak", "Compiler warning"],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "Off-by-one errors arise when the loop runs one too many or too few times." }
+        ,
+        {
+          "prompt": "How can printf help with debugging loops?",
+          "choices": [
+            "It cannot help; use gdb only.",
+            "Print loop variables each iteration to see how they change.",
+            "It disables the loop.",
+            "It restarts the program."
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "Strategic printf calls let you observe state changes as the loop runs." }
+        ,
+        {
+          "prompt": "Which gdb command steps through one loop iteration at a time?",
+          "choices": ["next", "continue", "break", "quit"],
+          "correct_index": 0,
+          "difficulty": "medium",
+          "explanation": "`next` runs the next line, allowing you to walk through each iteration." }
+        ,
+        {
+          "prompt": "Why might you convert a while loop into a for loop?",
+          "choices": [
+            "For loops automatically optimise your code.",
+            "It puts the initialisation, condition, and update in one place, improving clarity.",
+            "While loops cannot use integers.",
+            "For loops always run faster."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "Combining all loop parts in the header can make the flow easier to understand."
+        }
+      ]
+    },
+    {
+      "name": "Functions and Modularity",
+      "description": "Writing reusable functions, header files, testing, and documenting code.",
+      "order_index": 4,
+      "subtopics": [
+        { "name": "Function definitions", "description": "Parameters, return values, and prototypes." },
+        { "name": "Header files", "description": "Splitting code into .c and .h and guarding includes." },
+        { "name": "Testing", "description": "Writing simple tests and using assert." }
+      ],
+      "contents": [
+        {
+          "title": "Week 4 Functions & Modularity",
+          "summary": "Slides show how to break a program into functions, share declarations via headers, and build small test harnesses.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "Why do we write a function prototype in a header file?",
+          "choices": [
+            "To slow down compilation.",
+            "So other modules know how to call the function without seeing the implementation.",
+            "To make the function inline automatically.",
+            "To force the compiler to ignore the function."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "Prototypes in headers share the function's signature with other source files." }
+        ,
+        {
+          "prompt": "What happens when an assert(condition) call sees that the condition is false?",
+          "choices": [
+            "Nothing, the program keeps running as normal.",
+            "It prints a message about the failed assertion and aborts the program.",
+            "It automatically restarts the program.",
+            "It turns the condition into a loop."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "assert reports the file and line of the failure, then stops execution so you can fix the bug." }
+        ,
+        {
+          "prompt": "Which tool quickly rebuilds your program when files change?",
+          "choices": ["grep", "make", "cat", "ls"],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "make tracks dependencies and recompiles only what changed." }
+        ,
+        {
+          "prompt": "Why write automated tests for your functions?",
+          "choices": [
+            "So you never need to read your code again.",
+            "To quickly check behaviour after edits and catch regressions early.",
+            "Because the compiler requires it.",
+            "Tests make programs faster."
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "Tests help ensure changes don’t break existing functionality."
+        },
+        {
+          "prompt": "What does an include guard prevent?",
+          "choices": [
+            "The need for prototypes.",
+            "Multiple inclusion of the same header causing duplicate definitions.",
+            "All compiler warnings.",
+            "Linker errors from missing objects."
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "Include guards stop the preprocessor from processing the same header twice."
+        }
+      ]
+    },
+    {
+      "name": "Arrays, Pointers, and Strings",
+      "description": "Manipulating arrays, understanding pointers, and handling C strings safely.",
+      "order_index": 5,
+      "subtopics": [
+        { "name": "Arrays", "description": "Indexing, iteration, and passing arrays to functions." },
+        { "name": "Pointers", "description": "Addresses, pointer arithmetic, and pass-by-reference." },
+        { "name": "Strings", "description": "Null-terminated char arrays and common library functions." }
+      ],
+      "contents": [
+        {
+          "title": "Week 5 Arrays & Pointers",
+          "summary": "Slides explain how arrays map to memory, what pointer arithmetic really does, and how to work with C strings safely.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "What does the expression `*(ptr + 2)` access?",
+          "choices": [
+            "The value stored two elements after the pointer.",
+            "A brand new array.",
+            "The address of the pointer itself.",
+            "It causes a compile error."
+          ],
+          "correct_index": 0,
+          "difficulty": "medium",
+          "explanation": "Pointer arithmetic moves by element size, so ptr + 2 refers to the third element."
+        },
+        {
+          "prompt": "How do you pass an array to a function in C?",
+          "choices": [
+            "By copying the entire array by value.",
+            "By passing a pointer to its first element.",
+            "You cannot pass arrays to functions.",
+            "Use the `array` keyword."
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "Arrays decay to pointers when passed to functions."
+        },
+        {
+          "prompt": "What must every C string end with?",
+          "choices": ["A newline", "A null terminator written as backslash and zero", "A tab", "A space"],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "C strings end with a backslash followed by zero (the null terminator)."
+        },
+        {
+          "prompt": "Which library function safely copies one string into another when you know the destination size?",
+          "choices": ["strcpy", "strncpy", "strlen", "sprintf"],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "strncpy lets you cap the number of copied characters to avoid overflow." }
+        ,
+        {
+          "prompt": "Why might you use pointer parameters in a function?",
+          "choices": [
+            "To prevent the function from modifying data.",
+            "To allow the function to modify the caller's data or return additional results.",
+            "Because pointers are always faster.",
+            "To avoid writing return statements."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "Passing pointers lets the function update variables or structures outside its scope."
+        }
+      ]
+    },
+    {
+      "name": "Structs, Dynamic Memory, and Debugging",
+      "description": "Designing structs, allocating memory with malloc/free, and taming bugs with gdb and assertions.",
+      "order_index": 6,
+      "subtopics": [
+        { "name": "Struct design", "description": "Grouping related data into custom types." },
+        { "name": "Dynamic memory", "description": "malloc, free, and avoiding leaks." },
+        { "name": "Debugging tools", "description": "Using gdb, valgrind, and assertions to find memory issues." }
+      ],
+      "contents": [
+        {
+          "title": "Week 6 Structs & Memory",
+          "summary": "Slides cover declaring structs, managing ownership of heap data, and demonstrate valgrind catching leaks.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "Why use a struct in C?",
+          "choices": [
+            "To slow down your program.",
+            "To bundle related fields (like x and y) under one name.",
+            "To replace all arrays.",
+            "Because pointers stop working without structs."
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "Structs let you package related data into one type."
+        },
+        {
+          "prompt": "What must you always do after calling malloc when you no longer need the memory?",
+          "choices": ["Call free on the pointer.", "Call malloc again.", "Set the pointer to NULL only.", "Nothing, the OS frees it."],
+          "correct_index": 0,
+          "difficulty": "easy",
+          "explanation": "Calling free releases the heap memory back to the system." }
+        ,
+        {
+          "prompt": "Which tool reports memory leaks in your program?",
+          "choices": ["make", "valgrind", "printf", "touch"],
+          "correct_index": 1,
+          "difficulty":"medium",
+          "explanation": "valgrind tracks allocations and warns when you forget to free memory." }
+        ,
+        {
+          "prompt": "What does setting a pointer to NULL after freeing it help prevent?",
+          "choices": [
+            "Compilation errors.",
+            "Accidentally reusing the freed pointer (dangling pointer issues).",
+            "The need to free memory.",
+            "Stack overflows."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "NULLing the pointer makes accidental reuse more obvious."
+        },
+        {
+          "prompt": "Why run your program under gdb when it crashes?",
+          "choices": [
+            "So the crash disappears.",
+            "To inspect the backtrace, variable values, and recreate the crash with more context.",
+            "Because gdb automatically fixes bugs.",
+            "Because valgrind requires it."
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "gdb lets you see the line number and state at the moment of failure."
+        }
+      ]
+    }
+  ]
+}

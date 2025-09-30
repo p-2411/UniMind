@@ -48,25 +48,31 @@ function QuestionCard({ question, onCorrectAnswer }) {
 
   // Determine the CSS class for each option based on its state
   const getOptionClass = (index) => {
-    let baseClass = 'w-full px-6 py-4 text-left rounded-xl border transition-all duration-200 ';
+    let baseClass = 'w-full px-6 py-4 text-left rounded-2xl border transition-all duration-200 backdrop-blur-sm ';
 
-    // Highlight the selected option
-    if (selectedIndex === index && !feedback) {
-      baseClass += 'bg-purple-500/10 border-purple-500/50 text-white ';
-    } else if (!feedback) {
-      baseClass += 'bg-[#0f0f0f] border-gray-800 text-gray-300 hover:border-gray-700 hover:bg-[#151515] ';
+    if (!feedback) {
+      if (selectedIndex === index) {
+        baseClass += 'bg-orange-50/80 border-orange-300 text-slate-900 shadow-sm ';
+      } else {
+        baseClass += 'bg-white/70 border-white/40 text-slate-700 hover:bg-white/80 hover:border-orange-200 ';
+      }
     }
 
-    // After submission, show which answer was correct/incorrect
-    if (feedback === 'correct' && selectedIndex === index) {
-      baseClass += 'bg-green-500/10 border-green-500/50 text-white ';
-    } else if (feedback === 'incorrect') {
+    if (feedback === 'correct') {
       if (selectedIndex === index) {
-        baseClass += 'bg-red-500/10 border-red-500/50 text-white ';
-      } else if (index === question.correctAnswer) {
-        baseClass += 'bg-green-500/10 border-green-500/50 text-white ';
+        baseClass += 'bg-emerald-50/90 border-emerald-300 text-emerald-700 shadow-sm ';
       } else {
-        baseClass += 'bg-[#0f0f0f] border-gray-800 text-gray-500 ';
+        baseClass += 'bg-white/60 border-white/30 text-slate-600 ';
+      }
+    }
+
+    if (feedback === 'incorrect') {
+      if (selectedIndex === index) {
+        baseClass += 'bg-rose-50/90 border-rose-300 text-rose-700 shadow-sm ';
+      } else if (index === question.correctAnswer) {
+        baseClass += 'bg-emerald-50/90 border-emerald-300 text-emerald-700 shadow-sm ';
+      } else {
+        baseClass += 'bg-white/60 border-white/30 text-slate-600 ';
       }
     }
 
@@ -79,14 +85,37 @@ function QuestionCard({ question, onCorrectAnswer }) {
     return baseClass;
   };
 
+  const getIndicatorClass = (index) => {
+    if (feedback === 'correct' && selectedIndex === index) {
+      return 'border-emerald-400 bg-emerald-400';
+    }
+
+    if (feedback === 'incorrect') {
+      if (selectedIndex === index) {
+        return 'border-rose-400 bg-rose-400';
+      }
+      if (index === question.correctAnswer) {
+        return 'border-emerald-400 bg-emerald-400';
+      }
+    }
+
+    if (selectedIndex === index) {
+      return 'border-orange-400 bg-orange-400';
+    }
+
+    return 'border-slate-300 bg-white/80';
+  };
+
   return (
-    <div className="bg-[#1a1a1a] rounded-3xl border border-gray-800 shadow-2xl p-12">
+    <div className="bg-white/80 backdrop-blur-2xl rounded-3xl border border-white/30 shadow-[0_30px_60px_-15px_rgba(15,23,42,0.35)] p-10 md:p-12 text-slate-800">
       <div className="space-y-8">
-        <div className="text-center space-y-3">
-          <div className="inline-block px-4 py-1.5 bg-yellow-500/10 border border-yellow-500/20 rounded-full mb-2">
-            <span className="text-yellow-400 text-sm font-medium">Focus Check</span>
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-orange-100/80 border border-orange-200/70 rounded-full">
+            <span className="text-orange-600 text-sm font-medium">Focus Check</span>
           </div>
-          <h2 className="text-white text-3xl font-semibold leading-tight">{question.question}</h2>
+          <h2 className="text-3xl font-semibold leading-tight text-slate-900 md:text-4xl">
+            {question.question}
+          </h2>
         </div>
 
         <div className="space-y-4">
@@ -98,11 +127,9 @@ function QuestionCard({ question, onCorrectAnswer }) {
               disabled={isSubmitting}
             >
               <div className="flex items-center gap-3">
-                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
-                  selectedIndex === index
-                    ? 'border-yellow-500 bg-yellow-500'
-                    : 'border-gray-600'
-                }`}>
+                <div
+                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${getIndicatorClass(index)}`}
+                >
                   {selectedIndex === index && (
                     <div className="w-2 h-2 bg-white rounded-full"></div>
                   )}
@@ -115,25 +142,25 @@ function QuestionCard({ question, onCorrectAnswer }) {
 
         {/* Show feedback messages based on the current state */}
         {feedback === 'error' && (
-          <div className="bg-red-900/20 border border-red-700/50 text-red-300 px-5 py-4 rounded-xl text-base">
+          <div className="bg-rose-50 border border-rose-200 text-rose-600 px-5 py-4 rounded-xl text-base">
             Please select an answer before submitting.
           </div>
         )}
 
         {feedback === 'correct' && (
-          <div className="bg-green-900/20 border border-green-700/50 text-green-300 px-5 py-4 rounded-xl text-base">
+          <div className="bg-emerald-50 border border-emerald-200 text-emerald-600 px-5 py-4 rounded-xl text-base">
             ✓ Correct! Redirecting you now...
           </div>
         )}
 
         {feedback === 'incorrect' && (
-          <div className="bg-red-900/20 border border-red-700/50 text-red-300 px-5 py-4 rounded-xl text-base">
+          <div className="bg-rose-50 border border-rose-200 text-rose-600 px-5 py-4 rounded-xl text-base">
             ✗ Incorrect. Try the next question.
           </div>
         )}
 
         <button
-          className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white font-semibold text-lg px-8 py-4 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+          className="w-full bg-gradient-to-r from-yellow-300 via-orange-400 to-orange-500 hover:from-yellow-400 hover:via-orange-500 hover:to-orange-600 text-slate-900 font-semibold text-lg px-8 py-4 rounded-xl transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
           onClick={handleSubmit}
           disabled={isSubmitting}
         >

@@ -171,7 +171,7 @@ function Sidebar({
         data-slot="sidebar"
         className={cn(
           // Add subtle translucency + blur to better blend with page
-          "text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col",
+          "text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col backdrop-blur-sm !bg-white/80 dark:!bg-white/10",
           className
         )}
         {...props}
@@ -188,7 +188,7 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden "
+          className="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden backdrop-blur-sm !bg-white/80 dark:!bg-white/10"
           style={
             {
               "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
@@ -245,7 +245,7 @@ function Sidebar({
         <div
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
-          className="bg-white/6 backdrop-blur-sm group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm"
+          className="bg-sidebar group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm backdrop-blur-sm !bg-white/80 dark:!bg-white/10 group-data-[variant=floating]:border-white/30 dark:group-data-[variant=floating]:border-white/10"
         >
           {children}
         </div>

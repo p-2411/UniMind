@@ -1,0 +1,364 @@
+{
+  "course": {
+    "code": "COMP2521",
+    "name": "Data Structures and Algorithms",
+    "description": "Core UNSW CS course covering algorithm analysis, key data structures (lists, trees, graphs, hashes) and their implementation trade-offs."
+  },
+  "assessments": [
+    {
+      "title": "Laboratory Exercises",
+      "weight": 15.0,
+      "due_at": null,
+      "description": "Weekly individual lab tasks reinforcing lecture material. Best 7 of 8 labs are counted toward the final mark."
+    },
+    {
+      "title": "Weekly Quizzes",
+      "weight": 10.0,
+      "due_at": null,
+      "description": "WebCMS quizzes on the previous week’s theory. Multiple attempts allowed before the Monday 09:00 deadline."
+    },
+    {
+      "title": "Assignment 1",
+      "weight": 15.0,
+      "due_at": null,
+      "description": "Mid-term programming assignment that applies divide-and-conquer or recursive techniques to a medium-sized problem."
+    },
+    {
+      "title": "Assignment 2",
+      "weight": 15.0,
+      "due_at": null,
+      "description": "Late-term assignment focused on designing an efficient data-structure solution (graphs or hashing) with both automarking and manual review."
+    },
+    {
+      "title": "Final Exam",
+      "weight": 45.0,
+      "due_at": null,
+      "description": "Three-hour in-person exam with separate theory and programming sections. Exam hurdle requires at least 40% overall and 25% in each section."
+    }
+  ],
+  "topics": [
+    {
+      "name": "Algorithm Foundations & Analysis",
+      "description": "Course introduction, tooling expectations, and asymptotic analysis techniques used throughout the term.",
+      "order_index": 1,
+      "subtopics": [
+        {
+          "name": "Cost Models & Primitive Operation Counting",
+          "description": "Review of how we count primitive operations and build simple loop-based recurrences."
+        },
+        {
+          "name": "Asymptotic Notation",
+          "description": "Formal definitions of O, Θ, Ω notation and common growth classes."
+        },
+        {
+          "name": "Correctness & Invariants",
+          "description": "Using loop invariants and reasoning about recursive base/step cases."
+        }
+      ],
+      "contents": [
+        {
+          "title": "Orientation & Analysis Overview",
+          "summary": "Slides 1-3 outline staff, assessment scheme, and assumed C knowledge. The remainder revisits order-of-growth analysis and why benchmarking alone is insufficient.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "Which statement best describes asymptotic notation introduced in Week 1?",
+          "choices": [
+            "It exactly predicts runtime for any given input size.",
+            "It classifies growth rates while ignoring constant factors and lower-order terms.",
+            "It only applies to recursive algorithms.",
+            "It measures memory usage but not time complexity."
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "Big-O/Θ/Ω focus on dominant terms to compare algorithm scalability."
+        }
+      ]
+    },
+    {
+      "name": "Sorting Paradigms",
+      "description": "Elementary comparison sorts, divide-and-conquer techniques, and linear-time non-comparison methods.",
+      "order_index": 2,
+      "subtopics": [
+        {
+          "name": "Elementary Sorting",
+          "description": "Insertion, selection, and bubble sort behaviour and complexity."
+        },
+        {
+          "name": "Divide-and-Conquer",
+          "description": "Merge sort and quicksort recurrences, pivot strategies, and stability considerations."
+        },
+        {
+          "name": "Non-Comparison Sorts",
+          "description": "Counting sort, radix sort, and when linear-time sorting applies."
+        }
+      ],
+      "contents": [
+        {
+          "title": "Week 2 Sorting Notes",
+          "summary": "Slides highlight motivations for sorting, data models, swapping patterns, and derive T(n) = 2T(n/2)+Θ(n) for mergesort.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "Which recurrence captures the worst-case time for mergesort on an array of size n?",
+          "choices": [
+            "T(n) = T(n-1) + O(1)",
+            "T(n) = 2T(n/2) + O(n)",
+            "T(n) = T(n/2) + O(1)",
+            "T(n) = T(n/2) + O(n^2)"
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "Each level splits the problem in half and merges in linear work, giving Θ(n log n)."
+        },
+        {
+          "prompt": "Why are counting and radix sort considered \"non-comparison\" algorithms?",
+          "choices": [
+            "They rely on direct indexing into buckets keyed by value digits.",
+            "They compare keys using only <= and >= operators.",
+            "They swap adjacent items repeatedly.",
+            "They randomise the array before sorting."
+          ],
+          "correct_index": 0,
+          "difficulty": "medium",
+          "explanation": "These sorts map keys to positions without pairwise comparisons, enabling linear-time bounds."
+        }
+      ]
+    },
+    {
+      "name": "Abstract Data Types & Balanced Trees",
+      "description": "Stacks, queues, sets, binary search trees, and rotations used to maintain balance in AVL trees.",
+      "order_index": 3,
+      "subtopics": [
+        {
+          "name": "Stack & Queue ADTs",
+          "description": "Push/pop and enqueue/dequeue contracts plus typical implementations."
+        },
+        {
+          "name": "Binary Search Trees",
+          "description": "Insertion, search, traversal orders, join/split, and deletion cases."
+        },
+        {
+          "name": "AVL Rotations",
+          "description": "LL, RR, LR, RL cases for restoring balance after updates."
+        }
+      ],
+      "contents": [
+        {
+          "title": "Week 3 ADT Overview",
+          "summary": "Slides motivate abstraction, show stack/queue call patterns, and introduce recursive BST operations before moving into AVL rotations.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "Given pushes of 1, 2, 3 onto a stack, which order are values popped?",
+          "choices": [
+            "1, 2, 3",
+            "2, 1, 3",
+            "3, 2, 1",
+            "3, 1, 2"
+          ],
+          "correct_index": 2,
+          "difficulty": "easy",
+          "explanation": "Stacks are LIFO, so the most recent push (3) is removed first."
+        },
+        {
+          "prompt": "How is a left-right (LR) imbalance in an AVL tree repaired?",
+          "choices": [
+            "Single left rotation at the parent",
+            "Single right rotation at the parent",
+            "Left rotation on the left child, then right rotation on the parent",
+            "Right rotation on the left child, then left rotation on the parent"
+          ],
+          "correct_index": 2,
+          "difficulty": "medium",
+          "explanation": "LR cases require first rotating the left child left to convert to LL, then rotating the parent right."
+        }
+      ]
+    },
+    {
+      "name": "Graph Fundamentals & Traversal",
+      "description": "Adjacency representations, BFS/DFS traversal, cycle detection, and topological ordering.",
+      "order_index": 4,
+      "subtopics": [
+        {
+          "name": "Graph ADT & Representations",
+          "description": "Adjacency matrix vs list trade-offs and terminology."
+        },
+        {
+          "name": "Traversal Strategies",
+          "description": "Breadth-first and depth-first search procedures and typical applications."
+        },
+        {
+          "name": "Cycle Detection & DAGs",
+          "description": "Classifying edges in directed graphs and building topological orders."
+        }
+      ],
+      "contents": [
+        {
+          "title": "Week 4 Graph Intro",
+          "summary": "Slides motivate graphs via real-world relationships and detail BFS/DFS behaviour, discovery/finish times, and adjacency structures.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "Which traversal guarantees the shortest path in an unweighted graph between two nodes, if one exists?",
+          "choices": [
+            "Depth-first search",
+            "Breadth-first search",
+            "Pre-order traversal",
+            "Random walk"
+          ],
+          "correct_index": 1,
+          "difficulty": "easy",
+          "explanation": "BFS explores in layers outward from the source, discovering minimal-hop paths."
+        }
+      ]
+    },
+    {
+      "name": "Shortest Paths & Spanning Trees",
+      "description": "Priority-queue based shortest path algorithms and MST construction with cut properties.",
+      "order_index": 5,
+      "subtopics": [
+        {
+          "name": "Single Source Shortest Paths",
+          "description": "Dijkstra’s algorithm, relaxation invariants, and complexity with heaps."
+        },
+        {
+          "name": "Minimum Spanning Trees",
+          "description": "Prim’s and Kruskal’s algorithms and correctness arguments."
+        }
+      ],
+      "contents": [
+        {
+          "title": "Week 7 Shortest Paths & MSTs",
+          "summary": "Slides walk through Dijkstra using adjacency lists + priority queue and review cut/cycle properties underpinning MST proofs.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "Which edge-weight condition is required for the COMP2521 Dijkstra implementation to be correct?",
+          "choices": [
+            "All edges must be weight 1.",
+            "Edge weights may be negative if there are no cycles.",
+            "All edges must have non-negative weights.",
+            "Graph must be a tree."
+          ],
+          "correct_index": 2,
+          "difficulty": "medium",
+          "explanation": "Relaxation order assumes tentative distances never decrease unexpectedly; negative weights break this guarantee."
+        },
+        {
+          "prompt": "What structure allows Kruskal’s algorithm to avoid forming cycles?",
+          "choices": [
+            "Binary heap",
+            "Disjoint-set union (Union-Find)",
+            "Adjacency matrix",
+            "Hash table"
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "Union-Find keeps track of connected components as edges are added, blocking cycle-forming edges."
+        }
+      ]
+    },
+    {
+      "name": "Hashing & Dictionary Structures",
+      "description": "Map ADT requirements, hash function design, and collision resolution strategies.",
+      "order_index": 6,
+      "subtopics": [
+        {
+          "name": "Hash Functions & Load Factor",
+          "description": "Selecting hash functions and monitoring alpha to maintain constant expected time."
+        },
+        {
+          "name": "Collision Resolution",
+          "description": "Chaining versus open addressing trade-offs."
+        }
+      ],
+      "contents": [
+        {
+          "title": "Week 8 Hash Tables",
+          "summary": "Slides introduce map ADT operations, examine collisions, and compare chaining with open addressing strategies.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "In an open-addressing hash table, what typically triggers a rehash in COMP2521 exercises?",
+          "choices": [
+            "Discovering a tombstone",
+            "Load factor exceeding a chosen threshold",
+            "Every lab submission",
+            "Encountering a duplicate key"
+          ],
+          "correct_index": 1,
+          "difficulty": "medium",
+          "explanation": "To sustain expected O(1) ops, tables resize once alpha gets too high."
+        }
+      ]
+    },
+    {
+      "name": "Priority Structures & Tries",
+      "description": "Binary heaps for priority queues and trie-based prefix matching for string sets.",
+      "order_index": 7,
+      "subtopics": [
+        {
+          "name": "Binary Heaps",
+          "description": "Heap invariants, decrease-key bubbling, and heapsort."
+        },
+        {
+          "name": "Trie Operations",
+          "description": "Insertion, lookup, deletion complexity and autocomplete applications."
+        }
+      ],
+      "contents": [
+        {
+          "title": "Week 9 Priority Queues & Tries",
+          "summary": "Slides demonstrate heap operations step-by-step and motivate tries for predictive text and approximate matching.",
+          "body": null,
+          "resource_url": null
+        }
+      ],
+      "questions": [
+        {
+          "prompt": "After decreasing a key in a binary heap priority queue, how is the heap property restored?",
+          "choices": [
+            "Swap the node with its larger child repeatedly",
+            "Rebuild the heap from scratch",
+            "Bubble the node up while it is smaller than its parent",
+            "Sort the entire array with mergesort"
+          ],
+          "correct_index": 2,
+          "difficulty": "medium",
+          "explanation": "Decrease-key performs upward bubbling until the parent dominates the child."
+        },
+        {
+          "prompt": "Ignoring alphabet size, what is the time complexity of a trie lookup for a string of length L?",
+          "choices": [
+            "O(1)",
+            "O(log L)",
+            "O(L)",
+            "O(L^2)"
+          ],
+          "correct_index": 2,
+          "difficulty": "easy",
+          "explanation": "We follow one edge per character, giving linear time in the key length."
+        }
+      ]
+    }
+  ]
+}

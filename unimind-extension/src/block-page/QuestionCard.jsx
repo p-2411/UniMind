@@ -33,7 +33,7 @@ function QuestionCard({ question, onCorrectAnswer }) {
       setFeedback('correct');
       // Wait a moment to show success, then notify parent component
       setTimeout(() => {
-        onCorrectAnswer();
+        onCorrectAnswer(selectedIndex);
       }, 1500);
     } else {
       setFeedback('incorrect');
@@ -114,7 +114,7 @@ function QuestionCard({ question, onCorrectAnswer }) {
             <span className="text-orange-600 text-sm font-medium">Focus Check</span>
           </div>
           <h2 className="text-3xl font-semibold leading-tight text-slate-900 md:text-4xl">
-            {question.question}
+            {question.prompt || question.question}
           </h2>
         </div>
 

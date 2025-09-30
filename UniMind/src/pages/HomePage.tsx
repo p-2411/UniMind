@@ -26,7 +26,7 @@ function HomePage() {
       <SidebarInset className="p-6 min-h-screen bg-gradient-to-br from-gray-950 to-[#052334]">
         <header className="flex h-12 items-center gap-2 border-b-1 p-8">
           <SidebarTrigger className="md:hidden -ml-8 mr-2" />
-          <h1 className="text-3xl font-semibold bg-gradient-to-r from-yellow-300 to-orange-400 inline-block text-transparent bg-clip-text">Welcome back, {user.display_name.split(' ')[0]}!</h1>
+          <h1 className="text-3xl font-semibold bg-gradient-to-r from-yellow-300 to-orange-400 inline-block text-transparent bg-clip-text">Welcome back, {user.display_name.split(' ')[0][0].toUpperCase() + user.display_name.split(' ')[0].slice(1)}!</h1>
         </header>
 
         <div className="p-4">

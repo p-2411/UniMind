@@ -1,12 +1,10 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 
 interface User {
-  user_id: string
-  first_name: string
-  last_name: string
+  id: string
   email: string
-  subjects: string[]
-  is_verified: boolean
+  display_name: string
+  is_active: boolean
   created_at: string
 }
 
@@ -47,12 +45,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("access_token", token)
     localStorage.setItem("user", JSON.stringify(userData))
     setUser(userData)
+
+    // Also store in Chrome storage for extension access
+    if (typeof chrome !== 'undefined' && chrome.storage) {
+      chrome.storage.local.set({
+        access_token: token,
+        user: userData
+      })
+    }
   }
 
   const logout = () => {
     localStorage.removeItem("access_token")
     localStorage.removeItem("user")
     setUser(null)
+
+    // Also clear from Chrome storage
+    if (typeof chrome !== 'undefined' && chrome.storage) {
+      chrome.storage.local.remove(['access_token', 'user'])
+    }
   }
 
   return (

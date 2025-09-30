@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import QuestionCard from './QuestionCard';
-import { getRandomQuestion } from './questions';
+import { getNextQuestion, updateAfterAnswer } from './questions';
+import { submitAttempt } from '../api/client';
 import logo from '../assets/logo.png';
 
 function BlockPage() {
@@ -13,6 +14,9 @@ function BlockPage() {
   // Track loading state while we fetch the initial question
   const [loading, setLoading] = useState(true);
 
+  // Track start time for timing the answer
+  const [startTime, setStartTime] = useState(null);
+
   // Initialize the component when it first mounts
   useEffect(() => {
     // Extract the tab ID from the URL query parameters
@@ -21,20 +25,43 @@ function BlockPage() {
     const currentTabId = urlParams.get('tabId');
     setTabId(currentTabId);
 
-    // Load the first random question
+    // Load the first question
     loadNewQuestion();
   }, []); // Empty dependency array means this runs once on mount
 
-  // Load a random question from the question bank
-  const loadNewQuestion = () => {
+  // Load a question using the selection algorithm
+  const loadNewQuestion = async () => {
     setLoading(true);
-    const question = getRandomQuestion();
-    setCurrentQuestion(question);
-    setLoading(false);
+    try {
+      const question = await getNextQuestion();
+      setCurrentQuestion(question);
+      setStartTime(Date.now());
+    } catch (error) {
+      console.error('Failed to load question:', error);
+      // Show error state or fallback
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Handle when the user answers correctly
-  const handleCorrectAnswer = () => {
+  const handleCorrectAnswer = async (answerIndex) => {
+    // Calculate time taken
+    const timeSeconds = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
+
+    // Submit the attempt to the backend
+    try {
+      await submitAttempt(currentQuestion.id, answerIndex, timeSeconds);
+    } catch (error) {
+      console.error('Failed to submit attempt:', error);
+      // Continue anyway to let user through
+    }
+
+    // Update local scheduling metadata so the next question reflects the attempt
+    if (currentQuestion) {
+      updateAfterAnswer(currentQuestion, true);
+    }
+
     // Retrieve the original URL the user was trying to visit
     // This was stored by the background script before redirecting here
     chrome.storage.local.get([`pendingUrl_${tabId}`], (result) => {

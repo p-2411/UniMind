@@ -1,29 +1,29 @@
 from __future__ import annotations
+import uuid
+from datetime import datetime
 from pydantic import BaseModel, Field, ConfigDict
 
 class TopicBase(BaseModel):
-    course_id: int
-    title: str = Field(min_length=1, max_length=200)
-    description: str | None = Field(default=None, max_length=10000)
-    order_index: int | None = Field(default=None, ge=0)
+    course_code: str
+    name: str = Field(min_length=1, max_length=255)
+    description: str | None = Field(default=None)
 
 class TopicCreate(TopicBase):
     pass
 
 class TopicUpdate(BaseModel):
-    title: str | None = Field(default=None, max_length=200)
-    description: str | None = Field(default=None, max_length=10000)
-    order_index: int | None = Field(default=None, ge=0)
-    is_archived: bool | None = None
+    name: str | None = Field(default=None, max_length=255)
+    description: str | None = None
 
 class TopicOut(BaseModel):
-    id: int
-    course_id: int
-    title: str
+    id: uuid.UUID
+    course_code: str
+    name: str
     description: str | None
-    order_index: int | None
-    is_archived: bool
-    created_at: str | None = None
-    updated_at: str | None = None
+    created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class TopicPriorityOut(TopicOut):
+    priority_score: float = Field(ge=-1e9, le=1e9)

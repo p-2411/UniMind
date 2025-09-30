@@ -3,6 +3,8 @@ import { useAuth } from './contexts/AuthContext';
 import LoginPage from './pages/LoginPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import HomePage from './pages/HomePage';
+import MySubjectsPage from './pages/MySubjectsPage';
+import ContentReviewPage from './pages/ContentReviewPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute.tsx';
 
 function App() {
@@ -35,7 +37,23 @@ function App() {
           </ProtectedRoute>
         }
       />
-      
+      <Route
+        path="/subjects"
+        element={
+          <ProtectedRoute>
+            <MySubjectsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/review"
+        element={
+          <ProtectedRoute>
+            <ContentReviewPage />
+          </ProtectedRoute>
+        }
+      />
+
       {/* Default route - redirect to dashboard or login */}
       <Route 
         path="/" 

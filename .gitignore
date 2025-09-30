@@ -13,7 +13,7 @@ dist/
 .vscode/
 .idea/
 
-
+# Python cache
 __pycache__/
 **/__pycache__/
 

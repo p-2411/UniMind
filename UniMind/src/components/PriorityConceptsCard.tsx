@@ -1,66 +1,84 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Target } from "lucide-react"
 import { useEffect, useState } from "react"
-import { PriorityEngine, type PriorityResult } from "../priority-engine"
-import type { Topic } from "@/types/database"
+import { useAuth } from "@/contexts/AuthContext"
+import type { PriorityResult } from "@/priority-engine"
+
+type PriorityTopic = PriorityResult & {
+  id: string
+  course_code: string
+  name: string
+  description: string | null
+  created_at: string
+  priority_score: number
+}
 
 export function PriorityConceptsCard({ className }: { className?: string }) {
-  const [topics, setTopics] = useState<Topic[]>([])
-  const [priorityResults, setPriorityResults] = useState<PriorityResult[]>([])
+  const { user } = useAuth()
+  const [topics, setTopics] = useState<PriorityTopic[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    // TODO: Replace with actual API endpoint when backend is ready
-    const fetchTopicsAndCalculatePriorities = async () => {
+    const fetchPriorityTopics = async () => {
+      if (!user || !user.id) {
+        setLoading(false)
+        return
+      }
+
       try {
         setLoading(true)
-        // const response = await fetch('/api/topics?user=currentUserId')
-        // if (!response.ok) throw new Error('Failed to fetch topics')
-        // const fetchedTopics = await response.json()
-        // setTopics(fetchedTopics)
+        const token = localStorage.getItem("access_token")
 
-        // Placeholder: Empty array until backend is ready
-        const fetchedTopics: Topic[] = []
-        setTopics(fetchedTopics)
-
-        // Calculate priorities using PriorityEngine
-        // TODO: Fetch user performance data and course configuration from backend
-        const topicIds = fetchedTopics.map(t => t.id)
-        const courseConfig = {
-          // Example: 'DP': {targetShare: 1.5, hasUnseen: true}
-          // Replace with actual course configuration from backend
+        if (!token) {
+          throw new Error('No authentication token found')
         }
 
-        const priorityEngine = new PriorityEngine(topicIds, courseConfig)
-        const priorities = priorityEngine.priorityTopics(3)
-        setPriorityResults(priorities)
+        const response = await fetch(`http://localhost:8000/students/${user.id}/priority-topics?limit=3`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}))
+          throw new Error(errorData.detail || 'Failed to fetch priority topics')
+        }
+
+        const rawTopics: PriorityTopic[] = (await response.json()).map((topic: any) => {
+          const score = Number.isFinite(topic.priority_score)
+            ? Number(topic.priority_score)
+            : 0
+
+          return {
+            ...topic,
+            priority_score: score,
+            topic: topic.name,
+            breakdown: {
+              masteryGap: 0,
+              forgettingRisk: 0,
+              coverageDeficit: 0,
+              assessmentUrgency: 0,
+              struggleSpike: 0,
+              novelty: 0,
+              overpractice: 0,
+              score,
+              reasons: [],
+            },
+          }
+        })
+
+        setTopics(rawTopics)
       } catch (err) {
+        console.error('Error fetching priority topics:', err)
         setError(err instanceof Error ? err.message : 'Failed to load priority concepts')
       } finally {
         setLoading(false)
       }
     }
 
-    fetchTopicsAndCalculatePriorities()
-  }, [])
-
-  const findTopicById = (topicId: string): Topic | undefined => {
-    return topics.find(t => t.id === topicId)
-  }
-
-  const getPriorityColor = (priority: string): string => {
-    switch (priority.toLowerCase()) {
-      case 'high':
-        return 'text-red-200 bg-red-900/40'
-      case 'medium':
-        return 'text-yellow-200 bg-yellow-900/40'
-      case 'low':
-        return 'text-blue-200 bg-blue-900/40'
-      default:
-        return 'text-gray-200 bg-gray-900/40'
-    }
-  }
+    fetchPriorityTopics()
+  }, [user])
 
   return (
     <Card className={`${className} `}>
@@ -82,39 +100,38 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
           </div>
         )}
 
-        {!loading && !error && priorityResults.length === 0 && (
+        {!loading && !error && topics.length === 0 && (
           <div className="p-4 text-center text-muted-foreground">
-            No priority concepts to display
+            No priority concepts to display. Enroll in a course to get started!
           </div>
         )}
 
-        {!loading && !error && priorityResults.map((item) => {
-          const topic = findTopicById(item.topicId)
-          const priorityColor = getPriorityColor(item.priority)
-
-          return (
-            <div key={item.topicId} className="p-2 md:p-3 border rounded-lg hover:bg-gray-800/50 dark:hover:bg-gray-800/50 transition-colors">
-              <div className="flex items-center gap-2">
-                <div className="w-0.5 h-8 bg-blue-500 rounded-full" />
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-1 md:gap-1.5">
-                    <span className="text-xs text-muted-foreground">{item.name}</span>
-                    <span className={`px-1.5 py-0.5 text-xs font-medium ${priorityColor} rounded-full`}>
-                      {item.priority}
-                    </span>
-                    <span className="hidden md:inline text-xs font-medium">·</span>
-                    <span className="text-xs font-medium">
-                      {topic?.name || 'Unknown Topic'}
-                    </span>
-                  </div>
+        {!loading && !error && topics.slice(0, 3).map((topic) => (
+          <div key={topic.id} className="p-2 md:p-3 border rounded-lg hover:bg-gray-800/50 dark:hover:bg-gray-800/50 transition-colors">
+            <div className="flex items-center gap-2">
+              <div className="w-0.5 h-8 bg-blue-500 rounded-full" />
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-1 md:gap-1.5">
+                  <span className="text-sm font-medium">{topic.name}</span>
+                  <span className="hidden md:inline text-xs font-medium">·</span>
+                  <span className="text-xs text-muted-foreground">
+                    {topic.course_code}
+                  </span>
+                  <span className="hidden md:inline text-xs font-medium">·</span>
+                  <span className="text-xs font-semibold text-orange-400 bg-orange-400/10 border border-orange-400/30 px-2 py-0.5 rounded-full">
+                    Score {topic.priority_score.toFixed(1)}
+                  </span>
                 </div>
-                <button className="p-1 hover:bg-gray-700 rounded transition-colors shrink-0">
-                  <Target className="w-3.5 h-3.5 text-gray-400" />
-                </button>
+                {topic.description && (
+                  <p className="text-xs text-muted-foreground mt-1">{topic.description}</p>
+                )}
               </div>
+              <button className="p-1 hover:bg-gray-700 rounded transition-colors shrink-0">
+                <Target className="w-3.5 h-3.5 text-gray-400" />
+              </button>
             </div>
-          )
-        })}
+          </div>
+        ))}
       </CardContent>
     </Card>
   )

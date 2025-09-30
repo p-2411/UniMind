@@ -1,21 +1,22 @@
-from sqlalchemy import Column, String, Boolean, DateTime, ARRAY
-from sqlalchemy.sql import func
-from backend.database import Base
+from __future__ import annotations
 import uuid
+from datetime import datetime
+from sqlalchemy import String, DateTime, func
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from . import Base
 
 class User(Base):
     __tablename__ = "users"
 
-    user_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    first_name = Column(String, nullable=False)
-    last_name = Column(String, nullable=False)
-    email = Column(String, unique=True, nullable=False, index=True)
-    password_hash = Column(String, nullable=False)
-    subjects = Column(ARRAY(String), default=list)  # Array of subject codes like ["COMP2521"]
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
+    display_name: Mapped[str] = mapped_column(String(120), nullable=False)
 
-    is_verified = Column(Boolean, default=False)
-    verification_token = Column(String, nullable=True)
-    verification_token_expires = Column(DateTime, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    # Relationships
+    enrolments: Mapped[list["Enrolment"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    attempts:   Mapped[list["QuestionAttempt"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    progress:   Mapped[list["TopicProgress"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    streak:     Mapped["DailyStreak"] | None = relationship(back_populates="user", uselist=False, cascade="all, delete-orphan")

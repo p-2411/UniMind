@@ -1,30 +1,34 @@
 from __future__ import annotations
+
 import os
+from typing import Generator
+
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
-from sqlalchemy.pool import NullPool
+from sqlalchemy.orm import sessionmaker
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./unimind.db")
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError(
+        "DATABASE_URL environment variable is required (expected a PostgreSQL DSN)."
+    )
+
+if not DATABASE_URL.startswith("postgresql"):
+    raise RuntimeError(
+        "DATABASE_URL must be a PostgreSQL connection string, e.g. 'postgresql+psycopg2://user:pass@localhost:5432/unimind'."
+    )
+
 ECHO_SQL = os.getenv("SQL_ECHO", "0") == "1"
 
-is_sqlite = DATABASE_URL.startswith("sqlite")
-
-# Engine
 engine = create_engine(
     DATABASE_URL,
     echo=ECHO_SQL,
-    # SQLite needs this; Postgres doesn’t.
-    connect_args={"check_same_thread": False} if is_sqlite else {},
-    # SQLite + threads/pydantic validation => avoid stale connections.
-    poolclass=NullPool if is_sqlite else None,
-    pool_pre_ping=not is_sqlite,  # keep Postgres connections fresh
+    pool_pre_ping=True,
     future=True,
 )
 
-# Session
 SessionLocal = sessionmaker(
     bind=engine,
     autocommit=False,
@@ -32,11 +36,12 @@ SessionLocal = sessionmaker(
     future=True,
 )
 
-# Declarative base (import this Base in all your models)
-Base = declarative_base()
+from backend import models  # noqa: E402  ensure metadata is populated
 
-# FastAPI dependency
-def get_db():
+Base = models.Base
+
+
+def get_db() -> Generator:
     db = SessionLocal()
     try:
         yield db

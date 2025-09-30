@@ -1,25 +1,26 @@
 from __future__ import annotations
-from pydantic import BaseModel, Field, ConfigDict
 
-class CourseBase(BaseModel):
+from datetime import datetime
+
+from pydantic import BaseModel, Field
+
+
+class CourseCreate(BaseModel):
     code: str = Field(min_length=1, max_length=32)
-    title: str = Field(min_length=1, max_length=200)
-    description: str | None = Field(default=None, max_length=10000)
+    name: str = Field(min_length=1, max_length=255)
+    description: str | None = Field(default=None, max_length=10_000)
 
-class CourseCreate(CourseBase):
-    pass
 
 class CourseUpdate(BaseModel):
-    code: str | None = Field(default=None, max_length=32)
-    title: str | None = Field(default=None, max_length=200)
-    description: str | None = Field(default=None, max_length=10000)
+    name: str | None = Field(default=None, min_length=1, max_length=255)
+    description: str | None = Field(default=None, max_length=10_000)
+
 
 class CourseOut(BaseModel):
-    id: int
     code: str
-    title: str
+    name: str
     description: str | None
-    created_at: str | None = None
-    updated_at: str | None = None
+    created_at: datetime | None = None
 
-    model_config = ConfigDict(from_attributes=True)
+    class Config:
+        from_attributes = True

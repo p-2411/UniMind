@@ -1,18 +1,37 @@
-from pydantic import BaseModel
-from datetime import datetime
+from __future__ import annotations
+
 import uuid
+from datetime import datetime
 
-class SubtopicCreate(BaseModel):
-    topic_id: uuid.UUID
-    name: str
-    description: str | None = None
+from sqlalchemy import DateTime, ForeignKey, String, Text, func
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-class SubtopicOut(BaseModel):
-    id: uuid.UUID
-    topic_id: uuid.UUID
-    name: str
-    description: str | None
-    created_at: datetime
+from . import Base
 
-    class Config:
-        orm_mode = True
+
+class Subtopic(Base):
+    __tablename__ = "subtopics"
+
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    topic_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("topics.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text)
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+    )
+
+    topic: Mapped["Topic"] = relationship(back_populates="subtopics")
+    contents: Mapped[list["Content"]] = relationship(
+        back_populates="subtopic",
+        cascade="all, delete-orphan",
+    )
+    questions: Mapped[list["Question"]] = relationship(back_populates="subtopic")

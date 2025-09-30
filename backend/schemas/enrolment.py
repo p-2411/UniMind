@@ -1,30 +1,19 @@
 from __future__ import annotations
-from enum import Enum
-from pydantic import BaseModel, Field, ConfigDict
 
-class EnrolRole(str, Enum):
-    student = "student"
-    tutor = "tutor"
-    admin = "admin"
+import uuid
+from datetime import datetime
 
-class EnrolmentBase(BaseModel):
-    user_id: int
-    course_id: int
-    role: EnrolRole = EnrolRole.student
+from pydantic import BaseModel, Field
 
-class EnrolmentCreate(EnrolmentBase):
-    pass
 
-class EnrolmentUpdate(BaseModel):
-    role: EnrolRole | None = None
-    is_active: bool | None = None
+class EnrolRequest(BaseModel):
+    course_code: str = Field(min_length=1, max_length=32)
+
 
 class EnrolmentOut(BaseModel):
-    id: int
-    user_id: int
-    course_id: int
-    role: EnrolRole
-    is_active: bool
-    created_at: str | None = None
+    user_id: uuid.UUID
+    course_code: str
+    enrolled_at: datetime | None = None
 
-    model_config = ConfigDict(from_attributes=True)
+    class Config:
+        from_attributes = True

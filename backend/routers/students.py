@@ -1,220 +1,182 @@
 from __future__ import annotations
 
-# FastAPI plumbing (routing + errors + DB session injection)
-from fastapi import APIRouter, Depends, HTTPException
+import uuid
+from datetime import datetime
+
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-# Local project imports: DB session factory, ORM models, pydantic schemas, business logic
 from backend.database import get_db
-from backend import models, schemas
-from backend.services.progress_engine import update_rating, stage_from_rating
+from backend.dependencies.auth import get_current_user
+from backend.models.course import Course
+from backend.models.enrolment import Enrolment
+from backend.models.question import Question
+from backend.models.attempt import QuestionAttempt
+from backend.models.topic import Topic
+from backend.models.progress import TopicProgress
+from backend.models.user import User
+from backend.schemas import AttemptCreate, AttemptResult, CourseOut, EnrolRequest, ProgressItem
+from backend.services.progress import apply_attempt, ensure_topic_progress, stage_from_percent
 from backend.services.streaks import update_streak
 
-router = APIRouter(
-    prefix="/students",   # every path here starts with /students
-    tags=["students"],    # groups in the Swagger UI
-)
+router = APIRouter(prefix="/students", tags=["students"])
 
-# ---------- Enrolments (users ↔ courses) ----------
 
-@router.get("/{user_id}/enrolments", response_model=list[schemas.CourseOut])
-def list_enrolments(user_id: str, db: Session = Depends(get_db)):
-    """
-    Return all courses the student is enrolled in.
-    """
-    user = db.get(models.User, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+def _assert_same_user(path_user_id: str, current_user: User) -> uuid.UUID:
+    try:
+        requested_id = uuid.UUID(path_user_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid user_id format") from exc
 
-    # Convenience: list via association rows (enrolments)
-    # If you added relationship 'courses' on User, you could just: return user.courses
+    if requested_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You can only access your own resources")
+    return requested_id
+
+
+@router.get("/{user_id}/enrolments", response_model=list[CourseOut])
+def list_enrolments(
+    user_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    _assert_same_user(user_id, current_user)
+
     rows = (
-        db.query(models.Course)
-        .join(models.Enrolment, models.Enrolment.course_code == models.Course.code)
-        .filter(models.Enrolment.user_id == user_id)
+        db.query(Course)
+        .join(Enrolment, Enrolment.course_code == Course.code)
+        .filter(Enrolment.user_id == current_user.id)
+        .order_by(Course.name.asc())
         .all()
     )
     return rows
 
 
-@router.post("/{user_id}/enrolments", status_code=201)
-def enrol_student(user_id: str, payload: schemas.EnrolRequest, db: Session = Depends(get_db)):
-    """
-    Enrol a student in a course. Idempotent-ish: will 409 on duplicate.
-    """
-    user = db.get(models.User, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+@router.post("/{user_id}/enrolments", status_code=status.HTTP_201_CREATED, response_model=CourseOut)
+def enrol_student(
+    user_id: str,
+    payload: EnrolRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    _assert_same_user(user_id, current_user)
 
-    course = db.get(models.Course, payload.course_code)
+    course = db.get(Course, payload.course_code.upper())
     if not course:
-        raise HTTPException(status_code=404, detail="Course not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Course not found")
 
-    # Insert association row; composite PK(user_id, course_code) prevents duplicates
-    db.add(models.Enrolment(user_id=user.id, course_code=course.code))
-    try:
-        db.commit()
-    except Exception:
-        db.rollback()
-        # Likely a duplicate key (already enrolled)
-        raise HTTPException(status_code=409, detail="Already enrolled in this course")
+    if db.get(Enrolment, (current_user.id, course.code)):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Already enrolled")
 
-    return {"detail": f"Enrolled in {course.code}"}
-
-
-@router.delete("/{user_id}/enrolments/{course_code}", status_code=204)
-def unenrol_student(user_id: str, course_code: str, db: Session = Depends(get_db)):
-    """
-    Remove a student from a course.
-    """
-    row = (
-        db.query(models.Enrolment)
-        .filter(
-            models.Enrolment.user_id == user_id,
-            models.Enrolment.course_code == course_code,
-        )
-        .first()
-    )
-    if not row:
-        raise HTTPException(status_code=404, detail="Enrolment not found")
-
-    db.delete(row)
+    db.add(Enrolment(user_id=current_user.id, course_code=course.code))
     db.commit()
-    return None
+
+    return course
 
 
-# ---------- Attempts (core learning loop) ----------
+@router.post("/{user_id}/attempts", response_model=AttemptResult)
+def submit_attempt(
+    user_id: str,
+    payload: AttemptCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    _assert_same_user(user_id, current_user)
 
-@router.post("/{user_id}/attempts", response_model=schemas.AttemptResult)
-def submit_attempt(user_id: str, body: schemas.AttemptCreate, db: Session = Depends(get_db)):
-    """
-    Record an answer attempt, update topic progress, update daily streak,
-    and return correctness + explanation + current stage.
-    """
-    # 1) Validate user
-    user = db.get(models.User, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+    question = db.get(Question, payload.question_id)
+    if not question:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Question not found")
 
-    # 2) Lookup question + basic validation
-    q = db.get(models.Question, body.question_id)
-    if not q:
-        raise HTTPException(status_code=404, detail="Question not found")
+    if payload.answer_index >= len(question.choices):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="answer_index out of range")
 
-    if body.answer_index < 0 or body.answer_index > 3:
-        raise HTTPException(status_code=400, detail="answer_index must be 0..3")
-
-    # 3) Compute correctness
-    is_correct = (body.answer_index == q.correct_index)
-
-    # 4) Insert attempt row
-    attempt = models.QuestionAttempt(
-        user_id=user.id,
-        question_id=q.id,
+    is_correct = payload.answer_index == question.correct_index
+    attempt = QuestionAttempt(
+        user_id=current_user.id,
+        question_id=question.id,
         was_correct=is_correct,
-        seconds=body.seconds,
+        seconds=payload.seconds or 0,
     )
     db.add(attempt)
 
-    # 5) Upsert TopicProgress (read current rating, default if missing)
-    prog = (
-        db.query(models.TopicProgress)
-        .filter(
-            models.TopicProgress.user_id == user.id,
-            models.TopicProgress.topic_id == q.topic_id,
-        )
-        .first()
-    )
+    progress = ensure_topic_progress(db, current_user.id, question.topic_id)
+    apply_attempt(progress, is_correct, payload.seconds)
 
-    if prog is None:
-        prog = models.TopicProgress(user_id=user.id, topic_id=q.topic_id, rating=0.200)
-        db.add(prog)
+    update_streak(db, current_user.id, datetime.utcnow())
 
-    # 6) Calculate new rating via your algorithm
-    new_rating = update_rating(float(prog.rating), is_correct, q.difficulty, float(body.seconds))
-    prog.rating = new_rating
-    # Touch last_seen so gate can prioritise other topics next time
-    from datetime import datetime, timezone
-    prog.last_seen_at = datetime.now(timezone.utc)
-
-    # 7) Update streaks (consecutive active days)
-    update_streak(db, user.id)  # service updates/creates DailyStreak row
-
-    # 8) Persist everything atomically
     db.commit()
-    db.refresh(prog)
+    db.refresh(progress)
 
-    # 9) Return API-friendly result (don’t expose raw rating)
-    return schemas.AttemptResult(
+    return AttemptResult(
         correct=is_correct,
-        explanation=q.explanation or "",
-        topic_id=str(q.topic_id),
-        stage=stage_from_rating(float(prog.rating)),
+        explanation=question.explanation or "",
+        topic_id=question.topic_id,
+        stage=progress.stage,
+        percent_complete=progress.percent_complete,
     )
 
 
-# ---------- Progress (read-only for UI) ----------
+@router.get("/{user_id}/progress", response_model=list[ProgressItem])
+def list_progress(
+    user_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    _assert_same_user(user_id, current_user)
 
-@router.get("/{user_id}/progress", response_model=list[schemas.ProgressItem])
-def list_progress(user_id: str, db: Session = Depends(get_db)):
-    """
-    Return progress for all topics the student has touched (or is enrolled in).
-    """
-    user = db.get(models.User, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    # Join topics with progress; left join to show zero-touched topics if enrolled
-    # For simplicity, show only topics with a progress row:
     rows = (
-        db.query(models.Topic, models.TopicProgress)
-        .join(models.TopicProgress, models.Topic.id == models.TopicProgress.topic_id)
-        .filter(models.TopicProgress.user_id == user.id)
+        db.query(Topic, TopicProgress)
+        .join(TopicProgress, TopicProgress.topic_id == Topic.id)
+        .filter(TopicProgress.user_id == current_user.id)
         .all()
     )
 
-    out: list[schemas.ProgressItem] = []
-    for topic, prog in rows:
-        out.append(
-            schemas.ProgressItem(
-                topic_id=str(topic.id),
+    items: list[ProgressItem] = []
+    for topic, progress in rows:
+        items.append(
+            ProgressItem(
+                topic_id=topic.id,
                 topic_name=topic.name,
                 course_code=topic.course_code,
-                stage=stage_from_rating(float(prog.rating)),
+                stage=progress.stage,
+                percent_complete=progress.percent_complete,
             )
         )
-    return out
+    return items
 
 
-@router.get("/{user_id}/progress/{topic_id}", response_model=schemas.ProgressItem)
-def get_progress(user_id: str, topic_id: str, db: Session = Depends(get_db)):
-    """
-    Return progress for a specific topic (maps rating → Learn/Still Learning/Mastered).
-    """
-    prog = (
-        db.query(models.TopicProgress)
+@router.get("/{user_id}/progress/{topic_id}", response_model=ProgressItem)
+def get_progress(
+    user_id: str,
+    topic_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    _assert_same_user(user_id, current_user)
+
+    topic = db.get(Topic, topic_id)
+    if not topic:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Topic not found")
+
+    progress = (
+        db.query(TopicProgress)
         .filter(
-            models.TopicProgress.user_id == user_id,
-            models.TopicProgress.topic_id == topic_id,
+            TopicProgress.user_id == current_user.id,
+            TopicProgress.topic_id == topic_id,
         )
         .first()
     )
-    topic = db.get(models.Topic, topic_id)
 
-    if not topic:
-        raise HTTPException(status_code=404, detail="Topic not found")
-    if not prog:
-        # No attempts yet → default stage
-        return schemas.ProgressItem(
-            topic_id=str(topic.id),
-            topic_name=topic.name,
-            course_code=topic.course_code,
-            stage=stage_from_rating(0.200),
-        )
+    if progress is None:
+        stage = stage_from_percent(0)
+        percent = 0
+    else:
+        stage = progress.stage
+        percent = progress.percent_complete
 
-    return schemas.ProgressItem(
-        topic_id=str(topic.id),
+    return ProgressItem(
+        topic_id=topic.id,
         topic_name=topic.name,
         course_code=topic.course_code,
-        stage=stage_from_rating(float(prog.rating)),
+        stage=stage,
+        percent_complete=percent,
     )

@@ -1,33 +1,32 @@
-from pydantic import BaseModel, EmailStr, Field
-from typing import List, Optional
+from __future__ import annotations
+
+import uuid
 from datetime import datetime
 
+from pydantic import BaseModel, EmailStr, Field
+
+
 class SignupRequest(BaseModel):
-    user_id: str = Field(..., min_length=1, description="Unique user ID")
-    first_name: str = Field(..., min_length=1)
-    last_name: str = Field(..., min_length=1)
     email: EmailStr
-    password: str = Field(..., min_length=8)
-    subjects: List[str] = Field(default_factory=list, description="List of subject codes")
+    password: str = Field(min_length=8, max_length=256)
+    display_name: str = Field(min_length=1, max_length=120)
+
 
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
 
-class VerifyEmailRequest(BaseModel):
-    token: str
 
 class UserResponse(BaseModel):
-    user_id: str
-    first_name: str
-    last_name: str
-    email: str
-    subjects: List[str]
-    is_verified: bool
-    created_at: datetime
+    id: uuid.UUID
+    email: EmailStr
+    display_name: str
+    is_active: bool
+    created_at: datetime | None = None
 
     class Config:
         from_attributes = True
+
 
 class TokenResponse(BaseModel):
     access_token: str

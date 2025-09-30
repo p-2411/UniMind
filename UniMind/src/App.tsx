@@ -1,33 +1,67 @@
-
-import './App.css'
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar"
-import { PriorityConceptsCard } from "@/components/PriorityConceptsCard"
-import { DailyStreakCard } from "@/components/DailyStreakCard"
-import { UpcomingAssessmentsCard } from "@/components/UpcomingAssessmentsCard"
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './contexts/AuthContext';
+import LoginPage from './pages/LoginPage';
+import VerifyEmailPage from './pages/VerifyEmailPage';
+import HomePage from './pages/HomePage';
+import { ProtectedRoute } from './components/auth/ProtectedRoute.tsx';
 
 function App() {
-  const user = "Parham"
-  return (
-  <SidebarProvider defaultOpen={true}>
-    <AppSidebar />
-      <SidebarInset className="p-6 min-h-screen">
-        <header className="flex h-12 items-center gap-2 border-b-1 p-8">
-          <SidebarTrigger className="md:hidden -ml-8 mr-2" />
-          <h1 className="text-3xl font-semibold bg-gradient-to-r from-yellow-300 to-orange-400 inline-block text-transparent bg-clip-text">Welcome back, {user}!</h1>
-          </header>
+  const { loading } = useAuth();
 
-          <div className="p-4">
-            {/* Dashboard Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              <PriorityConceptsCard className="lg:col-span-3"/>
-              <DailyStreakCard className="lg:col-span-1"/>
-              <UpcomingAssessmentsCard className="lg:col-span-4"/>
+  // Show loading screen while checking authentication status
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+          <p className="mt-4 text-gray-600">Loading UniMind...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <Routes>
+      {/* Public routes - accessible without authentication */}
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/verify-email" element={<VerifyEmailPage />} />
+      
+      {/* Protected routes - require authentication */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <HomePage />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Default route - redirect to dashboard or login */}
+      <Route 
+        path="/" 
+        element={<Navigate to="/dashboard" replace />} 
+      />
+      
+      {/* Catch-all route for 404 */}
+      <Route 
+        path="*" 
+        element={
+          <div className="min-h-screen flex items-center justify-center bg-gray-50">
+            <div className="text-center">
+              <h1 className="text-6xl font-bold text-gray-900 mb-4">404</h1>
+              <p className="text-xl text-gray-600 mb-8">Page not found</p>
+              <a 
+                href="/dashboard" 
+                className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+              >
+                Go to Dashboard
+              </a>
             </div>
           </div>
-      </SidebarInset>
-    </SidebarProvider>
-  )
+        } 
+      />
+    </Routes>
+  );
 }
 
-export default App
+export default App;

@@ -1,7 +1,18 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from backend.database import engine, Base
+from backend.migrations import run_startup_migrations
+from backend.routers import auth, courses
 
 app = FastAPI()
+
+# Create database tables and run lightweight migrations
+Base.metadata.create_all(bind=engine)
+run_startup_migrations(engine)
+
+# Include routers
+app.include_router(auth.router)
+app.include_router(courses.router)
 
 app.add_middleware(
     CORSMiddleware,

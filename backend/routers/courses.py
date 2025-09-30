@@ -1,77 +1,71 @@
-from fastapi import APIRouter, Depends, HTTPException
+from __future__ import annotations
+
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+
 from backend.database import get_db
-from backend import models, schemas
+from backend.dependencies.auth import get_current_user
+from backend.models.course import Course
+from backend.models.user import User
+from backend.schemas.course import CourseCreate, CourseOut, CourseUpdate
 
-router = APIRouter(
-    prefix="/courses",   # all endpoints here start with /courses
-    tags=["courses"],    # for Swagger docs grouping
-)
-
-# GET /courses → list all courses
-@router.get("/", response_model=list[schemas.CourseOut])
-def list_courses(db: Session = Depends(get_db)):
-    """
-    Returns all courses in the system.
-    """
-    return db.query(models.Course).all()
+router = APIRouter(prefix="/courses", tags=["courses"])
 
 
-# GET /courses/{code} → get course details
-@router.get("/{code}", response_model=schemas.CourseOut)
-def get_course(code: str, db: Session = Depends(get_db)):
-    """
-    Fetch a single course by its code (e.g., COMP2521).
-    """
-    course = db.query(models.Course).filter(models.Course.code == code).first()
-    if not course:
-        raise HTTPException(status_code=404, detail="Course not found")
+@router.get("", response_model=list[CourseOut])
+def list_courses(
+    db: Session = Depends(get_db),
+    _: User = Depends(get_current_user),
+):
+    courses = db.query(Course).order_by(Course.created_at.desc()).all()
+    return courses
+
+
+@router.post("", response_model=CourseOut, status_code=status.HTTP_201_CREATED)
+def create_course(
+    payload: CourseCreate,
+    db: Session = Depends(get_db),
+    _: User = Depends(get_current_user),
+):
+    code = payload.code.upper()
+    if db.get(Course, code):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Course code already exists")
+
+    course = Course(code=code, name=payload.name, description=payload.description)
+    db.add(course)
+    db.commit()
+    db.refresh(course)
     return course
 
 
-# POST /courses → create a new course
-@router.post("/", response_model=schemas.CourseOut)
-def create_course(course: schemas.CourseCreate, db: Session = Depends(get_db)):
-    """
-    Create a new course. Requires unique course code.
-    """
-    existing = db.query(models.Course).filter(models.Course.code == course.code).first()
-    if existing:
-        raise HTTPException(status_code=400, detail="Course already exists")
+@router.get("/{course_code}", response_model=CourseOut)
+def get_course(
+    course_code: str,
+    db: Session = Depends(get_db),
+    _: User = Depends(get_current_user),
+):
+    course = db.get(Course, course_code.upper())
+    if not course:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Course not found")
+    return course
 
-    new_course = models.Course(code=course.code, name=course.name)
-    db.add(new_course)
+
+@router.patch("/{course_code}", response_model=CourseOut)
+def update_course(
+    course_code: str,
+    payload: CourseUpdate,
+    db: Session = Depends(get_db),
+    _: User = Depends(get_current_user),
+):
+    course = db.get(Course, course_code.upper())
+    if not course:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Course not found")
+
+    if payload.name is not None:
+        course.name = payload.name
+    if payload.description is not None:
+        course.description = payload.description
+
     db.commit()
-    db.refresh(new_course)
-    return new_course
-
-
-# PUT /courses/{code} → update course info
-@router.put("/{code}", response_model=schemas.CourseOut)
-def update_course(code: str, course: schemas.CourseUpdate, db: Session = Depends(get_db)):
-    """
-    Update an existing course’s details (like its name).
-    """
-    db_course = db.query(models.Course).filter(models.Course.code == code).first()
-    if not db_course:
-        raise HTTPException(status_code=404, detail="Course not found")
-
-    db_course.name = course.name
-    db.commit()
-    db.refresh(db_course)
-    return db_course
-
-
-# DELETE /courses/{code} → remove a course
-@router.delete("/{code}")
-def delete_course(code: str, db: Session = Depends(get_db)):
-    """
-    Delete a course by its code. Cascades to topics, subtopics, etc.
-    """
-    db_course = db.query(models.Course).filter(models.Course.code == code).first()
-    if not db_course:
-        raise HTTPException(status_code=404, detail="Course not found")
-
-    db.delete(db_course)
-    db.commit()
-    return {"detail": f"Course {code} deleted"}
+    db.refresh(course)
+    return course

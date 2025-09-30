@@ -1,50 +1,26 @@
-from pydantic import BaseModel, Field
-from typing import List, Optional, Any
+from __future__ import annotations
+
 from datetime import datetime
 
-
-class MCQ(BaseModel):
-    id: str
-    type: str = Field("mcq", description="Question type, must be 'mcq'")
-    topic: str
-    text: str
-    choices: List[str]
-    difficulty: str = Field(..., description="easy|medium|hard")
+from pydantic import BaseModel, Field
 
 
-class Subtopic(BaseModel):
+class CourseCreate(BaseModel):
+    code: str = Field(min_length=1, max_length=32)
+    name: str = Field(min_length=1, max_length=255)
+    description: str | None = Field(default=None, max_length=10_000)
+
+
+class CourseUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=255)
+    description: str | None = Field(default=None, max_length=10_000)
+
+
+class CourseOut(BaseModel):
+    code: str
     name: str
-    topic_strength: float = Field(..., ge=0, le=1)
-
-
-class Topic(BaseModel):
-    name: str
-    topic_strength: float = Field(..., ge=0, le=1)
-    subtopics: List[Subtopic] = Field(default_factory=list)
-
-
-class Analysis(BaseModel):
-    topics: List[Topic] = Field(default_factory=list)
-
-
-class CourseCreateRequest(BaseModel):
-    name: str
-    slides_content: str
-
-
-class CourseUpdateRequest(BaseModel):
-    name: Optional[str] = None
-    slides_content: Optional[str] = None
-
-
-class CourseResponse(BaseModel):
-    course_id: str
-    name: str
-    slides_content: str
-    analysis: Optional[Analysis] = None
-    questions: List[MCQ] = Field(default_factory=list)
-    created_at: datetime
+    description: str | None
+    created_at: datetime | None = None
 
     class Config:
         from_attributes = True
-

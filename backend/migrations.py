@@ -1,36 +1,56 @@
-from sqlalchemy import text, inspect
+import logging
+from typing import Tuple
+
+from sqlalchemy import inspect
 from sqlalchemy.engine import Engine
+
+logger = logging.getLogger(__name__)
+
+
+def _sqlite_version(engine: Engine) -> Tuple[int, int, int]:
+    with engine.connect() as conn:
+        result = conn.exec_driver_sql("select sqlite_version()").scalar()
+    parts = [int(p) for p in (result.split(".") + ["0", "0"])[:3]]
+    return tuple(parts)  # type: ignore[return-value]
 
 
 def run_startup_migrations(engine: Engine) -> None:
-    """
-    One-time lightweight migration runner.
-    Currently: drops the 'degree' column from 'users' if present.
-    Supports Postgres; attempts SQLite drop (best-effort) and logs guidance.
-    """
+    """Run lightweight, idempotent migrations at application boot."""
+    inspector = inspect(engine)
+
+    if "users" not in inspector.get_table_names():
+        return
+
+    columns = {col["name"] for col in inspector.get_columns("users")}
+    if "degree" not in columns:
+        return
+
+    dialect = engine.dialect.name
+
     try:
-        inspector = inspect(engine)
-        tables = inspector.get_table_names()
-        if "users" not in tables:
-            return
-
-        columns = {col["name"] for col in inspector.get_columns("users")}
-        if "degree" not in columns:
-            return
-
-        dialect = engine.dialect.name
-        drop_sql = "ALTER TABLE users DROP COLUMN degree"  # works on Postgres; SQLite >= 3.35
+        if dialect == "sqlite":
+            version = _sqlite_version(engine)
+            if version < (3, 35, 0):
+                logger.warning(
+                    "[migrations] SQLite %s does not support DROP COLUMN. "
+                    "Recreate the database or upgrade SQLite to >= 3.35 to remove 'degree'.",
+                    ".".join(map(str, version)),
+                )
+                return
+            drop_sql = "ALTER TABLE users DROP COLUMN degree"
+        elif dialect in {"postgresql", "postgres"}:
+            drop_sql = "ALTER TABLE users DROP COLUMN IF EXISTS degree"
+        else:
+            drop_sql = "ALTER TABLE users DROP COLUMN degree"
 
         with engine.begin() as conn:
-            conn.execute(text(drop_sql))
-            # If SQLite older than 3.35, this will raise; we catch below
-        print("[migrations] Dropped column 'degree' from 'users' table")
+            conn.exec_driver_sql(drop_sql)
 
-    except Exception as exc:
-        # Non-fatal: app can still run, but inserts may fail until user cleans up.
-        print(
-            "[migrations] Warning: could not drop 'degree' column automatically. "
-            f"Reason: {exc}. If you use SQLite, consider recreating the DB; "
-            "for Postgres run: ALTER TABLE users DROP COLUMN degree;"
+        logger.info("[migrations] Dropped column 'degree' from 'users' table")
+
+    except Exception as exc:  # pragma: no cover - defensive guard
+        logger.warning(
+            "[migrations] Could not drop column 'degree' automatically (%s). "
+            "Apply the change manually if you rely on that table.",
+            exc,
         )
-

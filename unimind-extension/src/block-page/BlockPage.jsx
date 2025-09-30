@@ -62,18 +62,27 @@ function BlockPage() {
   // Show a loading state while the question is being prepared
   if (loading) {
     return (
-      <div className="fixed inset-0 w-screen h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <div className="text-white text-xl">Loading your focus check...</div>
+      <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-gray-950 to-[#052334]">
+        <div className="text-slate-900 text-lg md:text-xl font-medium bg-white/80 backdrop-blur-xl px-6 py-4 rounded-2xl border border-white/40 shadow-lg">
+          Loading your focus check...
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="fixed inset-0 w-screen h-screen bg-[#0a0a0a] flex flex-col items-center justify-center p-8 overflow-hidden">
-      <div className="w-full h-full flex flex-col items-center justify-center">
-        <div className="flex items-center gap-1 mb-12">
-          <img src={logo} alt="UniMind Logo" className="w-20 h-20" />
-          <h1 className="text-white text-4xl font-semibold">UniMind</h1>
+    <div className="fixed inset-0 flex items-center justify-center px-6 py-10 md:px-12 bg-gradient-to-br from-gray-950 to-[#052334] overflow-hidden">
+      <div className="w-full max-w-4xl flex flex-col items-center text-center">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-3 mb-10">
+          <img src={logo} alt="UniMind Logo" className="w-16 h-16 md:w-20 md:h-20 drop-shadow-xl" />
+          <div>
+            <h1 className="text-4xl font-semibold tracking-tight bg-gradient-to-r from-yellow-300 via-orange-400 to-orange-600 text-transparent bg-clip-text drop-shadow-sm">
+              UniMind
+            </h1>
+            <p className="text-sm md:text-base text-slate-700/80 mt-2">
+              Refocus with a quick concept check before heading back.
+            </p>
+          </div>
         </div>
 
         <div className="w-full max-w-3xl">
@@ -85,8 +94,8 @@ function BlockPage() {
           )}
         </div>
 
-        <p className="text-gray-500 text-center mt-8 text-sm">
-          This interruption helps you stay focused on what matters.
+        <p className="mt-10 text-sm md:text-base text-slate-100/90 bg-white/10 backdrop-blur-sm border border-white/20 px-5 py-3 rounded-2xl shadow-sm">
+          This brief pause keeps you aligned with your goals. Stay sharp!
         </p>
       </div>
     </div>

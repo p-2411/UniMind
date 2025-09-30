@@ -11,7 +11,7 @@ function HomePage() {
   return (
   <SidebarProvider defaultOpen={true}>
     <AppSidebar />
-      <SidebarInset className="p-6 min-h-screen bg-gradient-to-br from-grey-50 to-[#052334]">
+      <SidebarInset className="p-6 min-h-screen bg-gradient-to-br from-gray-950 to-[#052334]">
         <header className="flex h-12 items-center gap-2 border-b-1 p-8">
           <SidebarTrigger className="md:hidden -ml-8 mr-2" />
           <h1 className="text-3xl font-semibold bg-gradient-to-r from-yellow-300 to-orange-400 inline-block text-transparent bg-clip-text">Welcome back, {user}!</h1>

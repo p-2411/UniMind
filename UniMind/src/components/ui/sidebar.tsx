@@ -172,6 +172,7 @@ function Sidebar({
         className={cn(
           // Add subtle translucency + blur to better blend with page
           "text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col",
+          "text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col backdrop-blur-sm bg-white/80 dark:bg-white/10",
           className
         )}
         {...props}
@@ -188,7 +189,7 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden "
+          className="text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden backdrop-blur-sm bg-white/80 dark:bg-white/10"
           style={
             {
               "--sidebar-width": SIDEBAR_WIDTH_MOBILE,

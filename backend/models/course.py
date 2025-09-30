@@ -15,3 +15,4 @@ class Course(Base):
     enrolments: Mapped[list["Enrolment"]] = relationship(back_populates="course", cascade="all, delete-orphan")
     topics:     Mapped[list["Topic"]]     = relationship(back_populates="course", cascade="all, delete-orphan")
     assessments:Mapped[list["Assessment"]] = relationship(back_populates="course", cascade="all, delete-orphan")
+

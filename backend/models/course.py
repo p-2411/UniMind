@@ -37,3 +37,5 @@ class Course(Base):
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    assessments=Column(JSONB, nullable=True)  # New field for assessments

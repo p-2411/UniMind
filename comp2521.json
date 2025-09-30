@@ -1,0 +1,1005 @@
+{
+"course_id": "COMP2521",
+"topics": [
+{
+"topic_name": "Course Overview & Logistics",
+"subtopics": [
+"Course goals & assumed knowledge",
+"Teaching components (lectures, tutorials, labs, quizzes)",
+"Assessment & policies (late penalties, exam hurdle, special consideration)",
+"Academic integrity & use of generative AI",
+"Resources, expectations & study advice"
+]
+},
+{
+"topic_name": "C Tooling & Debugging Workflow",
+"subtopics": [
+"Compiling with clang and key flags (-Wall, -Werror, -g)",
+"Sanitizers (ASan, LSan, MSan, UBSan): purpose & usage",
+"Valgrind basics and interaction with sanitizers",
+"make & Makefiles: rules, dependencies, variables"
+]
+},
+{
+"topic_name": "Recursion Fundamentals",
+"subtopics": [
+"Definition: base vs recursive cases (classic examples)",
+"Call stack, winding/unwinding, pre/post-order work",
+"Tail vs non-tail recursion, converting to iteration",
+"When to use recursion vs iteration"
+]
+},
+{
+"topic_name": "Linked Lists & Recursive Patterns",
+"subtopics": [
+"Recursive list processing (sum, length, search)",
+"Appending/inserting recursively (common pitfalls)",
+"Recursive helpers & wrappers to pass extra state",
+"Comparing recursive vs iterative list operations"
+]
+},
+{
+"topic_name": "Abstract Data Types (Stacks, Queues, Deques)",
+"subtopics": [
+"Stack ADT: operations, array/list implementations",
+"Queue ADT: FIFO, circular buffers, linked queues",
+"Deque ADT: double-ended operations and use cases",
+"Applications of stacks/queues (parsing, BFS, undo)"
+]
+},
+{
+"topic_name": "Trees & Balanced Search Trees",
+"subtopics": [
+"Tree terminology & binary tree traversals",
+"Binary Search Trees (BST): invariants & operations",
+"AVL balancing: height, rotations (LL, RR, LR, RL)",
+"BST vs AVL: complexity and practical trade-offs"
+]
+},
+{
+"topic_name": "Hashing & Hash Tables",
+"subtopics": [
+"Hash functions & good properties",
+"Collision resolution: chaining",
+"Open addressing: linear/quadratic probing & double hashing",
+"Load factor, resizing & performance"
+]
+},
+{
+"topic_name": "Sorting Algorithms",
+"subtopics": [
+"Simple sorts: selection & insertion sort",
+"Divide-and-conquer: merge sort",
+"Quick sort: partitioning, pivots, performance",
+"Heaps & heapsort; stability & in-place considerations"
+]
+},
+{
+"topic_name": "Graphs & Fundamental Algorithms",
+"subtopics": [
+"Graph representations: adjacency matrix vs list",
+"Traversal: BFS vs DFS (trees, discovery/finish times)",
+"Shortest paths: Dijkstra (with priority queue)",
+"Topological sort & DAG reasoning"
+]
+},
+{
+"topic_name": "Algorithm Analysis",
+"subtopics": [
+"Empirical timing (clock()) & pitfalls",
+"Asymptotic analysis: primitive ops & growth",
+"Big-O, Big-Ω, Big-Θ: meanings & common classes",
+"Reasoning about recurrences & rough comparisons"
+]
+}
+],
+"questions": [
+{
+"id": 0,
+"type": "MCQ",
+"topic": "Course Overview & Logistics",
+"subtopic": "Course goals & assumed knowledge",
+"text": "Which outcome best reflects a core goal of COMP2521?",
+"choices": [
+"Memorise all of C syntax without applying it",
+"Understand and implement key data structures/algorithms and analyse their performance",
+"Focus exclusively on front-end web development",
+"Avoid reasoning about algorithmic trade-offs"
+],
+"difficulty": "easy"
+},
+{
+"id": 1,
+"type": "MCQ",
+"topic": "Course Overview & Logistics",
+"subtopic": "Course goals & assumed knowledge",
+"text": "Which prior skill set is most aligned with the assumed knowledge?",
+"choices": [
+"Proficiency with Java GUI libraries",
+"Basic C programming including arrays, structs, pointers, and linked lists",
+"CUDA programming and GPU kernels",
+"Advanced functional programming in Haskell"
+],
+"difficulty": "easy"
+},
+{
+"id": 2,
+"type": "MCQ",
+"topic": "Course Overview & Logistics",
+"subtopic": "Teaching components (lectures, tutorials, labs, quizzes)",
+"text": "Lectures primarily serve to:",
+"choices": [
+"Deliver theoretical overviews and worked examples/demos",
+"Assess students weekly with timed coding exams",
+"Grade final projects",
+"Provide only administrative announcements"
+],
+"difficulty": "easy"
+},
+{
+"id": 3,
+"type": "MCQ",
+"topic": "Course Overview & Logistics",
+"subtopic": "Teaching components (lectures, tutorials, labs, quizzes)",
+"text": "Tutorials and labs are designed mainly to:",
+"choices": [
+"Replace lectures completely",
+"Reinforce concepts via problem-solving and hands-on practice",
+"Introduce brand-new, unrelated topics",
+"Serve as optional social meetups without technical work"
+],
+"difficulty": "easy"
+},
+{
+"id": 4,
+"type": "MCQ",
+"topic": "Course Overview & Logistics",
+"subtopic": "Assessment & policies (late penalties, exam hurdle, special consideration)",
+"text": "A typical late-penalty policy in this course is closest to:",
+"choices": [
+"No penalty if submitted within a week",
+"Fixed 50% deduction regardless of delay",
+"Small percentage per hour/day with a hard cutoff after several days",
+"Penalty only if the submission compiles"
+],
+"difficulty": "medium"
+},
+{
+"id": 5,
+"type": "MCQ",
+"topic": "Course Overview & Logistics",
+"subtopic": "Assessment & policies (late penalties, exam hurdle, special consideration)",
+"text": "The exam hurdle implies:",
+"choices": [
+"Only coursework marks matter",
+"You must achieve at least a minimum mark on the exam (possibly per section) to pass overall",
+"You can skip the exam if you top the quizzes",
+"The higher of coursework or exam alone determines passing"
+],
+"difficulty": "medium"
+},
+{
+"id": 6,
+"type": "MCQ",
+"topic": "Course Overview & Logistics",
+"subtopic": "Academic integrity & use of generative AI",
+"text": "Regarding generative AI tools, the policy typically allows:",
+"choices": [
+"Generating assignment solutions as long as they’re paraphrased",
+"Using tools to learn concepts but not to produce assessable answers/solutions",
+"Unlimited use without attribution or constraints",
+"Only using AI during the final exam"
+],
+"difficulty": "easy"
+},
+{
+"id": 7,
+"type": "MCQ",
+"topic": "Course Overview & Logistics",
+"subtopic": "Resources, expectations & study advice",
+"text": "Before asking for help with a bug, a recommended action is:",
+"choices": [
+"Rewrite the program in another language",
+"Add prints or use a debugger (e.g., gdb) to inspect state",
+"Wait for the sample solution",
+"Delete and reclone the repository repeatedly"
+],
+"difficulty": "easy"
+},
+
+{
+  "id": 8,
+  "type": "MCQ",
+  "topic": "C Tooling & Debugging Workflow",
+  "subtopic": "Compiling with clang and key flags (-Wall, -Werror, -g)",
+  "text": "What does compiling with “-Wall -Werror -g” accomplish?",
+  "choices": [
+    "Disables warnings and strips debug info",
+    "Enables common warnings, treats warnings as errors, and includes debug symbols",
+    "Optimises at -O3 and removes symbols",
+    "Auto-formats code to a style guide"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 9,
+  "type": "MCQ",
+  "topic": "C Tooling & Debugging Workflow",
+  "subtopic": "Compiling with clang and key flags (-Wall, -Werror, -g)",
+  "text": "Why might “-Werror” be useful in coursework?",
+  "choices": [
+    "It hides runtime errors",
+    "It forces you to address warnings early, improving code quality",
+    "It speeds up the linker",
+    "It prints stack traces on crashes"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 10,
+  "type": "MCQ",
+  "topic": "C Tooling & Debugging Workflow",
+  "subtopic": "Sanitizers (ASan, LSan, MSan, UBSan): purpose & usage",
+  "text": "AddressSanitizer is primarily used to detect:",
+  "choices": [
+    "Network latency",
+    "Out-of-bounds accesses and use-after-free bugs",
+    "Incorrect code formatting",
+    "Undefined macros at compile time"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 11,
+  "type": "MCQ",
+  "topic": "C Tooling & Debugging Workflow",
+  "subtopic": "Sanitizers (ASan, LSan, MSan, UBSan): purpose & usage",
+  "text": "MemorySanitizer’s focus is on:",
+  "choices": [
+    "Uninitialised memory reads",
+    "Memory leaks only",
+    "Data races in multithreaded code",
+    "I/O buffering issues"
+  ],
+  "difficulty": "medium"
+},
+{
+  "id": 12,
+  "type": "MCQ",
+  "topic": "C Tooling & Debugging Workflow",
+  "subtopic": "Valgrind basics and interaction with sanitizers",
+  "text": "When using valgrind to detect leaks, you should generally:",
+  "choices": [
+    "Compile with ASan and run both together for best results",
+    "Compile without ASan, as they can interfere with each other",
+    "Switch to -O3 to help valgrind run faster",
+    "Disable debug symbols to reduce noise"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 13,
+  "type": "MCQ",
+  "topic": "C Tooling & Debugging Workflow",
+  "subtopic": "make & Makefiles: rules, dependencies, variables",
+  "text": "The primary advantage of a Makefile in projects is:",
+  "choices": [
+    "Automatic grading of submissions",
+    "Declaring build rules/dependencies so you can rebuild with a simple command",
+    "Replacing version control",
+    "Generating documentation automatically"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 14,
+  "type": "MCQ",
+  "topic": "C Tooling & Debugging Workflow",
+  "subtopic": "make & Makefiles: rules, dependencies, variables",
+  "text": "A Make target should specify:",
+  "choices": [
+    "Only the output file name",
+    "The target, its dependencies, and the command(s) to build it",
+    "Only compiler optimisations",
+    "Only runtime inputs"
+  ],
+  "difficulty": "easy"
+},
+
+{
+  "id": 15,
+  "type": "MCQ",
+  "topic": "Recursion Fundamentals",
+  "subtopic": "Definition: base vs recursive cases (classic examples)",
+  "text": "A correct recursive function must include:",
+  "choices": [
+    "Exactly two recursive calls",
+    "A base case that stops recursion and a step that makes progress toward it",
+    "Global variables for state",
+    "Tail calls only"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 16,
+  "type": "MCQ",
+  "topic": "Recursion Fundamentals",
+  "subtopic": "Definition: base vs recursive cases (classic examples)",
+  "text": "For factorial(n), the base case typically returns:",
+  "choices": [
+    "0 for n==0",
+    "1 for n==0",
+    "n for n==0",
+    "Undefined for n==0"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 17,
+  "type": "MCQ",
+  "topic": "Recursion Fundamentals",
+  "subtopic": "Call stack, winding/unwinding, pre/post-order work",
+  "text": "“Winding” and “unwinding” in recursion refer to:",
+  "choices": [
+    "Heap allocation and deallocation",
+    "Descending into calls and then returning back up the call stack",
+    "Compilation and linking",
+    "Input parsing and output formatting"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 18,
+  "type": "MCQ",
+  "topic": "Recursion Fundamentals",
+  "subtopic": "Call stack, winding/unwinding, pre/post-order work",
+  "text": "Work done before the recursive call is considered _____; work done after is _____.",
+  "choices": [
+    "post-order; pre-order",
+    "pre-order; post-order",
+    "tail; head",
+    "static; dynamic"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 19,
+  "type": "MCQ",
+  "topic": "Recursion Fundamentals",
+  "subtopic": "Tail vs non-tail recursion, converting to iteration",
+  "text": "Tail recursion is characterised by:",
+  "choices": [
+    "The recursive call being the last action in the function",
+    "Multiple recursive calls per frame",
+    "Allocating memory on the heap each call",
+    "Needing a global accumulator"
+  ],
+  "difficulty": "medium"
+},
+{
+  "id": 20,
+  "type": "MCQ",
+  "topic": "Recursion Fundamentals",
+  "subtopic": "When to use recursion vs iteration",
+  "text": "A good rule of thumb for recursion vs iteration is:",
+  "choices": [
+    "Always prefer recursion in C to reduce code size",
+    "If an iterative solution is straightforward, prefer it for space/time; use recursion when it expresses the structure of the problem (e.g., trees)",
+    "Iteration and recursion are identical in performance",
+    "Recursion eliminates the need for base cases"
+  ],
+  "difficulty": "easy"
+},
+
+{
+  "id": 21,
+  "type": "MCQ",
+  "topic": "Linked Lists & Recursive Patterns",
+  "subtopic": "Recursive list processing (sum, length, search)",
+  "text": "The base case when summing a linked list recursively is typically:",
+  "choices": [
+    "When head->value == 0",
+    "When head == NULL",
+    "When head->next == head",
+    "After visiting two nodes"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 22,
+  "type": "MCQ",
+  "topic": "Linked Lists & Recursive Patterns",
+  "subtopic": "Recursive list processing (sum, length, search)",
+  "text": "A correct recurrence for list sum is:",
+  "choices": [
+    "sum(L) = L->value - sum(L->next)",
+    "sum(L) = L->value + sum(L->next)",
+    "sum(L) = sum(L->next)",
+    "sum(L) = 0"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 23,
+  "type": "MCQ",
+  "topic": "Linked Lists & Recursive Patterns",
+  "subtopic": "Appending/inserting recursively (common pitfalls)",
+  "text": "A common mistake in recursive append is failing to:",
+  "choices": [
+    "Allocate the head node",
+    "Assign list->next = append(list->next, value) on the way back",
+    "Free the old tail",
+    "Return the original list pointer"
+  ],
+  "difficulty": "medium"
+},
+{
+  "id": 24,
+  "type": "MCQ",
+  "topic": "Linked Lists & Recursive Patterns",
+  "subtopic": "Recursive helpers & wrappers to pass extra state",
+  "text": "A wrapper that calls a helper with extra parameters is useful because:",
+  "choices": [
+    "C forbids recursion at the public API",
+    "It allows passing state (e.g., an index) without exposing it in the public function",
+    "It eliminates the need for base cases",
+    "It guarantees tail recursion"
+  ],
+  "difficulty": "medium"
+},
+{
+  "id": 25,
+  "type": "MCQ",
+  "topic": "Linked Lists & Recursive Patterns",
+  "subtopic": "Comparing recursive vs iterative list operations",
+  "text": "One trade-off of recursive list operations in C is:",
+  "choices": [
+    "They use less stack space than iteration",
+    "They may be clearer but can consume more stack and be slower",
+    "They always outperform iterative versions",
+    "They automatically manage memory"
+  ],
+  "difficulty": "easy"
+},
+
+{
+  "id": 26,
+  "type": "MCQ",
+  "topic": "Abstract Data Types (Stacks, Queues, Deques)",
+  "subtopic": "Stack ADT: operations, array/list implementations",
+  "text": "Which operations define a stack?",
+  "choices": [
+    "enqueue, dequeue",
+    "push, pop, peek/top",
+    "insertFront, insertBack",
+    "getMin, getMax"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 27,
+  "type": "MCQ",
+  "topic": "Abstract Data Types (Stacks, Queues, Deques)",
+  "subtopic": "Stack ADT: operations, array/list implementations",
+  "text": "A common array-based stack design maintains:",
+  "choices": [
+    "A head pointer to the first element",
+    "An index of the next free slot (top) and capacity",
+    "A circular buffer with head and tail",
+    "A binary heap invariant"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 28,
+  "type": "MCQ",
+  "topic": "Abstract Data Types (Stacks, Queues, Deques)",
+  "subtopic": "Queue ADT: FIFO, circular buffers, linked queues",
+  "text": "A circular buffer queue typically tracks:",
+  "choices": [
+    "Only a single pointer to the middle",
+    "Head and tail indices modulo capacity",
+    "A max-heap of priorities",
+    "A BST of elements"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 29,
+  "type": "MCQ",
+  "topic": "Abstract Data Types (Stacks, Queues, Deques)",
+  "subtopic": "Deque ADT: double-ended operations and use cases",
+  "text": "A deque supports:",
+  "choices": [
+    "Push/pop only on one end",
+    "Insertion/removal at both front and back",
+    "Random access in O(1)",
+    "Only sorted insertions"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 30,
+  "type": "MCQ",
+  "topic": "Abstract Data Types (Stacks, Queues, Deques)",
+  "subtopic": "Applications of stacks/queues (parsing, BFS, undo)",
+  "text": "Which application maps correctly?",
+  "choices": [
+    "Stacks → breadth-first traversal",
+    "Queues → depth-first traversal",
+    "Stacks → expression evaluation/parentheses matching",
+    "Queues → function call management"
+  ],
+  "difficulty": "easy"
+},
+
+{
+  "id": 31,
+  "type": "MCQ",
+  "topic": "Trees & Balanced Search Trees",
+  "subtopic": "Tree terminology & binary tree traversals",
+  "text": "Which traversal visits nodes in left-root-right order?",
+  "choices": [
+    "Pre-order",
+    "In-order",
+    "Post-order",
+    "Level-order"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 32,
+  "type": "MCQ",
+  "topic": "Trees & Balanced Search Trees",
+  "subtopic": "Tree terminology & binary tree traversals",
+  "text": "Level-order traversal is commonly implemented using a:",
+  "choices": [
+    "Stack",
+    "Queue",
+    "Deque",
+    "Priority queue"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 33,
+  "type": "MCQ",
+  "topic": "Trees & Balanced Search Trees",
+  "subtopic": "Binary Search Trees (BST): invariants & operations",
+  "text": "The BST invariant requires that:",
+  "choices": [
+    "Left subtree keys ≤ root key < right subtree keys",
+    "Root key is always the minimum",
+    "All keys are unique and even",
+    "Tree is always perfectly balanced"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 34,
+  "type": "MCQ",
+  "topic": "Trees & Balanced Search Trees",
+  "subtopic": "Binary Search Trees (BST): invariants & operations",
+  "text": "Deleting a node with two children in a BST typically involves:",
+  "choices": [
+    "Removing the entire subtree",
+    "Replacing with the in-order predecessor or successor",
+    "Converting the tree to an array first",
+    "Randomly picking a child to promote"
+  ],
+  "difficulty": "medium"
+},
+{
+  "id": 35,
+  "type": "MCQ",
+  "topic": "Trees & Balanced Search Trees",
+  "subtopic": "AVL balancing: height, rotations (LL, RR, LR, RL)",
+  "text": "An AVL tree maintains balance by ensuring:",
+  "choices": [
+    "All leaves have the same depth",
+    "Balance factor (left height − right height) is in {−1, 0, +1} at every node",
+    "The root has degree ≤ 2",
+    "Only the root is balanced"
+  ],
+  "difficulty": "medium"
+},
+{
+  "id": 36,
+  "type": "MCQ",
+  "topic": "Trees & Balanced Search Trees",
+  "subtopic": "AVL balancing: height, rotations (LL, RR, LR, RL)",
+  "text": "A Left-Right (LR) imbalance is corrected by:",
+  "choices": [
+    "Single left rotation at the root",
+    "Right rotation on left child, then left rotation on root",
+    "Left rotation on right child, then right rotation on root",
+    "Two right rotations at root"
+  ],
+  "difficulty": "hard"
+},
+{
+  "id": 37,
+  "type": "MCQ",
+  "topic": "Trees & Balanced Search Trees",
+  "subtopic": "BST vs AVL: complexity and practical trade-offs",
+  "text": "Compared to a plain BST, an AVL tree typically offers:",
+  "choices": [
+    "Worse search times in the worst case",
+    "Guaranteed O(log n) height at the cost of rotation overheads",
+    "O(1) insert/delete times",
+    "Better constant factors but unbounded height"
+  ],
+  "difficulty": "medium"
+},
+
+{
+  "id": 38,
+  "type": "MCQ",
+  "topic": "Hashing & Hash Tables",
+  "subtopic": "Hash functions & good properties",
+  "text": "A desirable property of a hash function is:",
+  "choices": [
+    "Clustering many keys to the same index",
+    "Uniform distribution of keys across buckets",
+    "Dependence on external global state",
+    "Expensive cryptographic cost for simple tables"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 39,
+  "type": "MCQ",
+  "topic": "Hashing & Hash Tables",
+  "subtopic": "Collision resolution: chaining",
+  "text": "Chaining resolves collisions by:",
+  "choices": [
+    "Linear probing into the next slot",
+    "Maintaining a list of all keys that hash to the same bucket",
+    "Rehashing on every insertion",
+    "Swapping with the minimum key"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 40,
+  "type": "MCQ",
+  "topic": "Hashing & Hash Tables",
+  "subtopic": "Open addressing: linear/quadratic probing & double hashing",
+  "text": "Double hashing computes probe sequences using:",
+  "choices": [
+    "A fixed stride of 1",
+    "A second hash function to determine the step size",
+    "Random numbers at runtime",
+    "A queue of free indices"
+  ],
+  "difficulty": "medium"
+},
+{
+  "id": 41,
+  "type": "MCQ",
+  "topic": "Hashing & Hash Tables",
+  "subtopic": "Load factor, resizing & performance",
+  "text": "The load factor of a hash table is defined as:",
+  "choices": [
+    "Table capacity divided by number of buckets",
+    "Number of stored keys divided by the number of buckets",
+    "Maximum chain length observed",
+    "Average probe length"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 42,
+  "type": "MCQ",
+  "topic": "Hashing & Hash Tables",
+  "subtopic": "Load factor, resizing & performance",
+  "text": "Resizing a hash table generally requires:",
+  "choices": [
+    "No action; old indices remain valid",
+    "Rehashing all keys into the new table",
+    "Only copying the array without recomputing indices",
+    "Deleting half the keys to reduce load"
+  ],
+  "difficulty": "medium"
+},
+
+{
+  "id": 43,
+  "type": "MCQ",
+  "topic": "Sorting Algorithms",
+  "subtopic": "Simple sorts: selection & insertion sort",
+  "text": "Insertion sort is often efficient for:",
+  "choices": [
+    "Large random arrays",
+    "Nearly sorted small arrays",
+    "Data requiring stability to be broken",
+    "Inputs too large to fit in memory"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 44,
+  "type": "MCQ",
+  "topic": "Sorting Algorithms",
+  "subtopic": "Simple sorts: selection & insertion sort",
+  "text": "Selection sort’s number of comparisons is:",
+  "choices": [
+    "Θ(n)",
+    "Θ(n log n)",
+    "Θ(n^2)",
+    "Θ(log n)"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 45,
+  "type": "MCQ",
+  "topic": "Sorting Algorithms",
+  "subtopic": "Divide-and-conquer: merge sort",
+  "text": "Merge sort’s time complexity is:",
+  "choices": [
+    "O(n)",
+    "O(n log n)",
+    "O(n^2)",
+    "O(log n)"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 46,
+  "type": "MCQ",
+  "topic": "Sorting Algorithms",
+  "subtopic": "Quick sort: partitioning, pivots, performance",
+  "text": "Quick sort’s worst-case occurs commonly when:",
+  "choices": [
+    "The pivot splits the array evenly",
+    "The pivot is always the smallest or largest element",
+    "Random pivoting is used",
+    "Median-of-three pivot selection is used"
+  ],
+  "difficulty": "medium"
+},
+{
+  "id": 47,
+  "type": "MCQ",
+  "topic": "Sorting Algorithms",
+  "subtopic": "Quick sort: partitioning, pivots, performance",
+  "text": "Quick sort is typically:",
+  "choices": [
+    "Stable and not in-place",
+    "Unstable but in-place (typical Lomuto/Hoare partitions)",
+    "Stable and in-place",
+    "Neither stable nor in-place in any variant"
+  ],
+  "difficulty": "medium"
+},
+{
+  "id": 48,
+  "type": "MCQ",
+  "topic": "Sorting Algorithms",
+  "subtopic": "Heaps & heapsort; stability & in-place considerations",
+  "text": "A binary heap used in heapsort maintains:",
+  "choices": [
+    "Complete binary tree with heap order",
+    "BST order with arbitrary shape",
+    "A linked list invariant",
+    "A sorted array at all times"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 49,
+  "type": "MCQ",
+  "topic": "Sorting Algorithms",
+  "subtopic": "Heaps & heapsort; stability & in-place considerations",
+  "text": "Heapsort is:",
+  "choices": [
+    "In-place and not stable",
+    "Stable and not in-place",
+    "Neither in-place nor stable",
+    "Always stable due to heap property"
+  ],
+  "difficulty": "medium"
+},
+
+{
+  "id": 50,
+  "type": "MCQ",
+  "topic": "Graphs & Fundamental Algorithms",
+  "subtopic": "Graph representations: adjacency matrix vs list",
+  "text": "An adjacency list is generally preferred over a matrix when the graph is:",
+  "choices": [
+    "Dense",
+    "Sparse",
+    "Complete",
+    "Weighted"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 51,
+  "type": "MCQ",
+  "topic": "Graphs & Fundamental Algorithms",
+  "subtopic": "Graph representations: adjacency matrix vs list",
+  "text": "Adjacency matrix space complexity is:",
+  "choices": [
+    "Θ(V)",
+    "Θ(E)",
+    "Θ(V^2)",
+    "Θ(V + E)"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 52,
+  "type": "MCQ",
+  "topic": "Graphs & Fundamental Algorithms",
+  "subtopic": "Traversal: BFS vs DFS (trees, discovery/finish times)",
+  "text": "BFS explores vertices in order of:",
+  "choices": [
+    "Increasing depth (levels) from a source",
+    "Decreasing degree",
+    "Alphabetical labels",
+    "Random priority"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 53,
+  "type": "MCQ",
+  "topic": "Graphs & Fundamental Algorithms",
+  "subtopic": "Traversal: BFS vs DFS (trees, discovery/finish times)",
+  "text": "DFS is useful for computing:",
+  "choices": [
+    "Shortest paths in weighted graphs",
+    "Topological ordering and discovery/finish times",
+    "Minimum spanning trees",
+    "Bipartite matchings"
+  ],
+  "difficulty": "medium"
+},
+{
+  "id": 54,
+  "type": "MCQ",
+  "topic": "Graphs & Fundamental Algorithms",
+  "subtopic": "Shortest paths: Dijkstra (with priority queue)",
+  "text": "Dijkstra’s algorithm requires edge weights to be:",
+  "choices": [
+    "Integers only",
+    "Non-negative",
+    "All equal",
+    "Distinct"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 55,
+  "type": "MCQ",
+  "topic": "Graphs & Fundamental Algorithms",
+  "subtopic": "Shortest paths: Dijkstra (with priority queue)",
+  "text": "Using a binary heap (priority queue), Dijkstra runs in:",
+  "choices": [
+    "O(E + V)",
+    "O(V^2)",
+    "O((V + E) log V)",
+    "O(EV)"
+  ],
+  "difficulty": "medium"
+},
+{
+  "id": 56,
+  "type": "MCQ",
+  "topic": "Graphs & Fundamental Algorithms",
+  "subtopic": "Topological sort & DAG reasoning",
+  "text": "A topological order exists if and only if the graph:",
+  "choices": [
+    "Is connected",
+    "Has no cycles (is a DAG)",
+    "Is complete",
+    "Is bipartite"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 57,
+  "type": "MCQ",
+  "topic": "Graphs & Fundamental Algorithms",
+  "subtopic": "Topological sort & DAG reasoning",
+  "text": "One way to compute a topological order is:",
+  "choices": [
+    "BFS with arbitrary start node",
+    "DFS and pushing nodes to a stack on finish",
+    "Prim’s algorithm",
+    "Kruskal’s algorithm"
+  ],
+  "difficulty": "medium"
+},
+
+{
+  "id": 58,
+  "type": "MCQ",
+  "topic": "Algorithm Analysis",
+  "subtopic": "Empirical timing (clock()) & pitfalls",
+  "text": "When using clock() to time code, a key pitfall is that:",
+  "choices": [
+    "It cannot measure CPU time",
+    "Results depend on input choice and environment; ensure comparable implementations",
+    "It only works on Windows",
+    "It automatically averages across runs"
+  ],
+  "difficulty": "medium"
+},
+{
+  "id": 59,
+  "type": "MCQ",
+  "topic": "Algorithm Analysis",
+  "subtopic": "Empirical timing (clock()) & pitfalls",
+  "text": "A typical usage pattern for timing with clock() is:",
+  "choices": [
+    "SECONDS = clock(); run();",
+    "start = clock(); run(); end = clock(); seconds = (double)(end - start)/CLOCKS_PER_SEC",
+    "seconds = time(NULL); run();",
+    "sleep(1); read /proc/stat"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 60,
+  "type": "MCQ",
+  "topic": "Algorithm Analysis",
+  "subtopic": "Asymptotic analysis: primitive ops & growth",
+  "text": "In asymptotic analysis we typically ignore:",
+  "choices": [
+    "The highest-order term",
+    "Constant factors and lower-order terms",
+    "The input size n",
+    "All multiplicative terms"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 61,
+  "type": "MCQ",
+  "topic": "Algorithm Analysis",
+  "subtopic": "Big-O, Big-Ω, Big-Θ: meanings & common classes",
+  "text": "Big-O, Big-Ω, and Big-Θ respectively denote:",
+  "choices": [
+    "Upper bound, lower bound, and tight bound",
+    "Lower bound, tight bound, and upper bound",
+    "Tight bound, upper bound, and lower bound",
+    "Average, best, and worst case"
+  ],
+  "difficulty": "easy"
+},
+{
+  "id": 62,
+  "type": "MCQ",
+  "topic": "Algorithm Analysis",
+  "subtopic": "Big-O, Big-Ω, Big-Θ: meanings & common classes",
+  "text": "Order these by increasing growth (n ≥ 2):",
+  "choices": [
+    "log n, n, n log n, n^2",
+    "n, log n, n^2, n log n",
+    "n^2, n log n, log n, n",
+    "2^n, n!, n^3, n^2"
+  ],
+  "difficulty": "medium"
+},
+{
+  "id": 63,
+  "type": "MCQ",
+  "topic": "Algorithm Analysis",
+  "subtopic": "Reasoning about recurrences & rough comparisons",
+  "text": "A typical recurrence for merge sort T(n) is:",
+  "choices": [
+    "T(n) = T(n−1) + O(1)",
+    "T(n) = 2T(n/2) + O(n)",
+    "T(n) = T(n/2) + O(1)",
+    "T(n) = T(n/2) + T(n/3) + O(1)"
+  ],
+  "difficulty": "medium"
+}
+
+
+]
+}

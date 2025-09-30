@@ -3,7 +3,7 @@ import { Target } from "lucide-react"
 
 export function PriorityConceptsCard({ className }: { className?: string }) {
   return (
-    <Card className={`${className}`}>
+    <Card className={`${className} `}>
       <CardHeader>
         <div>
           <CardTitle className="text-xl">Priority Concepts</CardTitle>

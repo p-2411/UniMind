@@ -14,7 +14,6 @@ class TopicProgress(Base):
     topic_id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True),
         ForeignKey("topics.id", ondelete="CASCADE"), primary_key=True)
 
-    rating: Mapped[float] = mapped_column(Numeric(4, 3), nullable=False, default=0.200)  # 0.000–1.000
     last_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     user:  Mapped["User"]  = relationship(back_populates="progress")

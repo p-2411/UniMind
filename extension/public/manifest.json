@@ -9,7 +9,8 @@
     "webNavigation"
   ],
   "host_permissions": [
-    "https://unimind-production.up.railway.app"
+    "https://unimind-production.up.railway.app/*",
+    "http://localhost:8000/*"
   ],
   "background": {
     "service_worker": "background.js"

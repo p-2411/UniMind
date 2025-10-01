@@ -1,24 +1,27 @@
-const DEFAULT_BLOCKED_SITES = [
-  'facebook.com',
-  'twitter.com',
-  'instagram.com',
-  'youtube.com',
-  'reddit.com',
-  'tiktok.com',
-  'netflix.com'
-];
-
 // API configuration
-const API_BASE_URL = 'https://unimind-production.up.railway.app/api';
+const DEFAULT_API_BASE_URL = 'https://unimind-production.up.railway.app';
 
-// Initialize default blocked sites when extension is installed
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.sync.get(['blockedSites'], (result) => {
-    if (!result.blockedSites) {
-      chrome.storage.sync.set({ blockedSites: DEFAULT_BLOCKED_SITES });
+function normaliseBaseUrl(value) {
+  if (!value || typeof value !== 'string') return DEFAULT_API_BASE_URL;
+  return value.replace(/\/$/, '');
+}
+
+async function getApiBaseUrl() {
+  if (!chrome?.storage?.local?.get) {
+    return DEFAULT_API_BASE_URL;
+  }
+
+  return new Promise((resolve) => {
+    try {
+      chrome.storage.local.get(['api_base_url'], (result) => {
+        resolve(normaliseBaseUrl(result.api_base_url || DEFAULT_API_BASE_URL));
+      });
+    } catch (error) {
+      console.warn('Falling back to default API base URL', error);
+      resolve(DEFAULT_API_BASE_URL);
     }
   });
-});
+}
 
 // Sync blocked sites from backend
 async function syncBlockedSitesFromBackend() {
@@ -26,14 +29,17 @@ async function syncBlockedSitesFromBackend() {
     const { access_token, user } = await chrome.storage.local.get(['access_token', 'user']);
 
     if (!access_token || !user) {
-      console.log('User not authenticated, using default blocked sites');
+      console.log('User not authenticated, skipping blocked sites sync');
       return;
     }
 
     const userObj = typeof user === 'string' ? JSON.parse(user) : user;
 
+    const apiBaseUrl = await getApiBaseUrl();
+
+    const requestUrl = `${apiBaseUrl}/students/${userObj.id}/blocked-sites`;
     const response = await fetch(
-      `${API_BASE_URL}/students/${userObj.id}/blocked-sites`,
+      requestUrl,
       {
         headers: {
           'Authorization': `Bearer ${access_token}`,
@@ -45,13 +51,10 @@ async function syncBlockedSitesFromBackend() {
       const blockedSites = await response.json();
       const domains = blockedSites.map(site => site.domain);
 
-      // If user has custom blocked sites, use them; otherwise use defaults
-      const sitesToBlock = domains.length > 0 ? domains : DEFAULT_BLOCKED_SITES;
-
-      await chrome.storage.sync.set({ blockedSites: sitesToBlock });
-      console.log('Synced blocked sites from backend:', sitesToBlock);
+      await chrome.storage.sync.set({ blockedSites: domains });
+      console.log('Synced blocked sites from backend:', domains);
     } else {
-      console.error('Failed to sync blocked sites:', response.status);
+      console.error('Failed to sync blocked sites:', response.status, requestUrl);
     }
   } catch (error) {
     console.error('Error syncing blocked sites:', error);
@@ -89,7 +92,7 @@ chrome.webNavigation.onBeforeNavigate.addListener((details) => {
   if (details.frameId !== 0) return;
 
   chrome.storage.sync.get(['blockedSites'], (result) => {
-    const blockedSites = result.blockedSites || DEFAULT_BLOCKED_SITES;
+    const blockedSites = result.blockedSites || [];
 
     if (shouldBlockUrl(details.url, blockedSites)) {
       // Check if this site has a temporary bypass
@@ -144,7 +147,7 @@ chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => 
 
   if (request.type === 'GET_BLOCKED_SITES') {
     chrome.storage.sync.get(['blockedSites'], (result) => {
-      sendResponse({ sites: result.blockedSites || DEFAULT_BLOCKED_SITES });
+      sendResponse({ sites: result.blockedSites || [] });
     });
     return true;
   }

@@ -71,15 +71,27 @@ export default function BlockedSitesManager() {
       setError(null);
       setSaveSuccess(false);
 
+      console.log('About to save blocked sites:', blockedSites.map((s: Site) => s.domain));
+
+      // Save to database
       await saveBlockedSites(blockedSites);
 
-      // Reload from server to get real IDs
+      // Reload from server to get real IDs and confirm save
       const sites = await fetchBlockedSites();
+      console.log('Reloaded sites from server:', sites.map((s: Site) => s.domain));
+
       setBlockedSites(sites);
       setOriginalSites(sites);
       setSaveSuccess(true);
 
-      chrome.runtime.sendMessage({ type: "REFRESH_BLOCKED_SITES" });
+      // Sync with extension background script to update blocking rules
+      try {
+        await chrome.runtime.sendMessage({ type: "REFRESH_BLOCKED_SITES" });
+        console.log('Extension blocking rules updated');
+      } catch (err) {
+        console.warn('Failed to refresh blocked sites in background:', err);
+        // Don't fail the save if background refresh fails
+      }
 
       // Clear success message after 3 seconds
       setTimeout(() => setSaveSuccess(false), 3000);

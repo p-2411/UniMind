@@ -579,29 +579,6 @@ def get_blocked_sites(
         .all()
     )
 
-    # If user has no blocked sites, initialize with defaults
-    if not blocked_sites:
-        DEFAULT_SITES = [
-            'facebook.com',
-            'twitter.com',
-            'instagram.com',
-            'youtube.com',
-            'reddit.com',
-            'tiktok.com',
-            'netflix.com'
-        ]
-
-        for domain in DEFAULT_SITES:
-            site = BlockedSite(user_id=current_user.id, domain=domain)
-            db.add(site)
-            blocked_sites.append(site)
-
-        db.commit()
-
-        # Refresh to get IDs
-        for site in blocked_sites:
-            db.refresh(site)
-
     return [BlockedSiteOut(id=str(site.id), domain=site.domain) for site in blocked_sites]
 
 

@@ -5,6 +5,25 @@ let cachedAuth = null
 let cachedAt = 0
 let pendingAuthLoad = null
 
+let basePersisted = false
+function persistApiBaseUrl() {
+  if (basePersisted) return
+  if (typeof chrome === 'undefined' || !chrome?.storage?.local?.set) return
+  try {
+    chrome.storage.local.get(['api_base_url'], (result) => {
+      if (result.api_base_url !== API_BASE_URL) {
+        chrome.storage.local.set({ api_base_url: API_BASE_URL })
+      }
+    })
+  } catch (error) {
+    console.warn('Unable to persist API base URL to chrome.storage', error)
+  } finally {
+    basePersisted = true
+  }
+}
+
+persistApiBaseUrl()
+
 // Keep a short-lived cache of auth data to avoid repeated chrome.storage reads.
 async function loadAuthFromStorage() {
   return new Promise((resolve) => {
@@ -244,45 +263,37 @@ export async function saveBlockedSites(sites) {
   // Get current sites from server
   const currentSites = await fetchBlockedSites()
 
-  // Normalize domains to lowercase for comparison
-  const currentDomains = new Set(currentSites.map(s => s.domain.toLowerCase()))
+  // Create sets of domain names for comparison
+  const currentDomainMap = new Map(currentSites.map(s => [s.domain.toLowerCase(), s]))
   const newDomains = new Set(sites.map(s => s.domain.toLowerCase()))
 
-  // Find sites to add (in new list but not in current)
-  const toAdd = sites.filter(s => !currentDomains.has(s.domain.toLowerCase()))
-
-  // Find sites to remove (in current list but not in new)
-  const toRemove = currentSites.filter(s => !newDomains.has(s.domain.toLowerCase()))
-
   console.log('Saving blocked sites:', {
-    current: currentSites.length,
-    new: sites.length,
-    toAdd: toAdd.length,
-    toRemove: toRemove.length,
-    toRemoveDetails: toRemove.map(s => ({ id: s.id, domain: s.domain }))
+    current: Array.from(currentDomainMap.keys()),
+    new: Array.from(newDomains),
   })
 
-  // Execute removals first
-  for (const site of toRemove) {
-    console.log('Removing site:', site.domain, 'with ID:', site.id)
-    try {
-      await removeBlockedSite(site.id)
-    } catch (err) {
-      console.error('Failed to remove site:', site.domain, err)
-      throw new Error(`Failed to remove ${site.domain}: ${err.message}`)
+  // Step 1: Remove sites that are not in the new list
+  const removals = []
+  for (const [domain, site] of currentDomainMap.entries()) {
+    if (!newDomains.has(domain)) {
+      console.log('Removing site:', domain, 'with ID:', site.id)
+      removals.push(removeBlockedSite(site.id))
     }
   }
+  await Promise.all(removals)
 
-  // Then additions
-  for (const site of toAdd) {
-    console.log('Adding site:', site.domain)
-    try {
-      await addBlockedSite(site.domain)
-    } catch (err) {
-      console.error('Failed to add site:', site.domain, err)
-      throw new Error(`Failed to add ${site.domain}: ${err.message}`)
+  // Step 2: Add sites that are not in the current list
+  const additions = []
+  for (const site of sites) {
+    const domain = site.domain.toLowerCase()
+    if (!currentDomainMap.has(domain)) {
+      console.log('Adding site:', domain)
+      additions.push(addBlockedSite(site.domain))
     }
   }
+  await Promise.all(additions)
+
+  console.log('Successfully saved blocked sites')
 }
 
 if (typeof chrome !== 'undefined' && chrome?.storage?.onChanged) {

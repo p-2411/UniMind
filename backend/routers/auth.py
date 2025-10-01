@@ -8,10 +8,22 @@ from backend.dependencies.auth import get_current_user
 from backend.models.course import Course
 from backend.models.enrolment import Enrolment
 from backend.models.user import User
+from backend.models.blocked_site import BlockedSite
 from backend.schemas.auth import LoginRequest, SignupRequest, TokenResponse, UserResponse
 from backend.services.auth import create_access_token, hash_password, verify_password
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+# Default blocked sites for new users
+DEFAULT_BLOCKED_SITES = [
+    'facebook.com',
+    'twitter.com',
+    'instagram.com',
+    'youtube.com',
+    'reddit.com',
+    'tiktok.com',
+    'netflix.com'
+]
 
 
 @router.post("/signup", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
@@ -50,6 +62,11 @@ def signup(payload: SignupRequest, db: Session = Depends(get_db)):
     for course_code in sorted(requested_codes):
         enrolment = Enrolment(user_id=user.id, course_code=course_code)
         db.add(enrolment)
+
+    # Add default blocked sites for new user
+    for domain in DEFAULT_BLOCKED_SITES:
+        blocked_site = BlockedSite(user_id=user.id, domain=domain)
+        db.add(blocked_site)
 
     db.commit()
     db.refresh(user)

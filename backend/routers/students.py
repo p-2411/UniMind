@@ -17,6 +17,7 @@ from backend.models.progress import TopicProgress
 from backend.models.user import User
 from backend.models.assessment import Assessment
 from backend.models.question_metric import QuestionMetric
+from backend.models.streak import DailyStreak
 from backend.schemas import AttemptCreate, AttemptResult, CourseOut, EnrolRequest, ProgressItem, UserResponse
 from backend.schemas.auth import UserUpdate
 from backend.schemas.topic import TopicOut, TopicPriorityOut
@@ -489,3 +490,25 @@ def get_review_questions(
     # Delegate to the same core to keep in sync
     return get_questions_for_extension(user_id, db, current_user)
 
+
+@router.get("/{user_id}/streak")
+def get_streak(
+    user_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Return the user's daily streak without mutating it."""
+    _assert_same_user(user_id, current_user)
+
+    streak = db.get(DailyStreak, current_user.id)
+    if streak is None:
+        return {
+            "current_streak": 0,
+            "longest_streak": 0,
+            "last_active_date": None,
+        }
+    return {
+        "current_streak": streak.current_streak,
+        "longest_streak": streak.longest_streak,
+        "last_active_date": streak.last_active_date.isoformat() if streak.last_active_date else None,
+    }

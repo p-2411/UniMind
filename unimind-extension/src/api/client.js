@@ -4,7 +4,7 @@ const API_BASE_URL = 'http://localhost:8000';
 /**
  * Get authentication token from Chrome storage
  */
-async function getAuthToken() {
+export async function getAuthToken() {
   return new Promise((resolve) => {
     chrome.storage.local.get(['access_token'], (result) => {
       resolve(result.access_token || null);
@@ -15,7 +15,7 @@ async function getAuthToken() {
 /**
  * Get user data from Chrome storage
  */
-async function getUser() {
+export async function getUser() {
   return new Promise((resolve) => {
     chrome.storage.local.get(['user'], (result) => {
       if (result.user) {
@@ -92,4 +92,34 @@ export async function submitAttempt(questionId, answerIndex, timeSeconds) {
   }
 
   return await response.json();
+}
+
+export async function fetchStreak() {
+  const token = await getAuthToken();
+  const user = await getUser();
+
+  if (!token || !user) {
+    throw new Error('User not authenticated');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/students/${user.id}/streak`,
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch streak');
+  }
+
+  return await response.json();
+}
+
+export async function logout() {
+  return new Promise((resolve) => {
+    chrome.storage.local.remove(['access_token', 'user'], () => resolve());
+  });
 }

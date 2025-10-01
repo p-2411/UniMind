@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import LoginPage from './login/LoginPage';
 import BlockPage from './block-page/BlockPage';
+import DashboardPage from './dashboard/DashboardPage';
 import './App.css';
 
 function App() {
@@ -44,17 +45,8 @@ function App() {
     return <LoginPage onLoginSuccess={() => setIsAuthenticated(true)} />;
   }
 
-  // If authenticated and not on block page, show simple status
-  return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-gray-950 to-[#052334]">
-      <div className="text-center">
-        <div className="text-white text-2xl font-bold mb-4">✓ Logged In</div>
-        <p className="text-slate-300">
-          UniMind extension is active. Visit a blocked site to start!
-        </p>
-      </div>
-    </div>
-  );
+  // Popup view
+  return <DashboardPage />;
 }
 
 export default App;

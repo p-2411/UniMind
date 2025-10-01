@@ -179,8 +179,8 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
                 <div className="mt-4 flex justify-center gap-2">
                   <Button
                     size="sm"
-                    className="bg-amber-400 text-slate-900 hover:bg-amber-300
-                              focus-visible:ring-2 focus-visible:ring-amber-300
+                    className="bg-yellow-400 text-black hover:bg-yellow-300
+                              focus-visible:ring-2 focus-visible:ring-yellow-300
                               font-semibold"
                     onClick={() => {
                       window.location.href = `/review?topic=${encodeURIComponent(topic.name)}`

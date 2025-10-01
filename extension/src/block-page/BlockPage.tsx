@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import QuestionCard from './QuestionCard';
-import { getNextQuestion, updateAfterAnswer } from './questions';
-import { submitAttempt } from '../api/client';
-import logo from '../assets/logo.png';
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import QuestionCard from "./QuestionCard";
+import { getNextQuestion, updateAfterAnswer } from "./questions";
+import { submitAttempt } from "../api/client";
+import logo from "../assets/logo.png";
 
 interface Question {
   id: string;
@@ -11,99 +11,95 @@ interface Question {
   options: string[];
   correctAnswer: number;
   topic?: string;
-  difficulty?: 'easy' | 'medium' | 'hard';
+  difficulty?: "easy" | "medium" | "hard";
   rolling_accuracy?: number;
   attempts?: number;
   last_seen_at?: number;
 }
 
 function BlockPage() {
-  // Store the current question being displayed
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
-
-  // Store the tab ID from the URL parameters
   const [tabId, setTabId] = useState<string | null>(null);
-
-  // Track loading state while we fetch the initial question
   const [loading, setLoading] = useState(true);
-
-  // Track start time for timing the answer
   const [startTime, setStartTime] = useState<number | null>(null);
 
-  // Initialize the component when it first mounts
+  // Scale-to-fit for the card so the page never scrolls
+  const cardOuterRef = useRef<HTMLDivElement | null>(null);
+  const cardInnerRef = useRef<HTMLDivElement | null>(null);
+  const [scale, setScale] = useState(1);
+
   useEffect(() => {
-    // Extract the tab ID from the URL query parameters
-    // This was added by the background script when it redirected here
     const urlParams = new URLSearchParams(window.location.search);
-    const currentTabId = urlParams.get('tabId');
+    const currentTabId = urlParams.get("tabId");
     setTabId(currentTabId);
-
-    // Load the first question
     loadNewQuestion();
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
-  // Load a question using the selection algorithm
+  useLayoutEffect(() => {
+    function fit() {
+      if (!cardOuterRef.current || !cardInnerRef.current) return;
+      const available = cardOuterRef.current.clientHeight;
+      const natural = cardInnerRef.current.scrollHeight;
+      const buffer = 8;
+      const factor = Math.min(1, (available - buffer) / Math.max(1, natural));
+      setScale(Number.isFinite(factor) ? Math.max(0.6, factor) : 1);
+    }
+    fit();
+
+    const ro = new ResizeObserver(fit);
+    if (cardOuterRef.current) ro.observe(cardOuterRef.current);
+    if (cardInnerRef.current) ro.observe(cardInnerRef.current);
+    window.addEventListener("resize", fit);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", fit);
+    };
+  }, [currentQuestion]);
+
   const loadNewQuestion = async () => {
     setLoading(true);
     try {
-      const question = await getNextQuestion() as Question;
+      const question = (await getNextQuestion()) as Question;
       setCurrentQuestion(question);
       setStartTime(Date.now());
     } catch (error) {
-      console.error('Failed to load question:', error);
-      // Show error state or fallback
+      console.error("Failed to load question:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle when the user answers correctly
   const handleCorrectAnswer = async (answerIndex: number) => {
     if (!currentQuestion) return;
-
-    // Calculate time taken
     const timeSeconds = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
 
-    // Submit the attempt to the backend
     try {
       await submitAttempt(currentQuestion.id, answerIndex, timeSeconds);
     } catch (error) {
-      console.error('Failed to submit attempt:', error);
-      // Continue anyway to let user through
+      console.error("Failed to submit attempt:", error);
     }
 
-    // Update local scheduling metadata so the next question reflects the attempt
     updateAfterAnswer(currentQuestion, true);
 
-    // Retrieve the original URL the user was trying to visit
-    // This was stored by the background script before redirecting here
     chrome.storage.local.get([`pendingUrl_${tabId}`], (result) => {
       const originalUrl = result[`pendingUrl_${tabId}`];
-
       if (originalUrl) {
-        // Clean up the stored URL since we're about to use it
         chrome.storage.local.remove([`pendingUrl_${tabId}`]);
-
-        // Grant temporary access to the site (2 seconds)
         const hostname = new URL(originalUrl).hostname;
-        chrome.storage.local.set({
-          [`bypass_${hostname}`]: Date.now() + 2 * 1000
-        }, () => {
-          // Redirect to the site the user originally wanted to visit
-          window.location.href = originalUrl;
-        });
+        chrome.storage.local.set(
+          { [`bypass_${hostname}`]: Date.now() + 2 * 1000 },
+          () => (window.location.href = originalUrl)
+        );
       } else {
-        // Fallback in case something went wrong with storage
-        console.error('No pending URL found');
+        console.error("No pending URL found");
       }
     });
   };
 
-  // Show a loading state while the question is being prepared
   if (loading) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-gray-950 to-[#052334]">
-        <div className="text-slate-900 text-lg md:text-xl font-medium bg-white/80 backdrop-blur-xl px-6 py-4 rounded-2xl border border-white/40 shadow-lg">
+      <div className="fixed inset-0 grid place-items-center bg-[#061423]">
+        <div className="text-slate-900 text-base md:text-lg font-medium bg-yellow-400/80 backdrop-blur-xl px-5 py-3 rounded-2xl border border-white/40 shadow-lg">
           Loading your focus check...
         </div>
       </div>
@@ -111,32 +107,53 @@ function BlockPage() {
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center px-6 py-10 md:px-12 bg-gradient-to-br from-gray-950 to-[#052334] overflow-hidden">
-      <div className="w-full max-w-4xl flex flex-col items-center text-center">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-3 mb-10">
-          <img src={logo} alt="UniMind Logo" className="w-16 h-16 md:w-20 md:h-20 drop-shadow-xl" />
-          <div>
-            <h1 className="text-4xl font-semibold tracking-tight bg-gradient-to-r from-yellow-300 via-orange-400 to-orange-600 text-transparent bg-clip-text drop-shadow-sm">
-              UniMind
-            </h1>
-            <p className="text-sm md:text-base text-slate-700/80 mt-2">
-              Refocus with a quick concept check before heading back.
-            </p>
-          </div>
-        </div>
+    <div className="fixed inset-0 overflow-hidden">
+      {/* Ambient background & subtle grid grain */}
+      <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_10%,rgba(255,200,80,0.12)_0%,rgba(255,200,80,0)_60%),radial-gradient(70%_60%_at_50%_120%,rgba(56,189,248,0.10)_0%,rgba(2,6,23,0)_60%)] bg-[#061423]" />
+      <div className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-overlay [background-image:linear-gradient(transparent_95%,rgba(255,255,255,.3)_95%),linear-gradient(90deg,transparent_95%,rgba(255,255,255,.3)_95%)] [background-size:24px_24px]" />
 
-        <div className="w-full max-w-3xl">
-          {currentQuestion && (
-            <QuestionCard
-              question={currentQuestion}
-              onCorrectAnswer={handleCorrectAnswer}
+      {/* 3-row page grid: header / content / footer */}
+      <div className="relative mx-auto h-dvh max-h-dvh w-full max-w-5xl grid grid-rows-[auto,1fr,auto] px-4 sm:px-6 py-4 sm:py-6">
+        {/* Header with halo */}
+        <header className="relative grid place-items-center gap-3 sm:gap-4 text-center">
+          <div className="pointer-events-none absolute -z-10 h-28 w-28 rounded-full bg-amber-400/20 blur-3xl" />
+          <div className="flex items-center justify-center gap-3 sm:gap-4">
+            <img
+              src={logo}
+              alt="UniMind Logo"
+              className="w-12 h-12 sm:w-14 sm:h-14 drop-shadow-xl"
             />
-          )}
-        </div>
+            <div>
+              <h1
+                className="font-semibold tracking-tight drop-shadow-sm 
+                           bg-yellow-400 bg-clip-text text-transparent
+                           text-[clamp(1.5rem,4vw,2.25rem)]"
+              >
+                UniMind
+              </h1>
+              <p className="mt-1 text-[clamp(0.8rem,1.6vw,0.95rem)] text-slate-200/90 hidden xs:block">
+                Refocus with a quick concept check before heading back.
+              </p>
+            </div>
+          </div>
+        </header>
 
-        <p className="mt-10 text-sm md:text-base text-slate-100/90 bg-white/10 backdrop-blur-sm border border-white/20 px-5 py-3 rounded-2xl shadow-sm">
-          This brief pause keeps you aligned with your goals. Stay sharp!
-        </p>
+        {/* Content — auto-scaling QuestionCard so page never scrolls */}
+        <main ref={cardOuterRef} className="min-h-0 flex items-center justify-center px-0 sm:px-2">
+          <div
+            ref={cardInnerRef}
+            style={{ transform: `scale(${scale})`, transformOrigin: "top center", willChange: "transform" }}
+            className="w-full max-w-3xl"
+          >
+            {currentQuestion && (
+              <QuestionCard question={currentQuestion} onCorrectAnswer={handleCorrectAnswer} />
+            )}
+          </div>
+        </main>
+
+        {/* Footer chip */}
+        <footer className="grid place-items-center">
+        </footer>
       </div>
     </div>
   );

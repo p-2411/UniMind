@@ -241,7 +241,7 @@ function MySubjectsPage() {
                   type="button"
                   size="sm"
                   variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                  className={cn('px-3', viewMode === 'grid' ? 'bg-orange-500 text-white hover:bg-orange-500' : 'text-gray-300 hover:text-white')}
+                  className={cn('px-3', viewMode === 'grid' ? 'bg-yellow-400 text-black hover:bg-yellow-300' : 'text-gray-300 hover:text-white')}
                   onClick={() => setViewMode('grid')}
                   aria-label="Grid view"
                 >
@@ -251,7 +251,7 @@ function MySubjectsPage() {
                   type="button"
                   size="sm"
                   variant={viewMode === 'list' ? 'default' : 'ghost'}
-                  className={cn('px-3', viewMode === 'list' ? 'bg-orange-500 text-white hover:bg-orange-500' : 'text-gray-300 hover:text-white')}
+                  className={cn('px-3', viewMode === 'list' ? 'bg-yellow-400 text-black hover:bg-yellow-300' : 'text-gray-300 hover:text-white')}
                   onClick={() => setViewMode('list')}
                   aria-label="List view"
                 >
@@ -280,8 +280,10 @@ function MySubjectsPage() {
               <p className="text-gray-400 text-sm">No items yet—add a subject or upload content.</p>
             ) : (
               <ul className="divide-y divide-white/10">
-                {priorityList.map(({ course, h, mastery, due }, idx) => {
-                  const masteryPct = mastery != null ? Math.round(mastery * 100) : null
+                {priorityList.map(({ course, h, due }, idx) => {
+                  const dueCount = h?.due_count ?? 0
+                  const completedCount = h?.completed_due_count ?? 0
+                  const progressPct = dueCount > 0 ? Math.round((completedCount / dueCount) * 100) : 0
                   const nextDue = (() => {
                     const dueAt = h?.upcoming_assessments?.[0]?.due_at
                     if (!dueAt) return null
@@ -296,7 +298,7 @@ function MySubjectsPage() {
                         <div className="mt-2 h-1.5 w-full rounded bg-white/10 overflow-hidden">
                           <div
                             className="h-1.5 rounded bg-gradient-to-r from-emerald-400 to-emerald-600"
-                            style={{ width: `${Math.max(4, masteryPct ?? 0)}%` }}
+                            style={{ width: `${Math.max(4, progressPct)}%` }}
                           />
                         </div>
                       </div>
@@ -304,7 +306,7 @@ function MySubjectsPage() {
                         {chip('', <><Flame className="h-3.5 w-3.5 text-orange-400" />{due} due</>)}
                         {nextDue && chip('', <><Clock className="h-3.5 w-3.5 text-sky-400" />{nextDue}</>)}
                         <Button
-                          className="bg-orange-500 hover:bg-orange-600"
+                          className="bg-yellow-400 text-black hover:bg-yellow-300"
                           onClick={() => { window.location.href = `/review?courseId=${course.id ?? course.code}` }}
                         >
                           Practice
@@ -359,6 +361,8 @@ function MySubjectsPage() {
                 const h = healthMap[String(course.id ?? course.code)]
                 const masteryPct = typeof h?.overall_mastery === 'number' ? Math.round(h!.overall_mastery * 100) : null
                 const dueCount = h?.due_count ?? 0
+                const completedDueCount = h?.completed_due_count ?? 0
+                const progressPct = dueCount > 0 ? Math.round((completedDueCount / dueCount) * 100) : 0
                 const nextDue = (() => {
                   const dueAt = h?.upcoming_assessments?.[0]?.due_at
                   if (!dueAt) return null
@@ -397,13 +401,14 @@ function MySubjectsPage() {
                         {nextDue && chip('', <><Clock className="h-3.5 w-3.5 text-sky-400" /> Next: {nextDue}</>)}
                       </div>
 
-                      {/* Mastery bar */}
-                      {masteryPct !== null && (
+                      {/* Progress bar - shows completion of due questions */}
+                      {dueCount > 0 && (
                         <div className="mt-1">
+                          <div className="text-xs text-gray-400 mb-1">{completedDueCount}/{dueCount} due completed today</div>
                           <div className="h-2 w-full rounded bg-white/10 overflow-hidden">
                             <div
                               className="h-2 rounded bg-gradient-to-r from-emerald-400 to-emerald-600 transition-[width] duration-500"
-                              style={{ width: `${Math.max(4, masteryPct)}%` }}
+                              style={{ width: `${Math.max(4, progressPct)}%` }}
                             />
                           </div>
                         </div>
@@ -421,7 +426,7 @@ function MySubjectsPage() {
                           Overview
                         </Button>
                         <Button
-                          className="w-fit bg-orange-500 text-white hover:bg-orange-600"
+                          className="w-fit bg-yellow-400 text-black hover:bg-yellow-300"
                           onClick={() => { window.location.href = `/review?courseId=${course.id ?? course.code}` }}
                         >
                           Practice {dueCount ? `(${dueCount})` : ''}

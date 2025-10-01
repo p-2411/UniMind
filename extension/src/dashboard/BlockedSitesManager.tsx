@@ -4,7 +4,7 @@ import { fetchBlockedSites, saveBlockedSites } from "../api/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ScrollArea } from "@/components/ui/scroll-area"; // if you don't have shadcn ScrollArea, see fallback below
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type Site = { id: string; domain: string };
 
@@ -44,16 +44,14 @@ export default function BlockedSitesManager() {
 
     setAddError(null);
 
-    // Check if domain already exists
-    if (blockedSites.some(s => s.domain.toLowerCase() === domain.toLowerCase())) {
+    if (blockedSites.some((s) => s.domain.toLowerCase() === domain.toLowerCase())) {
       setAddError("Site already in the list");
       return;
     }
 
-    // Add to local state with temporary ID
     const newSite: Site = {
       id: `temp-${Date.now()}`,
-      domain: domain.toLowerCase().replace(/^www\./, ''),
+      domain: domain.toLowerCase().replace(/^www\./, ""),
     };
     setBlockedSites((prev) => [...prev, newSite]);
     setNewDomain("");
@@ -71,29 +69,19 @@ export default function BlockedSitesManager() {
       setError(null);
       setSaveSuccess(false);
 
-      console.log('About to save blocked sites:', blockedSites.map((s: Site) => s.domain));
-
-      // Save to database
       await saveBlockedSites(blockedSites);
 
-      // Reload from server to get real IDs and confirm save
       const sites = await fetchBlockedSites();
-      console.log('Reloaded sites from server:', sites.map((s: Site) => s.domain));
-
       setBlockedSites(sites);
       setOriginalSites(sites);
       setSaveSuccess(true);
 
-      // Sync with extension background script to update blocking rules
       try {
         await chrome.runtime.sendMessage({ type: "REFRESH_BLOCKED_SITES" });
-        console.log('Extension blocking rules updated');
       } catch (err) {
-        console.warn('Failed to refresh blocked sites in background:', err);
-        // Don't fail the save if background refresh fails
+        console.warn("Failed to refresh blocked sites in background:", err);
       }
 
-      // Clear success message after 3 seconds
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err: any) {
       console.error("Failed to save blocked sites", err);
@@ -154,7 +142,7 @@ export default function BlockedSitesManager() {
           <Button
             type="submit"
             disabled={isSaving || !newDomain.trim()}
-            className="whitespace-nowrap bg-white/10 text-slate-100 hover:bg-white/15 font-semibold border border-white/20"
+            className="w-full sm:w-auto whitespace-nowrap bg-white/10 text-slate-100 hover:bg-white/15 font-semibold border border-white/20"
           >
             Add Site
           </Button>
@@ -171,8 +159,8 @@ export default function BlockedSitesManager() {
         )}
       </form>
 
-      {/* Save button */}
-      <div className="flex items-center gap-3">
+      {/* Save button row (wrap-safe) */}
+      <div className="flex flex-wrap items-center gap-3">
         <Button
           onClick={handleSave}
           disabled={!hasChanges || isSaving}
@@ -181,45 +169,46 @@ export default function BlockedSitesManager() {
           {isSaving ? "Saving…" : "Save Changes"}
         </Button>
         {saveSuccess && (
-          <span className="text-sm text-emerald-400 font-medium">
-            ✓ Saved
-          </span>
+          <span className="text-sm text-emerald-400 font-medium">✓ Saved</span>
         )}
       </div>
 
-      {/* Sites list — contained & scrollable */}
-      {blockedSites.length === 0 ? (
-        <div className="flex flex-1 items-center justify-center rounded-lg border border-white/10 bg-white/5 px-3 py-4 text-center text-sm text-slate-300">
-          No blocked sites yet. Add a site above to get started.
-        </div>
-      ) : (
-        <ScrollArea className="flex-1 min-h-0 rounded-lg border border-white/10 bg-white/5">
-          <ul className="divide-y divide-white/10">
-            {blockedSites.map((site) => (
-              <li
-                key={site.id}
-                className="flex items-center gap-2 px-3 py-3"
-              >
-                <span
-                  className="flex-1 truncate text-slate-100"
-                  title={site.domain}
-                >
-                  {site.domain}
-                </span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="shrink-0 text-red-300 hover:text-red-200"
-                  onClick={() => handleRemoveSite(site.id)}
-                  title="Remove site"
-                >
-                  ✕
-                </Button>
-              </li>
-            ))}
-          </ul>
-        </ScrollArea>
-      )}
+      {/* List box — consistent size whether empty or not */}
+      <section
+        aria-label="Blocked sites"
+        role="group"
+        className="rounded-lg border border-white/10 bg-white/5 overflow-hidden h-56"
+      >
+        {blockedSites.length === 0 ? (
+          <div className="flex h-full items-center justify-center px-3 py-4 text-center text-sm text-slate-300">
+            No blocked sites yet. Add a site above to get started.
+          </div>
+        ) : (
+          <ScrollArea className="h-full">
+            <ul role="list" className="divide-y divide-white/10">
+              {blockedSites.map((site) => (
+                <li key={site.id} className="flex items-center gap-2 px-3 py-3">
+                  <span
+                    className="flex-1 truncate text-slate-100"
+                    title={site.domain}
+                  >
+                    {site.domain}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="shrink-0 text-red-300 hover:text-red-200"
+                    onClick={() => handleRemoveSite(site.id)}
+                    title="Remove site"
+                  >
+                    ✕
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </ScrollArea>
+        )}
+      </section>
     </div>
   );
 }

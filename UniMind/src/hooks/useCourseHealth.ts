@@ -6,6 +6,7 @@ export type SubjectOverview = {
   course_name: string
   overall_mastery: number  // 0..1
   due_count: number
+  completed_due_count: number
   upcoming_assessments: { id: number; title: string; due_at?: string | null }[]
 }
 

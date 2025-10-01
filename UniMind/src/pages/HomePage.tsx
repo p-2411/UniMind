@@ -31,10 +31,10 @@ function HomePage() {
 
         <div className="p-4">
           {/* Dashboard Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <PriorityConceptsCard className="lg:col-span-3"/>
-            <DailyStreakCard className="lg:col-span-1"/>
-            <UpcomingAssessmentsCard className="lg:col-span-4"/>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-stretch">
+            <PriorityConceptsCard className="lg:col-span-3 h-full" />
+            <DailyStreakCard className="lg:col-span-1 h-full" />
+            <UpcomingAssessmentsCard className="lg:col-span-4" />
           </div>
         </div>
       </SidebarInset>

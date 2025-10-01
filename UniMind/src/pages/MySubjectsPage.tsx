@@ -102,39 +102,63 @@ function MySubjectsPage() {
   }, [courses, searchTerm, sortOption])
 
   // ---------- health ----------
-  const courseIds = filteredCourses.map(c => String(c.id ?? c.code))
+  const courseIds = filteredCourses.map(c => c.code)
   const healthMap = useCourseHealth(courseIds)
 
   // ---------- computed stats ----------
   const totalSubjects = filteredCourses.length
   const avgMasteryPct = useMemo(() => {
     const vals = filteredCourses
-      .map(c => healthMap[String(c.id ?? c.code)]?.overall_mastery)
+      .map(c => healthMap[c.code]?.overall_mastery)
       .filter((v): v is number => typeof v === 'number')
     if (!vals.length) return null
     return Math.round((vals.reduce((a, b) => a + b, 0) / vals.length) * 100)
   }, [filteredCourses, healthMap])
 
   const totalDue = useMemo(() => {
-    return filteredCourses.reduce((sum, c) => sum + (healthMap[String(c.id ?? c.code)]?.due_count ?? 0), 0)
+    return filteredCourses.reduce((sum, c) => sum + (healthMap[c.code]?.due_count ?? 0), 0)
   }, [filteredCourses, healthMap])
 
   const soonestAssessment = useMemo(() => {
+    console.log('Computing soonestAssessment...')
+    console.log('Filtered courses:', filteredCourses.length)
+
+    const assessmentData = filteredCourses.map(c => ({
+      code: c.code,
+      health: healthMap[c.code],
+      assessments: healthMap[c.code]?.upcoming_assessments
+    }))
+    console.log('Assessment data:', assessmentData)
+
     const times = filteredCourses
-      .map(c => healthMap[String(c.id ?? c.code)]?.upcoming_assessments?.[0]?.due_at)
+      .map(c => healthMap[c.code]?.upcoming_assessments?.[0]?.due_at)
       .filter(Boolean)
       .map(d => Date.parse(String(d)))
       .filter(n => !Number.isNaN(n))
-    if (!times.length) return null
-    const daysLeft = Math.ceil((Math.min(...times) - Date.now()) / (1000 * 60 * 60 * 24))
+
+    console.log('Parsed times:', times)
+    console.log('Times length:', times.length)
+
+    if (!times.length) {
+      console.log('No valid times found - returning null')
+      return null
+    }
+
+    const minTime = Math.min(...times)
+    const daysLeft = Math.ceil((minTime - Date.now()) / (1000 * 60 * 60 * 24))
+
+    console.log('Min time:', new Date(minTime))
+    console.log('Days left:', daysLeft)
+    console.log('Returning:', daysLeft >= 0 ? daysLeft : null)
+
     return daysLeft >= 0 ? daysLeft : null
   }, [filteredCourses, healthMap])
 
-  // Rank subjects for “today’s priority”: more due + lower mastery first
+  // Rank subjects for "today's priority": more due + lower mastery first
   const priorityList = useMemo(() => {
     return [...filteredCourses]
       .map(c => {
-        const h = healthMap[String(c.id ?? c.code)]
+        const h = healthMap[c.code]
         const mastery = typeof h?.overall_mastery === 'number' ? h!.overall_mastery : null
         const due = h?.due_count ?? 0
         const score = (due * 10) + (1 - (mastery ?? 0)) // simple: more due + lower mastery -> higher score
@@ -291,7 +315,7 @@ function MySubjectsPage() {
                     return d >= 0 ? `${d}d` : null
                   })()
                   return (
-                    <li key={course.id ?? course.code} className="py-3 flex items-center gap-4">
+                    <li key={course.code} className="py-3 flex items-center gap-4">
                       <div className="w-6 text-sm text-gray-400">{idx+1}.</div>
                       <div className="flex-1">
                         <div className="font-medium">{course.name}</div>
@@ -307,7 +331,7 @@ function MySubjectsPage() {
                         {nextDue && chip('', <><Clock className="h-3.5 w-3.5 text-sky-400" />{nextDue}</>)}
                         <Button
                           className="bg-yellow-400 text-black hover:bg-yellow-300"
-                          onClick={() => { window.location.href = `/review?courseId=${course.id ?? course.code}` }}
+                          onClick={() => { window.location.href = `/review?courseId=${course.code}` }}
                         >
                           Practice
                         </Button>
@@ -358,7 +382,7 @@ function MySubjectsPage() {
           ) : (
             <div className={cn('grid gap-4', viewMode === 'grid' ? 'md:grid-cols-2 xl:grid-cols-3' : 'grid-cols-1')}>
               {filteredCourses.map((course) => {
-                const h = healthMap[String(course.id ?? course.code)]
+                const h = healthMap[course.code]
                 const masteryPct = typeof h?.overall_mastery === 'number' ? Math.round(h!.overall_mastery * 100) : null
                 const dueCount = h?.due_count ?? 0
                 const completedDueCount = h?.completed_due_count ?? 0
@@ -373,7 +397,7 @@ function MySubjectsPage() {
 
                 return (
                   <Card
-                    key={course.id ?? course.code}
+                    key={course.code}
                     className="group relative overflow-hidden border-white/10 bg-white/5 backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:border-orange-400/60 hover:bg-white/10"
                   >
                     <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true">
@@ -427,7 +451,7 @@ function MySubjectsPage() {
                         </Button>
                         <Button
                           className="w-fit bg-yellow-400 text-black hover:bg-yellow-300"
-                          onClick={() => { window.location.href = `/review?courseId=${course.id ?? course.code}` }}
+                          onClick={() => { window.location.href = `/review?courseId=${course.code}` }}
                         >
                           Practice {dueCount ? `(${dueCount})` : ''}
                         </Button>

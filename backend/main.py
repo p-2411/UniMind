@@ -23,6 +23,8 @@ app.add_middleware(
         "https://uni-mind-inky.vercel.app",
         "http://localhost:5173",
         "http://localhost:3000",
+        "http://localhost:5174",
+        "ljlajflafdipkapoimnpmcnnonfdngci",  # Chrome extension
     ],
     allow_credentials=True,
     allow_methods=["*"],

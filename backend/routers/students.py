@@ -396,14 +396,17 @@ def get_upcoming_assessments(
     """Get upcoming assessments for the user's enrolled courses."""
     _assert_same_user(user_id, current_user)
 
-    # Get all assessments from enrolled courses, ordered by due date
-    # This shows both past and future assessments for demonstration purposes
+    # Get upcoming assessments from enrolled courses, ordered by due date
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc)
+
     assessments = (
         db.query(Assessment)
         .join(Course, Assessment.course_code == Course.code)
         .join(Enrolment, Enrolment.course_code == Course.code)
         .filter(Enrolment.user_id == current_user.id)
         .filter(Assessment.due_at.isnot(None))
+        .filter(Assessment.due_at > now)
         .order_by(Assessment.due_at.asc())
         .limit(limit)
         .all()

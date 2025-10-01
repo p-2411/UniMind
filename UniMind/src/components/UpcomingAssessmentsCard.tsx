@@ -18,7 +18,6 @@ export function UpcomingAssessmentsCard({ className }: { className?: string }) {
   const [assessments, setAssessments] = useState<Assessment[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [showAll, setShowAll] = useState(false)
 
   useEffect(() => {
     const fetchAssessments = async () => {
@@ -36,7 +35,7 @@ export function UpcomingAssessmentsCard({ className }: { className?: string }) {
         }
 
         const baseUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
-        const response = await fetch(`${baseUrl}/students/${user.id}/upcoming-assessments?limit=10`, {
+        const response = await fetch(`${baseUrl}/students/${user.id}/upcoming-assessments?limit=3`, {
           headers: {
             "Authorization": `Bearer ${token}`
           }
@@ -60,7 +59,6 @@ export function UpcomingAssessmentsCard({ className }: { className?: string }) {
           .sort((a, b) => new Date(a.due_at ?? 0).getTime() - new Date(b.due_at ?? 0).getTime())
 
         setAssessments(upcoming)
-        setShowAll(false)
       } catch (err) {
         console.error('Error fetching assessments:', err)
         setError(err instanceof Error ? err.message : 'Failed to load assessments')
@@ -117,7 +115,7 @@ export function UpcomingAssessmentsCard({ className }: { className?: string }) {
           </div>
         )}
 
-        {!loading && !error && assessments.slice(0, showAll ? assessments.length : 3).map((assessment) => {
+        {!loading && !error && assessments.map((assessment) => {
           const type = getAssessmentType(assessment.title)
 
           return (
@@ -157,18 +155,6 @@ export function UpcomingAssessmentsCard({ className }: { className?: string }) {
             </div>
           )
         })}
-
-        {!loading && !error && assessments.length > 3 && (
-          <div className="pt-2">
-            <button
-              type="button"
-              onClick={() => setShowAll((prev) => !prev)}
-              className="text-sm font-medium text-orange-400 hover:text-orange-300"
-            >
-              {showAll ? 'Show less' : `Show all (${assessments.length})`}
-            </button>
-          </div>
-        )}
       </CardContent>
     </Card>
   )

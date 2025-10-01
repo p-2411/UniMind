@@ -162,6 +162,22 @@ def update_profile(
     return UserResponse.model_validate(current_user)
 
 
+@router.get("/{user_id}/attempts/count")
+def get_attempts_count(
+    user_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Get the total number of question attempts for a user."""
+    _assert_same_user(user_id, current_user)
+
+    count = db.query(QuestionAttempt).filter(
+        QuestionAttempt.user_id == current_user.id
+    ).count()
+
+    return {"count": count}
+
+
 @router.post("/{user_id}/attempts", response_model=AttemptResult)
 def submit_attempt(
     user_id: str,

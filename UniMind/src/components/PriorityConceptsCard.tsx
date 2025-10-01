@@ -27,6 +27,7 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
   const [topics, setTopics] = useState<PriorityTopic[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [totalAttempts, setTotalAttempts] = useState(0)
 
   useEffect(() => {
     const fetchPriorityTopics = async () => {
@@ -37,19 +38,37 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
         if (!token) throw new Error("No authentication token found")
 
         const baseUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, "") ?? "http://localhost:8000"
+
+        // Fetch total attempts count
+        const attemptsRes = await fetch(`${baseUrl}/students/${user.id}/attempts/count`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+
+        if (attemptsRes.ok) {
+          const attemptsData = await attemptsRes.json()
+          setTotalAttempts(attemptsData.count || 0)
+
+          // Only fetch priority topics if user has at least 5 attempts
+          if (attemptsData.count < 5) {
+            setLoading(false)
+            return
+          }
+        }
+
         const res = await fetch(`${baseUrl}/students/${user.id}/priority-topics?limit=3`, {
           headers: { Authorization: `Bearer ${token}` }
         })
-        if (!res.ok) throw new Error("Failed to fetch priority topics")
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}))
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}))
           throw new Error(errorData.detail || 'Failed to fetch priority topics')
         }
 
-        const rawTopics: PriorityTopic[] = (await response.json()).map((topic: any) => {
-          const score = Number.isFinite(topic.priority_score)
-            ? (1 - Number(topic.priority_score) * 0.01).toFixed(2)
+        const rawTopics: PriorityTopic[] = (await res.json()).map((topic: any) => {
+          // Convert score to 0-100 range
+          const rawScore = Number(topic.priority_score)
+          const score = Number.isFinite(rawScore)
+            ? (1 - rawScore * 0.01)
             : 0
 
           return {
@@ -69,7 +88,7 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
             },
           }
         })
-        setTopics(rows)
+        setTopics(rawTopics)
       } catch (e) {
         setError(e instanceof Error ? e.message : "Failed to load priority concepts")
       } finally {
@@ -98,11 +117,17 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
 
         {error && <p className="text-center text-red-400">{error}</p>}
 
-        {!loading && !error && topics.length === 0 && (
+        {!loading && !error && totalAttempts < 5 && (
+          <p className="text-center text-gray-400">
+            Complete at least {5 - totalAttempts} more practice {5 - totalAttempts === 1 ? 'attempt' : 'attempts'} to see priority concepts
+          </p>
+        )}
+
+        {!loading && !error && totalAttempts >= 5 && topics.length === 0 && (
           <p className="text-center text-gray-400">No urgent topics. Keep practicing!</p>
         )}
 
-        {!loading && !error && (
+        {!loading && !error && totalAttempts >= 5 && topics.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {topics.map((topic) => {
               const band = scoreBand(topic.priority_score)
@@ -135,7 +160,7 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
                       <span className={`text-lg font-bold ${band.color}`}>
-                        {topic.priority_score.toFixed(0)}%
+                        {topic.priority_score.toFixed(2)}
                       </span>
                     </div>
                   </div>

@@ -34,7 +34,8 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
           throw new Error('No authentication token found')
         }
 
-        const response = await fetch(`http://localhost:8000/students/${user.id}/priority-topics?limit=3`, {
+        const baseUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
+        const response = await fetch(`${baseUrl}/students/${user.id}/priority-topics?limit=3`, {
           headers: {
             "Authorization": `Bearer ${token}`
           }

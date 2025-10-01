@@ -35,7 +35,8 @@ export function UpcomingAssessmentsCard({ className }: { className?: string }) {
           throw new Error('No authentication token found')
         }
 
-        const response = await fetch(`http://localhost:8000/students/${user.id}/upcoming-assessments?limit=10`, {
+        const baseUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
+        const response = await fetch(`${baseUrl}/students/${user.id}/upcoming-assessments?limit=10`, {
           headers: {
             "Authorization": `Bearer ${token}`
           }

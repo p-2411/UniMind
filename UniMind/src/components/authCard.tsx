@@ -42,7 +42,8 @@ export default function AuthCard() {
   useEffect(() => {
     const loadCourses = async () => {
       try {
-        const response = await fetch("http://localhost:8000/auth/course-options")
+        const baseUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
+        const response = await fetch(`${baseUrl}/auth/course-options`)
         if (!response.ok) {
           throw new Error("Failed to load available courses")
         }
@@ -75,7 +76,8 @@ export default function AuthCard() {
     try {
       if (isLogin) {
         // Login
-        const response = await fetch("http://localhost:8000/auth/login", {
+        const baseUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
+        const response = await fetch(`${baseUrl}/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -105,7 +107,8 @@ export default function AuthCard() {
           throw new Error("Password must be at least 8 characters")
         }
 
-        const response = await fetch("http://localhost:8000/auth/signup", {
+        const baseUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
+        const response = await fetch(`${baseUrl}/auth/signup`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

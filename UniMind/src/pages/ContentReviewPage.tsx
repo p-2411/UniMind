@@ -1,3 +1,4 @@
+// src/pages/ContentReviewPage.tsx
 import '../App.css'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
@@ -8,6 +9,8 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { chooseNextQuestions, updateAfterAnswer } from '@/lib/question-selector'
+import { ChevronDown, Check, Filter } from 'lucide-react'
+
 
 type ReviewQuestion = {
   id: string
@@ -27,10 +30,7 @@ type AttemptState = {
   selectedIndex: number | null
   submitting: boolean
   error: string | null
-  result: {
-    correct: boolean
-    explanation: string
-  } | null
+  result: { correct: boolean; explanation: string } | null
 }
 
 const difficultyLabels: Record<ReviewQuestion['difficulty'], string> = {
@@ -39,66 +39,61 @@ const difficultyLabels: Record<ReviewQuestion['difficulty'], string> = {
   hard: 'Hard',
 }
 
-function formatRelative(timestamp: number | null, prefix: string, emptyFallback: string) {
-  if (!timestamp) return emptyFallback
-  const diffMs = Date.now() - timestamp
-  const absDiff = Math.abs(diffMs)
-  const minutes = Math.round(absDiff / (60 * 1000))
-  if (minutes < 1) return `${prefix}just now`
-  if (minutes < 60) return `${prefix}${minutes} min${minutes === 1 ? '' : 's'} ${diffMs >= 0 ? 'ago' : 'from now'}`
-  const hours = Math.round(minutes / 60)
-  if (hours < 24) return `${prefix}${hours} hr${hours === 1 ? '' : 's'} ${diffMs >= 0 ? 'ago' : 'from now'}`
-  const days = Math.round(hours / 24)
+function formatRelative(ts: number | null, prefix: string, empty: string) {
+  if (!ts) return empty
+  const diffMs = Date.now() - ts
+  const mins = Math.round(Math.abs(diffMs) / 60000)
+  if (mins < 1) return `${prefix}just now`
+  if (mins < 60) return `${prefix}${mins} min${mins === 1 ? '' : 's'} ${diffMs >= 0 ? 'ago' : 'from now'}`
+  const hrs = Math.round(mins / 60)
+  if (hrs < 24) return `${prefix}${hrs} hr${hrs === 1 ? '' : 's'} ${diffMs >= 0 ? 'ago' : 'from now'}`
+  const days = Math.round(hrs / 24)
   return `${prefix}${days} day${days === 1 ? '' : 's'} ${diffMs >= 0 ? 'ago' : 'from now'}`
 }
 
-function accuracyLabel(value: number) {
-  const pct = Math.round(value * 100)
+function accuracyLabel(v: number) {
+  const pct = Math.round(v * 100)
   return Number.isFinite(pct) ? `${pct}%` : '—'
 }
 
 function ContentReviewPage() {
   const { user } = useAuth()
+
   const [questions, setQuestions] = useState<ReviewQuestion[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
   const [attemptStates, setAttemptStates] = useState<Record<string, AttemptState>>({})
   const [difficultyFilter, setDifficultyFilter] = useState<'all' | ReviewQuestion['difficulty']>('all')
+
   const [pageQuestions, setPageQuestions] = useState<ReviewQuestion[]>([])
   const [seenIds, setSeenIds] = useState<Set<string>>(new Set())
+
+  // NEW: topic/class filter state
+  const [topicsOpen, setTopicsOpen] = useState(false)
+  const [selectedTopics, setSelectedTopics] = useState<Set<string>>(new Set())
 
   const fetchQuestions = useCallback(async () => {
     if (!user) {
       setLoading(false)
       return
     }
-
     try {
       setLoading(true)
       setError(null)
 
       const token = localStorage.getItem('access_token')
-      if (!token) {
-        throw new Error('No authentication token found')
-      }
+      if (!token) throw new Error('No authentication token found')
 
-      const baseUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
+      const baseUrl =
+        (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
+
       const response = await fetch(`${baseUrl}/students/${user.id}/review-questions`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
         throw new Error((errorData as { detail?: string }).detail ?? 'Failed to fetch review questions')
-      }
-
-      const contentType = response.headers.get('content-type') ?? ''
-      if (!contentType.includes('application/json')) {
-        const unexpected = await response.text()
-        console.error('Unexpected response when fetching review questions:', unexpected)
-        throw new Error('Unexpected response from server')
       }
 
       const raw: any[] = await response.json()
@@ -120,7 +115,7 @@ function ContentReviewPage() {
       setAttemptStates({})
       setSeenIds(new Set())
     } catch (err) {
-      console.error('Error loading review questions:', err)
+      console.error(err)
       setQuestions([])
       setError(err instanceof Error ? err.message : 'Failed to load review questions')
     } finally {
@@ -132,141 +127,130 @@ function ContentReviewPage() {
     void fetchQuestions()
   }, [fetchQuestions])
 
+  // Derive unique topic list from fetched questions
+  const allTopics = useMemo(() => {
+    const s = new Set<string>()
+    for (const q of questions) s.add(q.topic)
+    return [...s].sort((a, b) => a.localeCompare(b))
+  }, [questions])
+
+  // Topic helpers
+  const toggleTopic = (t: string) =>
+    setSelectedTopics((prev) => {
+      const next = new Set(prev)
+      next.has(t) ? next.delete(t) : next.add(t)
+      return next
+    })
+  const clearTopics = () => setSelectedTopics(new Set())
+  const selectAllTopics = () => setSelectedTopics(new Set(allTopics))
+
+  // Apply filters (difficulty + topics)
   const filteredQuestions = useMemo(() => {
-    const base = difficultyFilter === 'all' ? questions : questions.filter((q) => q.difficulty === difficultyFilter)
-    return base
-  }, [questions, difficultyFilter])
+    const byDiff = difficultyFilter === 'all' ? questions : questions.filter((q) => q.difficulty === difficultyFilter)
+    if (selectedTopics.size === 0) return byDiff
+    return byDiff.filter((q) => selectedTopics.has(q.topic))
+  }, [questions, difficultyFilter, selectedTopics])
 
   const hasNext = useMemo(
     () => filteredQuestions.some((q) => !seenIds.has(q.id)),
     [filteredQuestions, seenIds]
   )
 
-  // Recompute first page whenever the filter or questions change
+  // First page whenever filters change
   useEffect(() => {
     if (filteredQuestions.length === 0) {
       setPageQuestions([])
       setSeenIds(new Set())
       return
     }
-    const initial = chooseNextQuestions(filteredQuestions, 3)
-    setPageQuestions(initial)
-    setSeenIds(new Set(initial.map((q) => q.id)))
+    const first = chooseNextQuestions(filteredQuestions, 3)
+    setPageQuestions(first)
+    setSeenIds(new Set(first.map((q) => q.id)))
   }, [filteredQuestions])
 
   const handleNextPage = () => {
     const next = chooseNextQuestions(filteredQuestions, 3, seenIds)
-    if (next.length > 0) {
-      const newSeen = new Set(seenIds)
-      next.forEach((q) => newSeen.add(q.id))
-      setSeenIds(newSeen)
-      setPageQuestions(next)
-      // reset attempt states for the newly shown questions only
-      setAttemptStates((prev) => {
-        const copy: typeof prev = { ...prev }
-        for (const q of next) delete copy[q.id]
-        return copy
-      })
-    }
+    if (next.length === 0) return
+    const newSeen = new Set(seenIds)
+    next.forEach((q) => newSeen.add(q.id))
+    setSeenIds(newSeen)
+    setPageQuestions(next)
+    setAttemptStates((prev) => {
+      const copy = { ...prev }
+      for (const q of next) delete copy[q.id]
+      return copy
+    })
   }
 
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <p className="text-gray-600">Loading...</p>
-        </div>
+        <p className="text-gray-600">Loading...</p>
       </div>
     )
   }
 
   const handleAttempt = async (question: ReviewQuestion, optionIndex: number) => {
-    setAttemptStates((prev) => ({
-      ...prev,
-      [question.id]: {
-        selectedIndex: optionIndex,
-        submitting: true,
-        error: null,
-        result: prev[question.id]?.result ?? null,
-      },
+    setAttemptStates((p) => ({
+      ...p,
+      [question.id]: { selectedIndex: optionIndex, submitting: true, error: null, result: p[question.id]?.result ?? null },
     }))
 
     try {
       const token = localStorage.getItem('access_token')
-      if (!token) {
-        throw new Error('Missing authentication token')
-      }
+      if (!token) throw new Error('Missing authentication token')
+      const baseUrl =
+        (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
 
-      const baseUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
-      const response = await fetch(`${baseUrl}/students/${user.id}/attempts`, {
+      const res = await fetch(`${baseUrl}/students/${user.id}/attempts`, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          question_id: question.id,
-          answer_index: optionIndex,
-          seconds: 0,
-        }),
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question_id: question.id, answer_index: optionIndex, seconds: 0 }),
       })
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error((errorData as { detail?: string }).detail ?? 'Attempt failed')
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        throw new Error((errData as { detail?: string }).detail ?? 'Attempt failed')
       }
+      const payload: { correct: boolean; explanation: string } = await res.json()
 
-      const payload: { correct: boolean; explanation: string } = await response.json()
-
-      setAttemptStates((prev) => ({
-        ...prev,
-        [question.id]: {
-          selectedIndex: optionIndex,
-          submitting: false,
-          error: null,
-          result: {
-            correct: payload.correct,
-            explanation: payload.explanation,
-          },
-        },
+      setAttemptStates((p) => ({
+        ...p,
+        [question.id]: { selectedIndex: optionIndex, submitting: false, error: null, result: payload },
       }))
-
-      // Update only the current page's questions to avoid resetting pagination
       setPageQuestions((prev) => prev.map((q) => (q.id === question.id ? updateAfterAnswer(q, payload.correct) : q)))
     } catch (err) {
-      console.error('Error submitting attempt:', err)
-      setAttemptStates((prev) => ({
-        ...prev,
+      setAttemptStates((p) => ({
+        ...p,
         [question.id]: {
           selectedIndex: optionIndex,
           submitting: false,
-          result: prev[question.id]?.result ?? null,
+          result: p[question.id]?.result ?? null,
           error: err instanceof Error ? err.message : 'Attempt failed',
         },
       }))
     }
   }
 
-  const renderOption = (question: ReviewQuestion, option: string, idx: number) => {
-    const state = attemptStates[question.id]
-    const isSubmitting = state?.submitting ?? false
-    const isSelected = state?.selectedIndex === idx
-    const hasAnswered = !!state?.result
-    const isCorrectOption = hasAnswered && idx === question.correctAnswer
-    const isIncorrectSelection = hasAnswered && isSelected && idx !== question.correctAnswer
+  const renderOption = (q: ReviewQuestion, option: string, idx: number) => {
+    const st = attemptStates[q.id]
+    const submitting = st?.submitting ?? false
+    const selected = st?.selectedIndex === idx
+    const answered = !!st?.result
+    const correct = answered && idx === q.correctAnswer
+    const wrongSel = answered && selected && idx !== q.correctAnswer
 
     return (
       <button
         key={idx}
         type="button"
-        disabled={isSubmitting || hasAnswered}
-        onClick={() => handleAttempt(question, idx)}
+        disabled={submitting || answered}
+        onClick={() => handleAttempt(q, idx)}
         className={cn(
           'w-full text-left border border-white/10 bg-white/5 rounded-lg px-4 py-3 transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400',
-          isSelected && !hasAnswered && 'border-orange-400 bg-orange-400/10',
-          hasAnswered && isCorrectOption && 'border-green-400 bg-green-500/10 text-green-200',
-          hasAnswered && isIncorrectSelection && 'border-red-400 bg-red-500/10 text-red-200',
-          isSubmitting && 'opacity-70'
+          selected && !answered && 'border-orange-400 bg-orange-400/10',
+          answered && correct && 'border-green-400 bg-green-500/10 text-green-200',
+          answered && wrongSel && 'border-red-400 bg-red-500/10 text-red-200',
+          submitting && 'opacity-70'
         )}
       >
         <div className="flex gap-3 items-start">
@@ -291,11 +275,14 @@ function ContentReviewPage() {
         </header>
 
         <div className="p-4 space-y-6">
+          {/* Top controls */}
+          {/* Top row: title + difficulties + refresh */}
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
               <h2 className="text-xl font-semibold text-white">Ready to practise?</h2>
               <p className="text-sm text-gray-400">Answer questions from your enrolled topics and keep your mastery sharp.</p>
             </div>
+
             <div className="flex flex-wrap gap-2">
               {(['all', 'easy', 'medium', 'hard'] as const).map((filter) => (
                 <Button
@@ -308,19 +295,88 @@ function ContentReviewPage() {
                   {filter === 'all' ? 'All difficulties' : difficultyLabels[filter]}
                 </Button>
               ))}
-              <Button
-                type="button"
-                variant="outline"
-                disabled={loading}
-                onClick={() => {
-                  void fetchQuestions()
-                }}
-              >
+
+              <Button type="button" variant="outline" disabled={loading} onClick={() => void fetchQuestions()}>
                 Refresh list
               </Button>
             </div>
           </div>
 
+          {/* Second row: Topics filter on its own line */}
+          <div className="flex flex-wrap gap-2 mt-2">
+            <div className="relative">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setTopicsOpen((v) => !v)}
+                className="inline-flex items-center gap-2"
+              >
+                <Filter className="h-4 w-4 text-gray-400 group-hover:text-gray-200 transition-colors" />
+                Topics
+                {selectedTopics.size > 0 && (
+                  <span className="ml-1 rounded-full bg-white/10 px-2 py-0.5 text-xs">
+                    {selectedTopics.size}
+                  </span>
+                )}
+                <ChevronDown className={cn('h-4 w-4 transition-transform', topicsOpen && 'rotate-180')} />
+              </Button>
+
+              {topicsOpen && (
+                <div
+                  className="absolute left-0 z-20 mt-2 w-72 rounded-lg border border-white/10 bg-slate-900/95 backdrop-blur-md shadow-xl p-2"
+                  onMouseLeave={() => setTopicsOpen(false)}
+                >
+                  <div className="flex items-center justify-between px-2 py-1">
+                    <span className="text-xs uppercase tracking-wide text-gray-400">Filter by topics</span>
+                    <div className="flex gap-2">
+                      <button type="button" onClick={selectAllTopics} className="text-xs text-gray-300 hover:text-white">
+                        Select all
+                      </button>
+                      <button type="button" onClick={clearTopics} className="text-xs text-gray-300 hover:text-white">
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="max-h-64 overflow-auto pr-1">
+                    {allTopics.length === 0 ? (
+                      <div className="px-3 py-6 text-sm text-gray-400">No topics available</div>
+                    ) : (
+                      allTopics.map((topic) => {
+                        const checked = selectedTopics.has(topic)
+                        return (
+                          <label
+                            key={topic}
+                            className="flex items-center gap-2 cursor-pointer rounded-md px-2 py-1.5 hover:bg-white/5"
+                            onMouseDown={(e) => e.preventDefault()} // keep dropdown open
+                          >
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={() => toggleTopic(topic)}
+                              className="peer sr-only"
+                            />
+                            <span
+                              className={cn(
+                                'grid place-items-center h-4 w-4 rounded border',
+                                checked ? 'border-orange-400 bg-orange-400/20' : 'border-white/20 bg-transparent'
+                              )}
+                            >
+                              {checked && <Check className="h-3 w-3 text-orange-300" />}
+                            </span>
+                            <span className="text-sm text-gray-200 truncate">{topic}</span>
+                          </label>
+                        )
+                      })
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+
+          {/* Loading skeletons */}
           {loading && (
             <div className="grid gap-4">
               {[1, 2, 3].map((i) => (
@@ -339,6 +395,7 @@ function ContentReviewPage() {
             </div>
           )}
 
+          {/* Errors / Empty */}
           {!loading && error && (
             <div className="text-center py-16">
               <p className="text-red-400 text-lg">{error}</p>
@@ -353,60 +410,57 @@ function ContentReviewPage() {
             </div>
           )}
 
+          {/* Questions */}
           {!loading && !error && filteredQuestions.length > 0 && (
             <div className="grid gap-4">
-              {pageQuestions.map((question) => {
-                const state = attemptStates[question.id]
+              {pageQuestions.map((q) => {
+                const st = attemptStates[q.id]
                 return (
-                  <Card key={question.id} className="bg-white/5 border-white/10">
+                  <Card key={q.id} className="bg-white/5 border-white/10">
                     <CardHeader className="space-y-3">
                       <div className="flex flex-wrap items-center gap-2 text-xs text-gray-300">
                         <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[11px] uppercase tracking-wide text-gray-200">
-                          {question.topic}
+                          {q.topic}
                         </span>
                         <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-gray-300">
-                          Difficulty: {difficultyLabels[question.difficulty]}
+                          Difficulty: {difficultyLabels[q.difficulty]}
                         </span>
                         <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-gray-300">
-                          Accuracy: {accuracyLabel(question.rollingAccuracy)}
+                          Accuracy: {accuracyLabel(q.rollingAccuracy)}
                         </span>
                         <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-gray-300">
-                          Attempts: {question.attempts}
+                          Attempts: {q.attempts}
                         </span>
                         <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-gray-300">
-                          {formatRelative(question.lastSeenAt, 'Seen ', 'Not attempted yet')}
+                          {formatRelative(q.lastSeenAt, 'Seen ', 'Not attempted yet')}
                         </span>
-                        {question.nextDueAt && (
+                        {q.nextDueAt && (
                           <span className="inline-flex items-center rounded-full border border-orange-400/50 bg-orange-400/10 px-2 py-0.5 text-[11px] text-orange-200">
-                            {formatRelative(question.nextDueAt, 'Due ', 'Due soon')}
+                            {formatRelative(q.nextDueAt, 'Due ', 'Due soon')}
                           </span>
                         )}
                       </div>
-                      <CardTitle className="text-lg text-white leading-snug">
-                        {question.prompt}
-                      </CardTitle>
+
+                      <CardTitle className="text-lg text-white leading-snug">{q.prompt}</CardTitle>
                       <CardDescription className="text-sm text-gray-400">
                         Choose the best answer to reinforce this concept.
                       </CardDescription>
                     </CardHeader>
+
                     <CardContent className="space-y-3">
-                      {question.options.map((option, idx) => renderOption(question, option, idx))}
+                      {q.options.map((opt, i) => renderOption(q, opt, i))}
 
-                      {state?.error && (
-                        <p className="text-sm text-red-400">{state.error}</p>
-                      )}
+                      {st?.error && <p className="text-sm text-red-400">{st.error}</p>}
 
-                      {state?.result && (
+                      {st?.result && (
                         <div className="rounded-md border border-white/10 bg-white/5 p-3 text-sm text-gray-200">
                           <p className="font-semibold text-white">
-                            {state.result.correct ? 'Nice work! That’s correct.' : 'Not quite. Review the explanation below.'}
+                            {st.result.correct ? 'Nice work! That’s correct.' : 'Not quite. Review the explanation below.'}
                           </p>
-                          {state.result.explanation && (
-                            <p className="mt-2 text-gray-300">{state.result.explanation}</p>
-                          )}
-                          {!state.result.correct && question.options[question.correctAnswer] && (
+                          {st.result.explanation && <p className="mt-2 text-gray-300">{st.result.explanation}</p>}
+                          {!st.result.correct && q.options[q.correctAnswer] && (
                             <p className="mt-2 text-gray-200">
-                              Correct answer: <span className="font-semibold">{question.options[question.correctAnswer]}</span>
+                              Correct answer: <span className="font-semibold">{q.options[q.correctAnswer]}</span>
                             </p>
                           )}
                         </div>
@@ -415,6 +469,7 @@ function ContentReviewPage() {
                   </Card>
                 )
               })}
+
               <div className="flex justify-end mt-2">
                 <Button type="button" variant="default" onClick={handleNextPage} disabled={!hasNext}>
                   Next

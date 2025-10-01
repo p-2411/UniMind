@@ -9,7 +9,7 @@
     "webNavigation"
   ],
   "host_permissions": [
-    "<all_urls>"
+    "https://unimind-production.up.railway.app/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -17,13 +17,8 @@
   "action": {
     "default_popup": "index.html"
   },
-  "web_accessible_resources": [
-    {
-      "resources": ["index.html", "assets/*"],
-      "matches": ["<all_urls>"]
-    }
-  ],
+  
   "externally_connectable": {
-    "matches": ["http://localhost:*/*"]
+    "matches": ["http://localhost:*/*", "https://uni-mind-inky.vercel.app/*"]
   }
 }

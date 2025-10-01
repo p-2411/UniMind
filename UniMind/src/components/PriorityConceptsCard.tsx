@@ -1,7 +1,6 @@
 // src/components/PriorityConceptsCard.tsx
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Target } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useAuth } from "@/contexts/AuthContext"
 import type { PriorityResult } from "@/priority-engine"

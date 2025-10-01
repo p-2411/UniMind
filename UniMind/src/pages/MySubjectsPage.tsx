@@ -16,6 +16,13 @@ import { useCourseHealth } from '@/hooks/useCourseHealth'
 type SortOption = 'recent' | 'alphabetical'
 type ViewMode = 'grid' | 'list'
 
+type UpcomingAssessment = {
+  course: Course
+  title: string
+  dueAtRaw: string
+  dueTime: number
+}
+
 function formatDate(dateString: string) {
   const parsed = Date.parse(dateString)
   if (Number.isNaN(parsed)) return '—'
@@ -119,40 +126,36 @@ function MySubjectsPage() {
     return filteredCourses.reduce((sum, c) => sum + (healthMap[c.code]?.due_count ?? 0), 0)
   }, [filteredCourses, healthMap])
 
-  const soonestAssessment = useMemo(() => {
-    console.log('Computing soonestAssessment...')
-    console.log('Filtered courses:', filteredCourses.length)
+  const nextAssessment = useMemo<UpcomingAssessment | null>(() => {
+    const now = Date.now()
+    const entries: UpcomingAssessment[] = []
 
-    const assessmentData = filteredCourses.map(c => ({
-      code: c.code,
-      health: healthMap[c.code],
-      assessments: healthMap[c.code]?.upcoming_assessments
-    }))
-    console.log('Assessment data:', assessmentData)
+    filteredCourses.forEach(course => {
+      const overview = healthMap[course.code]
+      overview?.upcoming_assessments?.forEach(assessment => {
+        if (!assessment.due_at) return
+        const dueTime = Date.parse(assessment.due_at)
+        if (Number.isNaN(dueTime) || dueTime < now) return
 
-    const times = filteredCourses
-      .map(c => healthMap[c.code]?.upcoming_assessments?.[0]?.due_at)
-      .filter(Boolean)
-      .map(d => Date.parse(String(d)))
-      .filter(n => !Number.isNaN(n))
+        entries.push({
+          course,
+          title: assessment.title,
+          dueAtRaw: assessment.due_at,
+          dueTime,
+        })
+      })
+    })
 
-    console.log('Parsed times:', times)
-    console.log('Times length:', times.length)
+    if (!entries.length) return null
 
-    if (!times.length) {
-      console.log('No valid times found - returning null')
-      return null
-    }
-
-    const minTime = Math.min(...times)
-    const daysLeft = Math.ceil((minTime - Date.now()) / (1000 * 60 * 60 * 24))
-
-    console.log('Min time:', new Date(minTime))
-    console.log('Days left:', daysLeft)
-    console.log('Returning:', daysLeft >= 0 ? daysLeft : null)
-
-    return daysLeft >= 0 ? daysLeft : null
+    return entries.reduce((soonest, current) => (current.dueTime < soonest.dueTime ? current : soonest))
   }, [filteredCourses, healthMap])
+
+  const daysUntilNextAssessment = useMemo(() => {
+    if (!nextAssessment) return null
+    const diff = Math.ceil((nextAssessment.dueTime - Date.now()) / (1000 * 60 * 60 * 24))
+    return diff >= 0 ? diff : 0
+  }, [nextAssessment])
 
   // Rank subjects for "today's priority": more due + lower mastery first
   const priorityList = useMemo(() => {
@@ -230,8 +233,16 @@ function MySubjectsPage() {
                 <Clock className="h-4 w-4 text-sky-400" /> Next assessment
               </CardTitle>
             </CardHeader>
-            <CardContent className="text-3xl font-semibold">
-              {soonestAssessment !== null ? `${soonestAssessment}d` : '—'}
+            <CardContent className="space-y-1">
+              <div className="text-3xl font-semibold">
+                {daysUntilNextAssessment !== null ? `${daysUntilNextAssessment}d` : '—'}
+              </div>
+              {nextAssessment && (
+                <p className="text-xs text-gray-400">
+                  {nextAssessment.course.code} · {nextAssessment.title}
+                  {nextAssessment.dueAtRaw ? ` · ${formatDate(nextAssessment.dueAtRaw)}` : ''}
+                </p>
+              )}
             </CardContent>
           </Card>
         </section>

@@ -7,6 +7,7 @@ import MySubjectsPage from './pages/MySubjectsPage';
 import SettingsPage from './pages/SettingsPage';
 import ContentReviewPage from './pages/ContentReviewPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute.tsx';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 
 function App() {
   const { loading } = useAuth();
@@ -28,6 +29,7 @@ function App() {
       {/* Public routes - accessible without authentication */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/verify-email" element={<VerifyEmailPage />} />
+      <Route path="/privacy" element={<PrivacyPolicyPage />} />
       
       {/* Protected routes - require authentication */}
       <Route

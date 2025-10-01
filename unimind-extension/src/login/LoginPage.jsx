@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import logo from '../assets/logo.png';
 import '../styles/popup.css';
-
-const API_BASE_URL = 'http://localhost:8000';
+import { API_BASE_URL } from '../config.js';
 
 function LoginPage({ onLoginSuccess }) {
   const [email, setEmail] = useState('');

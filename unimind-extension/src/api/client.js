@@ -1,5 +1,5 @@
 // API client for UniMind backend
-const API_BASE_URL = 'http://localhost:8000';
+import { API_BASE_URL } from '../config.js'
 
 /**
  * Get authentication token from Chrome storage

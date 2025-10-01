@@ -20,7 +20,7 @@ app.include_router(gate.router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://uni-mind-inky.vercel.app/",
+        "https://uni-mind-inky.vercel.app",
         "http://localhost:5173",
         "http://localhost:3000",
     ],

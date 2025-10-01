@@ -88,14 +88,25 @@ export default function PopupDashboard() {
 
   if (showBlockedSites) {
     return (
-      <div className="min-w-[320px] bg-[#0b1320] p-4">
-        <Card className="bg-white/5 border-white/10 shadow-xl backdrop-blur">
-          <CardHeader className="pb-0">
-            <Button variant="ghost" className="px-0" onClick={() => setShowBlockedSites(false)}>
-              ← Back to dashboard
-            </Button>
+      <div className="min-w-[320px] min-h-[560px] bg-[#0b1320] p-4 text-slate-100">
+        <Card className="bg-white/5 border-white/10 shadow-xl backdrop-blur rounded-2xl h-full min-h-[520px] flex flex-col">
+          <CardHeader className="pb-2">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h1 className="text-xl font-semibold">Blocked sites</h1>
+                <p className="text-sm text-slate-300">Tune which sites trigger a focus check.</p>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-slate-300 hover:text-slate-100 px-0"
+                onClick={() => setShowBlockedSites(false)}
+              >
+                ← Back
+              </Button>
+            </div>
           </CardHeader>
-          <CardContent className="p-4">
+          <CardContent className="flex flex-1 flex-col gap-4 overflow-hidden px-6 pb-6 pt-0">
             <BlockedSitesManager />
           </CardContent>
         </Card>

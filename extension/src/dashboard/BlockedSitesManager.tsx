@@ -1,6 +1,6 @@
 // src/components/BlockedSitesManager.tsx
 import { useEffect, useState } from "react";
-import { fetchBlockedSites, addBlockedSite, removeBlockedSite } from "../api/client";
+import { fetchBlockedSites, saveBlockedSites } from "../api/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,12 +9,14 @@ import { ScrollArea } from "@/components/ui/scroll-area"; // if you don't have s
 type Site = { id: string; domain: string };
 
 export default function BlockedSitesManager() {
+  const [originalSites, setOriginalSites] = useState<Site[]>([]);
   const [blockedSites, setBlockedSites] = useState<Site[]>([]);
   const [newDomain, setNewDomain] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [addError, setAddError] = useState<string | null>(null);
-  const [isAdding, setIsAdding] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   useEffect(() => {
     loadBlockedSites();
@@ -25,6 +27,7 @@ export default function BlockedSitesManager() {
       setLoading(true);
       const sites = await fetchBlockedSites();
       setBlockedSites(sites);
+      setOriginalSites(sites);
       setError(null);
     } catch (err) {
       console.error("Failed to load blocked sites", err);
@@ -34,37 +37,61 @@ export default function BlockedSitesManager() {
     }
   }
 
-  async function handleAddSite(e: React.FormEvent) {
+  function handleAddSite(e: React.FormEvent) {
     e.preventDefault();
     const domain = newDomain.trim();
     if (!domain) return;
 
+    setAddError(null);
+
+    // Check if domain already exists
+    if (blockedSites.some(s => s.domain.toLowerCase() === domain.toLowerCase())) {
+      setAddError("Site already in the list");
+      return;
+    }
+
+    // Add to local state with temporary ID
+    const newSite: Site = {
+      id: `temp-${Date.now()}`,
+      domain: domain.toLowerCase().replace(/^www\./, ''),
+    };
+    setBlockedSites((prev) => [...prev, newSite]);
+    setNewDomain("");
+    setSaveSuccess(false);
+  }
+
+  function handleRemoveSite(siteId: string) {
+    setBlockedSites((prev) => prev.filter((s) => s.id !== siteId));
+    setSaveSuccess(false);
+  }
+
+  async function handleSave() {
     try {
-      setIsAdding(true);
-      setAddError(null);
-      const newSite = await addBlockedSite(domain);
-      setBlockedSites((prev) => [...prev, newSite]);
-      setNewDomain("");
+      setIsSaving(true);
+      setError(null);
+      setSaveSuccess(false);
+
+      await saveBlockedSites(blockedSites);
+
+      // Reload from server to get real IDs
+      const sites = await fetchBlockedSites();
+      setBlockedSites(sites);
+      setOriginalSites(sites);
+      setSaveSuccess(true);
 
       chrome.runtime.sendMessage({ type: "REFRESH_BLOCKED_SITES" });
+
+      // Clear success message after 3 seconds
+      setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err: any) {
-      console.error("Failed to add blocked site", err);
-      setAddError(err?.message || "Failed to add site");
+      console.error("Failed to save blocked sites", err);
+      setError(err?.message || "Failed to save changes");
     } finally {
-      setIsAdding(false);
+      setIsSaving(false);
     }
   }
 
-  async function handleRemoveSite(siteId: string) {
-    try {
-      await removeBlockedSite(siteId);
-      setBlockedSites((prev) => prev.filter((s) => s.id !== siteId));
-      chrome.runtime.sendMessage({ type: "REFRESH_BLOCKED_SITES" });
-    } catch (err) {
-      console.error("Failed to remove blocked site", err);
-      alert("Failed to remove site");
-    }
-  }
+  const hasChanges = JSON.stringify(blockedSites) !== JSON.stringify(originalSites);
 
   if (loading) {
     return (
@@ -77,7 +104,7 @@ export default function BlockedSitesManager() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="flex min-h-0 flex-1 flex-col gap-4">
       {/* Heading */}
       <div>
         <h2 className="text-lg font-semibold text-slate-100">Blocked Sites</h2>
@@ -109,15 +136,15 @@ export default function BlockedSitesManager() {
             value={newDomain}
             onChange={(e) => setNewDomain(e.target.value)}
             placeholder="e.g., youtube.com"
-            disabled={isAdding}
+            disabled={isSaving}
             className="bg-white/5 text-slate-100 placeholder:text-slate-400 border-white/10"
           />
           <Button
             type="submit"
-            disabled={isAdding || !newDomain.trim()}
-            className="whitespace-nowrap bg-amber-400 text-black hover:bg-amber-300 font-semibold"
+            disabled={isSaving || !newDomain.trim()}
+            className="whitespace-nowrap bg-white/10 text-slate-100 hover:bg-white/15 font-semibold border border-white/20"
           >
-            {isAdding ? "Adding…" : "Add Site"}
+            Add Site
           </Button>
         </div>
 
@@ -132,13 +159,29 @@ export default function BlockedSitesManager() {
         )}
       </form>
 
+      {/* Save button */}
+      <div className="flex items-center gap-3">
+        <Button
+          onClick={handleSave}
+          disabled={!hasChanges || isSaving}
+          className="flex-1 bg-amber-400 text-black hover:bg-amber-300 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isSaving ? "Saving…" : "Save Changes"}
+        </Button>
+        {saveSuccess && (
+          <span className="text-sm text-emerald-400 font-medium">
+            ✓ Saved
+          </span>
+        )}
+      </div>
+
       {/* Sites list — contained & scrollable */}
       {blockedSites.length === 0 ? (
-        <div className="rounded-lg border border-white/10 bg-white/5 px-3 py-4 text-sm text-slate-300">
+        <div className="flex flex-1 items-center justify-center rounded-lg border border-white/10 bg-white/5 px-3 py-4 text-center text-sm text-slate-300">
           No blocked sites yet. Add a site above to get started.
         </div>
       ) : (
-        <ScrollArea className="max-h-56 rounded-lg border border-white/10 bg-white/5">
+        <ScrollArea className="flex-1 min-h-0 rounded-lg border border-white/10 bg-white/5">
           <ul className="divide-y divide-white/10">
             {blockedSites.map((site) => (
               <li
@@ -154,7 +197,7 @@ export default function BlockedSitesManager() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-red-300 hover:text-red-200"
+                  className="shrink-0 text-red-300 hover:text-red-200"
                   onClick={() => handleRemoveSite(site.id)}
                   title="Remove site"
                 >

@@ -61,7 +61,7 @@ function MySubjectsPage() {
       }
 
       const baseUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
-      const response = await fetch(`${baseUrl}/courses`, {
+      const response = await fetch(`${baseUrl}/students/${user.id}/enrolments`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

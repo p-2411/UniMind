@@ -62,20 +62,8 @@
     {
       "title": "Assignment 2 – Modular C Programming",
       "weight": 15.0,
-      "due_at": "2025-11-03T18:00:00+11:00",
+      "due_at": "2025-11-22T18:00:00+09:00",
       "description": "Individual assignment emphasising modularity, testing, and pointers."
-    },
-    {
-      "title": "Assignment 3 – Capstone Project",
-      "weight": 20.0,
-      "due_at": "2025-11-24T18:00:00+11:00",
-      "description": "Team-based C project applying course concepts to a larger codebase."
-    },
-    {
-      "title": "Midterm Practical Test",
-      "weight": 5.0,
-      "due_at": "2025-10-17T10:00:00+11:00",
-      "description": "In-lab practical assessing mid-semester programming skills."
     },
     {
       "title": "Final Exam",

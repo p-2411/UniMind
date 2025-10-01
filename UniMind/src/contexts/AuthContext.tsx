@@ -1,4 +1,7 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+// Declare chrome for type-checking in web builds (runtime guard remains in place)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const chrome: any
 
 interface User {
   id: string

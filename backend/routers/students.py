@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -16,7 +16,9 @@ from backend.models.topic import Topic
 from backend.models.progress import TopicProgress
 from backend.models.user import User
 from backend.models.assessment import Assessment
-from backend.schemas import AttemptCreate, AttemptResult, CourseOut, EnrolRequest, ProgressItem
+from backend.models.question_metric import QuestionMetric
+from backend.schemas import AttemptCreate, AttemptResult, CourseOut, EnrolRequest, ProgressItem, UserResponse
+from backend.schemas.auth import UserUpdate
 from backend.schemas.topic import TopicOut, TopicPriorityOut
 from backend.schemas.assessment import AssessmentOut
 from backend.services.progress import apply_attempt, ensure_topic_progress, stage_from_percent
@@ -76,6 +78,88 @@ def enrol_student(
     return course
 
 
+@router.delete("/{user_id}/enrolments/{course_code}", status_code=status.HTTP_204_NO_CONTENT)
+def unenrol_student(
+    user_id: str,
+    course_code: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    _assert_same_user(user_id, current_user)
+
+    code = course_code.upper()
+
+    # Identify all topics (and questions) that belong to this course
+    topic_ids_subq = db.query(Topic.id).filter(Topic.course_code == code).subquery()
+    question_ids_subq = db.query(Question.id).filter(Question.topic_id.in_(topic_ids_subq)).subquery()
+
+    # Delete user progress for these topics
+    (
+        db.query(TopicProgress)
+        .filter(
+            TopicProgress.user_id == current_user.id,
+            TopicProgress.topic_id.in_(topic_ids_subq),
+        )
+        .delete(synchronize_session=False)
+    )
+
+    # Delete user attempts for questions from these topics
+    (
+        db.query(QuestionAttempt)
+        .filter(
+            QuestionAttempt.user_id == current_user.id,
+            QuestionAttempt.question_id.in_(question_ids_subq),
+        )
+        .delete(synchronize_session=False)
+    )
+
+    # Delete per-question metrics for these questions
+    (
+        db.query(QuestionMetric)
+        .filter(
+            QuestionMetric.user_id == current_user.id,
+            QuestionMetric.question_id.in_(question_ids_subq),
+        )
+        .delete(synchronize_session=False)
+    )
+
+    # Finally, remove enrolment row if present (idempotent)
+    enrol = db.get(Enrolment, (current_user.id, code))
+    if enrol:
+        db.delete(enrol)
+
+    db.commit()
+    return
+
+
+@router.patch("/{user_id}/profile", response_model=UserResponse)
+def update_profile(
+    user_id: str,
+    payload: UserUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    _assert_same_user(user_id, current_user)
+
+    # Update email if provided (ensure unique)
+    if payload.email and payload.email.lower() != current_user.email:
+        exists = (
+            db.query(User)
+            .filter(User.email == payload.email.lower())
+            .first()
+        )
+        if exists:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already in use")
+        current_user.email = payload.email.lower()
+
+    if payload.display_name is not None:
+        current_user.display_name = payload.display_name
+
+    db.commit()
+    db.refresh(current_user)
+    return UserResponse.model_validate(current_user)
+
+
 @router.post("/{user_id}/attempts", response_model=AttemptResult)
 def submit_attempt(
     user_id: str,
@@ -104,7 +188,43 @@ def submit_attempt(
     progress = ensure_topic_progress(db, current_user.id, question.topic_id)
     apply_attempt(progress, is_correct, payload.seconds)
 
-    update_streak(db, current_user.id, datetime.utcnow())
+    # Update per-question metrics so extension and in-app review stay in sync
+    now = datetime.utcnow()
+    metrics = (
+        db.query(QuestionMetric)
+        .filter(
+            QuestionMetric.user_id == current_user.id,
+            QuestionMetric.question_id == question.id,
+        )
+        .first()
+    )
+    if metrics is None:
+        metrics = QuestionMetric(
+            user_id=current_user.id,
+            question_id=question.id,
+            rolling_accuracy=0.5,
+            attempts=0,
+        )
+        db.add(metrics)
+
+    EMA_ALPHA = 0.2
+    prev = metrics.rolling_accuracy or 0.5
+    target = 1.0 if is_correct else 0.0
+    metrics.rolling_accuracy = max(0.0, min(1.0, EMA_ALPHA * target + (1 - EMA_ALPHA) * prev))
+
+    metrics.attempts = max(0, (metrics.attempts or 0)) + 1
+
+    DAY = timedelta(days=1)
+    SIX_HOURS = timedelta(hours=6)
+    if metrics.last_seen_at and metrics.next_due_at:
+        prev_interval = max(timedelta(seconds=1), metrics.next_due_at - metrics.last_seen_at)
+    else:
+        prev_interval = DAY
+    next_interval = max(DAY, prev_interval * 2) if is_correct else max(SIX_HOURS, prev_interval * 0.5)
+    metrics.last_seen_at = now
+    metrics.next_due_at = now + next_interval
+
+    update_streak(db, current_user.id, now)
 
     db.commit()
     db.refresh(progress)
@@ -274,27 +394,36 @@ def get_upcoming_assessments(
     return assessments
 
 
+## Removed: questions-for-extension endpoint
+
 @router.get("/{user_id}/questions-for-extension")
 def get_questions_for_extension(
     user_id: str,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """Get all questions from enrolled courses with attempt metadata for the extension algorithm."""
+    """Return questions with per-user metrics (used by extension and in-app)."""
     _assert_same_user(user_id, current_user)
 
     # Get all questions from enrolled courses
     questions_query = (
-        db.query(Question, Topic)
+        db.query(Question, Topic, QuestionMetric)
         .join(Topic, Question.topic_id == Topic.id)
         .join(Course, Topic.course_code == Course.code)
         .join(Enrolment, Enrolment.course_code == Course.code)
+        .outerjoin(
+            QuestionMetric,
+            (QuestionMetric.user_id == current_user.id) & (QuestionMetric.question_id == Question.id),
+        )
         .filter(Enrolment.user_id == current_user.id)
         .all()
     )
 
+    if not questions_query:
+        return []
+
     # Get user's attempts for these questions
-    question_ids = [q.id for q, _ in questions_query]
+    question_ids = [q.id for q, _, _ in questions_query]
     attempts_query = (
         db.query(QuestionAttempt)
         .filter(
@@ -305,37 +434,35 @@ def get_questions_for_extension(
     )
 
     # Calculate metadata for each question
-    attempts_by_question = {}
+    attempts_by_question: dict = {}
     for attempt in attempts_query:
-        if attempt.question_id not in attempts_by_question:
-            attempts_by_question[attempt.question_id] = []
-        attempts_by_question[attempt.question_id].append(attempt)
+        attempts_by_question.setdefault(attempt.question_id, []).append(attempt)
 
     result = []
-    for question, topic in questions_query:
+    for question, topic, metrics in questions_query:
         question_attempts = attempts_by_question.get(question.id, [])
 
-        # Calculate rolling accuracy (EMA with alpha=0.2)
-        rolling_accuracy = 0.5  # default
-        if question_attempts:
-            acc = rolling_accuracy
-            for attempt in sorted(question_attempts, key=lambda a: a.answered_at):
-                target = 1.0 if attempt.was_correct else 0.0
-                acc = 0.2 * target + 0.8 * acc
-            rolling_accuracy = acc
-
-        # Calculate last_seen_at and next_due_at
-        last_seen_at = None
-        next_due_at = None
-        if question_attempts:
-            last_attempt = max(question_attempts, key=lambda a: a.answered_at)
-            last_seen_at = int(last_attempt.answered_at.timestamp() * 1000)  # ms
-
-            # Simple spaced repetition: if last was correct, due in 24h, else 6h
-            if last_attempt.was_correct:
-                next_due_at = last_seen_at + (24 * 60 * 60 * 1000)
-            else:
-                next_due_at = last_seen_at + (6 * 60 * 60 * 1000)
+        if metrics is not None:
+            last_seen_at = int(metrics.last_seen_at.timestamp() * 1000) if metrics.last_seen_at else None
+            next_due_at = int(metrics.next_due_at.timestamp() * 1000) if metrics.next_due_at else None
+            rolling_accuracy = float(metrics.rolling_accuracy or 0.5)
+            attempts_count = int(metrics.attempts or 0)
+        else:
+            # Fallback: derive from attempts
+            rolling_accuracy = 0.5
+            if question_attempts:
+                acc = rolling_accuracy
+                for attempt in sorted(question_attempts, key=lambda a: a.answered_at):
+                    target = 1.0 if attempt.was_correct else 0.0
+                    acc = 0.2 * target + 0.8 * acc
+                rolling_accuracy = acc
+            last_seen_at = None
+            next_due_at = None
+            if question_attempts:
+                last_attempt = max(question_attempts, key=lambda a: a.answered_at)
+                last_seen_at = int(last_attempt.answered_at.timestamp() * 1000)
+                next_due_at = last_seen_at + (24 * 60 * 60 * 1000) if last_attempt.was_correct else last_seen_at + (6 * 60 * 60 * 1000)
+            attempts_count = len(question_attempts)
 
         result.append({
             "id": str(question.id),
@@ -348,7 +475,17 @@ def get_questions_for_extension(
             "last_seen_at": last_seen_at,
             "next_due_at": next_due_at,
             "rolling_accuracy": rolling_accuracy,
-            "attempts": len(question_attempts),
+            "attempts": attempts_count,
         })
 
     return result
+
+@router.get("/{user_id}/review-questions")
+def get_review_questions(
+    user_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    # Delegate to the same core to keep in sync
+    return get_questions_for_extension(user_id, db, current_user)
+

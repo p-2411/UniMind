@@ -1,9 +1,10 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import LoginPage from './pages/LoginPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import HomePage from './pages/HomePage';
 import MySubjectsPage from './pages/MySubjectsPage';
+import SettingsPage from './pages/SettingsPage';
 import ContentReviewPage from './pages/ContentReviewPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute.tsx';
 
@@ -53,6 +54,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <SettingsPage />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Default route - redirect to dashboard or login */}
       <Route 
@@ -68,12 +77,12 @@ function App() {
             <div className="text-center">
               <h1 className="text-6xl font-bold text-gray-900 mb-4">404</h1>
               <p className="text-xl text-gray-600 mb-8">Page not found</p>
-              <a 
-                href="/dashboard" 
+              <Link
+                to="/dashboard"
                 className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
               >
                 Go to Dashboard
-              </a>
+              </Link>
             </div>
           </div>
         } 

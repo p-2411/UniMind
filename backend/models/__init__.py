@@ -13,3 +13,4 @@ from .attempt import QuestionAttempt
 from .progress import TopicProgress  
 from .assessment import Assessment   
 from .streak import DailyStreak   
+from .question_metric import QuestionMetric

@@ -71,11 +71,11 @@ export function UpcomingAssessmentsCard({ className }: { className?: string }) {
     fetchAssessments()
   }, [user])
 
-  const getAssessmentStakeLevel = (weight: number | null): { label: string; colorClass: string } => {
-    if (!weight) return { label: 'Assignment', colorClass: 'text-blue-200 bg-blue-900/40' }
-    if (weight >= 20) return { label: 'High Stakes', colorClass: 'text-red-200 bg-red-900/40' }
-    if (weight >= 10) return { label: 'Quiz', colorClass: 'text-yellow-200 bg-yellow-900/40' }
-    return { label: 'Assignment', colorClass: 'text-blue-200 bg-blue-900/40' }
+  const getAssessmentType = (title: string): { label: string; colorClass: string } | null => {
+    const t = title.trim().toLowerCase()
+    if (t.startsWith('lab')) return { label: 'Lab', colorClass: 'text-blue-200 bg-blue-900/40' }
+    if (t.startsWith('assignment')) return { label: 'Assignment', colorClass: 'text-yellow-200 bg-yellow-900/40' }
+    return null
   }
 
   const formatDate = (dateString: string | null): string => {
@@ -117,7 +117,7 @@ export function UpcomingAssessmentsCard({ className }: { className?: string }) {
         )}
 
         {!loading && !error && assessments.slice(0, showAll ? assessments.length : 3).map((assessment) => {
-          const stakeLevel = getAssessmentStakeLevel(assessment.weight)
+          const type = getAssessmentType(assessment.title)
 
           return (
             <div key={assessment.id} className="p-3 md:p-4 border rounded-lg hover:bg-gray-800/50 transition-colors">
@@ -136,9 +136,11 @@ export function UpcomingAssessmentsCard({ className }: { className?: string }) {
                   )}
                 </div>
                 <div className="flex flex-col items-end gap-2 shrink-0">
-                  <span className={`px-2 py-0.5 text-xs font-medium ${stakeLevel.colorClass} rounded-full`}>
-                    {stakeLevel.label}
-                  </span>
+                  {type && (
+                    <span className={`px-2 py-0.5 text-xs font-medium ${type.colorClass} rounded-full`}>
+                      {type.label}
+                    </span>
+                  )}
                   <div className="flex items-center gap-1.5 text-sm font-semibold">
                     <Calendar className="w-4 h-4" />
                     <span>{formatDate(assessment.due_at)}</span>

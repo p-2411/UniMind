@@ -44,7 +44,7 @@ function App() {
     return <LoginPage onLoginSuccess={() => setIsAuthenticated(true)} />;
   }
 
-  // If authenticated and not on block page, show success message
+  // If authenticated and not on block page, show simple status
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-gray-950 to-[#052334]">
       <div className="text-center">

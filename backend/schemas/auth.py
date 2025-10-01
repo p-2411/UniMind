@@ -33,3 +33,8 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user: UserResponse
+
+
+class UserUpdate(BaseModel):
+    email: EmailStr | None = Field(default=None)
+    display_name: str | None = Field(default=None, min_length=1, max_length=120)

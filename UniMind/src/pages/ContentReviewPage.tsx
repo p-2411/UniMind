@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
+import { chooseNextQuestions, updateAfterAnswer } from '@/lib/question-selector'
 
 type ReviewQuestion = {
   id: string
@@ -63,6 +64,8 @@ function ContentReviewPage() {
   const [error, setError] = useState<string | null>(null)
   const [attemptStates, setAttemptStates] = useState<Record<string, AttemptState>>({})
   const [difficultyFilter, setDifficultyFilter] = useState<'all' | ReviewQuestion['difficulty']>('all')
+  const [pageQuestions, setPageQuestions] = useState<ReviewQuestion[]>([])
+  const [seenIds, setSeenIds] = useState<Set<string>>(new Set())
 
   const fetchQuestions = useCallback(async () => {
     if (!user) {
@@ -80,7 +83,7 @@ function ContentReviewPage() {
       }
 
       const baseUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
-      const response = await fetch(`${baseUrl}/students/${user.id}/questions-for-extension`, {
+      const response = await fetch(`${baseUrl}/students/${user.id}/review-questions`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -115,6 +118,7 @@ function ContentReviewPage() {
 
       setQuestions(mapped)
       setAttemptStates({})
+      setSeenIds(new Set())
     } catch (err) {
       console.error('Error loading review questions:', err)
       setQuestions([])
@@ -129,9 +133,42 @@ function ContentReviewPage() {
   }, [fetchQuestions])
 
   const filteredQuestions = useMemo(() => {
-    if (difficultyFilter === 'all') return questions
-    return questions.filter((q) => q.difficulty === difficultyFilter)
+    const base = difficultyFilter === 'all' ? questions : questions.filter((q) => q.difficulty === difficultyFilter)
+    return base
   }, [questions, difficultyFilter])
+
+  const hasNext = useMemo(
+    () => filteredQuestions.some((q) => !seenIds.has(q.id)),
+    [filteredQuestions, seenIds]
+  )
+
+  // Recompute first page whenever the filter or questions change
+  useEffect(() => {
+    if (filteredQuestions.length === 0) {
+      setPageQuestions([])
+      setSeenIds(new Set())
+      return
+    }
+    const initial = chooseNextQuestions(filteredQuestions, 3)
+    setPageQuestions(initial)
+    setSeenIds(new Set(initial.map((q) => q.id)))
+  }, [filteredQuestions])
+
+  const handleNextPage = () => {
+    const next = chooseNextQuestions(filteredQuestions, 3, seenIds)
+    if (next.length > 0) {
+      const newSeen = new Set(seenIds)
+      next.forEach((q) => newSeen.add(q.id))
+      setSeenIds(newSeen)
+      setPageQuestions(next)
+      // reset attempt states for the newly shown questions only
+      setAttemptStates((prev) => {
+        const copy: typeof prev = { ...prev }
+        for (const q of next) delete copy[q.id]
+        return copy
+      })
+    }
+  }
 
   if (!user) {
     return (
@@ -193,6 +230,9 @@ function ContentReviewPage() {
           },
         },
       }))
+
+      // Update only the current page's questions to avoid resetting pagination
+      setPageQuestions((prev) => prev.map((q) => (q.id === question.id ? updateAfterAnswer(q, payload.correct) : q)))
     } catch (err) {
       console.error('Error submitting attempt:', err)
       setAttemptStates((prev) => ({
@@ -315,7 +355,7 @@ function ContentReviewPage() {
 
           {!loading && !error && filteredQuestions.length > 0 && (
             <div className="grid gap-4">
-              {filteredQuestions.map((question) => {
+              {pageQuestions.map((question) => {
                 const state = attemptStates[question.id]
                 return (
                   <Card key={question.id} className="bg-white/5 border-white/10">
@@ -375,6 +415,11 @@ function ContentReviewPage() {
                   </Card>
                 )
               })}
+              <div className="flex justify-end mt-2">
+                <Button type="button" variant="default" onClick={handleNextPage} disabled={!hasNext}>
+                  Next
+                </Button>
+              </div>
             </div>
           )}
         </div>

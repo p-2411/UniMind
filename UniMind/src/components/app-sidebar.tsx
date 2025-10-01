@@ -1,5 +1,6 @@
 import { BookOpen, Home, Inbox, Settings } from "lucide-react"
 import logo from "../assets/logo.png"
+import { Link } from "react-router-dom"
 
 import {
   Sidebar,
@@ -36,10 +37,10 @@ export function AppSidebar() {
   return (
     <Sidebar variant="sidebar" className="!h-screen border-r sticky top-0">
       <SidebarHeader className="flex pt-6 pb-4 px-8">
-          <a href="#" className="flex items-center font-bold text-2xl">
+          <Link to="/dashboard" className="flex items-center font-bold text-2xl">
             <img src={logo} alt="UniMind Logo" className="h-10 w-10 mr-1" />
             <span className="ml-2">UniMind</span>
-          </a>
+          </Link>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -48,10 +49,10 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title} >
                   <SidebarMenuButton asChild className="gap-4">
-                    <a href={item.url}>
+                    <Link to={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -64,10 +65,10 @@ export function AppSidebar() {
 
                 <SidebarMenuItem key="settings">
                   <SidebarMenuButton asChild className="gap-4">
-                    <a href="#">
+                    <Link to="/settings">
                       <Settings />
                       <span>Settings</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
             </SidebarMenu>

@@ -21,6 +21,7 @@ export interface Topic {
 export interface Course {
   code: string;
   name: string;
+  description: string | null;
   created_at: string; // ISO 8601 datetime string
 }
 

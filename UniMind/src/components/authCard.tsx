@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
 import { Button } from "@/components/ui/button"
 import {
@@ -293,6 +293,10 @@ export default function AuthCard() {
           >
             {isLogin ? "Sign up" : "Login"}
           </button>
+        </div>
+        <div className="text-center text-xs text-muted-foreground">
+          By using UniMind you agree to our
+          {' '}<Link to="/privacy" className="underline underline-offset-4 hover:text-primary">Privacy Policy</Link>.
         </div>
       </CardFooter>
     </Card>

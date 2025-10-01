@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { Course } from '@/types/database'
+import { Link } from 'react-router-dom'
 
 export default function SettingsPage() {
   const { user, login, logout } = useAuth()
@@ -235,6 +236,17 @@ export default function SettingsPage() {
                   })}
                 </div>
               )}
+          </CardContent>
+          </Card>
+          <Card className="bg-white/5 border-white/10">
+            <CardHeader>
+              <CardTitle>Legal & Support</CardTitle>
+              <CardDescription>Learn how we handle your data</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link to="/privacy" className="text-sm font-medium text-orange-400 hover:text-orange-300 underline underline-offset-4">
+                View Privacy Policy
+              </Link>
             </CardContent>
           </Card>
           {/* Confirmation Modal */}

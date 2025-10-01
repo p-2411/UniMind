@@ -120,7 +120,7 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
                   </span>
                   <span className="hidden md:inline text-xs font-medium">·</span>
                   <span className="text-xs font-semibold text-orange-400 bg-orange-400/10 border border-orange-400/30 px-2 py-0.5 rounded-full">
-                    Score {topic.priority_score.toFixed(1)}
+                    Score {(1 - topic.priority_score * 0.01).toFixed(2)}
                   </span>
                 </div>
                 {topic.description && (

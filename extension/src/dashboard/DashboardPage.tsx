@@ -118,8 +118,8 @@ export default function PopupDashboard() {
     <div className="min-w-[320px] bg-[#0b1320] p-4 text-slate-100">
       <Card className="bg-white/5 border-white/10 shadow-xl backdrop-blur rounded-2xl">
         <CardHeader className="pb-2">
-          <h1 className="text-xl font-semibold">Welcome back, {name}! 👋</h1>
-          <p className="text-sm text-slate-300">Quick status—jump to your UniMind dashboard.</p>
+          <h1 className="text-xl font-semibold">Welcome, {name}! 👋</h1>
+          <p className="text-sm text-slate-300"></p>
         </CardHeader>
 
         <CardContent className="space-y-4">

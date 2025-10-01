@@ -25,7 +25,8 @@ app.add_middleware(
         "http://localhost:3000",
         "http://localhost:5174",
         "http://localhost:8000",
-        "chrome-extension://ljlajflafdipkapoimnpmcnnonfdngci", # YOUR extension ID
+        "chrome-extension://ljlajflafdipkapoimnpmcnnonfdngci", # prham extension ID
+        "chrome-extension://kjhiacblldmmkpkjlnieaidenajibhhf", # arnav extension ID
     ],
     allow_credentials=True,
     allow_methods=["*"],

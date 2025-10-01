@@ -147,3 +147,87 @@ export async function fetchTodayStats() {
 
   return await response.json();
 }
+
+/**
+ * Fetch user's blocked sites from backend
+ */
+export async function fetchBlockedSites() {
+  const token = await getAuthToken();
+  const user = await getUser();
+
+  if (!token || !user) {
+    throw new Error('User not authenticated');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/students/${user.id}/blocked-sites`,
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch blocked sites');
+  }
+
+  return await response.json();
+}
+
+/**
+ * Add a blocked site
+ */
+export async function addBlockedSite(domain) {
+  const token = await getAuthToken();
+  const user = await getUser();
+
+  if (!token || !user) {
+    throw new Error('User not authenticated');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/students/${user.id}/blocked-sites`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ domain }),
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.detail || 'Failed to add blocked site');
+  }
+
+  return await response.json();
+}
+
+/**
+ * Remove a blocked site
+ */
+export async function removeBlockedSite(siteId) {
+  const token = await getAuthToken();
+  const user = await getUser();
+
+  if (!token || !user) {
+    throw new Error('User not authenticated');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/students/${user.id}/blocked-sites/${siteId}`,
+    {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to remove blocked site');
+  }
+}

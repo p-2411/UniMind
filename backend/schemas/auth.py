@@ -10,6 +10,7 @@ class SignupRequest(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8, max_length=256)
     display_name: str = Field(min_length=1, max_length=120)
+    course_codes: list[str] = Field(default_factory=list, description="List of course codes to enroll in")
 
 
 class LoginRequest(BaseModel):

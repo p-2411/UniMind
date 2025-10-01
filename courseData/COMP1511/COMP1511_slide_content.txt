@@ -1,0 +1,3336 @@
+PDFs to Text — Consolidated Output (pypdf-only)
+===============================================
+
+Source folder: /Users/parhamsepasgozar/Desktop/UniMind/slides/1511T3
+Matched PDFs: 6
+Generated at: 2025-10-01 02:59:32
+
+[1/6] COMP1511_25T3_Week_1_Lecture_1.pdf
+----------------------------------------
+
+COMP1511/COMP1911
+COMP1511/1911 Programming Fundamentals
+The Beginning
+Week 1 Lecture 1
+
+COMP1511/COMP1911
+Today’s Lecture
+● Welcomes and Introductions
+● How COMP1511/COMP1911 works
+● How to get help
+● What is programming?
+● Working in Linux
+● A ﬁrst look into C
+2
+
+COMP1511/COMP1911
+Who am I?
+3
+Dr Angela Finlayson
+Lecturer in Charge
+Oscar’s mum
+Tina Arena Fan
+Civ 6 Enthusiast
+
+COMP1511/COMP1911
+Our Wonderful Course Admins!!!!
+4
+Soﬁa De Bellis Grace Murray
+COMP1511/COMP1911
+Amazing Lecture Streamers/Moderators
+5
+ 
+Liam 
+Phillips
+Rosemary
+Ai 
+Conrad
+Vernon
+And also Brianna Kim as our special guest moderator for the ﬁrst 2 weeks
+COMP1511/COMP1911
+Fabulous Forum Team
+6
+ 
+Amber 
+Lucas
+Max
+Davidson
+Timothy
+Zhou
+
+COMP1511/COMP1911
+ Meet the COMP1511/1911 25T3 Team! 
+And our Incredible Team of Tutors!
+7
+
+COMP1511/COMP1911
+We teach you the fundamentals of programming
+● how to approach and solve problems
+● how to express our solutions in step by step instructions that a 
+computer can execute  
+We assume 
+● no prior knowledge
+● no previous programming experience
+Problem solving is a skill that can only be built with practice!  
+In COMP1511/COMP1911
+8
+COMP1511/COMP1911
+● UNSW is committed to providing an inclusive learning 
+environment 
+● All activity connected to COMP1511 and COMP1911, including 
+social media, must be respectful.
+○ No discrimination of any kind 
+○ No inappropriate behaviour 
+○ No harassment, bullying, aggression or sexual harassment 
+○ Full respect for the privacy of others
+Code of Conduct
+9
+COMP1511/COMP1911
+ 
+Getting to Know You Game!
+10
+COMP1511/COMP1911
+● All course information is on our 
+course website
+○ Please bookmark it
+● We don’t use Moodle
+● Please read the course outline 
+thoroughly
+      
+Course Website
+11
+https://cgi.cse.unsw.edu.au/~cs1511/current
+
+COMP1511/COMP1911
+Course Format
+● Weekly Lectures 2 x 2 hours
+● Weekly tut/labs 3 hour blocks
+● 2 Major Assignments
+● 1 Final Exam
+12
+COMP1511/COMP1911
+● All lectures:
+○ Live streamed online via YouTube and recorded
+● Times and Locations:
+○ Monday 11am-1pm  also in person in Ainsworth G03
+○ Tuesday 4pm-6pm   (online only)
+Week 6 is Flex Week, so no formal lectures! 
+Lectures 2x2 Hours a Week
+13
+COMP1511/COMP1911
+● Lecture slides and code are available on course website
+● Recordings will be available on course website and YouTube 
+playlist
+● If you have a question during the lecture:
+○ Put your hand up and ask
+○ Ask in live chat
+● Please be respectful of others - everyone is here to learn
+○ Don’t be noisy
+○ Be kind to one another in the chat and of course in person too :)
+Lectures 2x2 Hours a Week
+14
+COMP1511/COMP1911
+● Classroom environment - interactive learning
+● Tutorial Questions will be available in advance
+● Online and face-to-face: 
+○ please check your timetable for your enrolment details
+● For online classes: 
+○ use Teams 
+○ Please turn on your cameras if you can 
+○ We love seeing pets make an appearance
+Tutorial: 1 hour 
+15
+COMP1511/COMP1911
+● Hands on Practical coding 
+○ Mostly individual, sometimes working in pairs
+● Time to have one-on-one conversations with your tutors 
+● Problem set released each Sunday night 6pm  
+● Problem sets submitted by Monday 6pm the next week
+○ marked automatically 
+○ Worth 15% total over the term (no marks for week 1)
+■ Worth 2 marks each (capped at 15 overall)
+Lab: 2 hour (directly after tutorial)
+16
+COMP1511/COMP1911
+● Problems have diﬃculty levels, 1 dot, 2 dot and 3 dot
+○ 3 dot problems are optional, bonus marks, some are very hard and 
+time consuming
+● Week 8 will include practice array hurdle exam questions!
+● Tutorials and Labs do NOT run in Week 6 (Flex Week)
+Lab: 2 hour (directly after tutorial)
+17
+COMP1511/COMP1911
+Assignment 1 - 20% (Released Week 4 Due Week 7) 
+Assignment 2 - 25% (Released Week 8 Due Week 10) 
+● Individual work 
+● Take you a few weeks 
+● Apply the theory and practice your skills on larger problems
+Assignments
+18
+COMP1511/COMP1911
+● Start as early as possible
+○ Time to get help as needed
+○ Time to take breaks
+○ Too stressful to do at the last minute
+● Don’t plagiarise or use ChatGpt to generate your code
+○ We have sophisticated plagiarism detection software.
+● Get help from appropriate sources - help sessions, forum, 
+tutors in your lab
+Assignment Tips
+19
+COMP1511/COMP1911
+● Assignments and Labs can be submitted late with a penalty
+● Late penalties of 5% per day late apply off the ceiling
+○ maximum lateness is ﬁve days, after which time it is zero marks
+Late Penalties
+20
+COMP1511/COMP1911
+● Plagiarism: The presentation of someone else’s work or ideas 
+as if they were your own. 
+● Any kind of cheating on your work for this course will incur 
+penalties (see the course outline for more details) 
+● At best, you’ll lose the marks for the assignment 
+● At worst, you’ll be asked to leave UNSW 
+● You will also cheat yourself out of learning!!!
+○ Doing labs and assignments on your own is the best way to study 
+for the ﬁnal exam
+Plagiarism
+21
+COMP1511/COMP1911
+● Collaboration on individual assessments like Assignments is 
+considered plagiarism
+○ Your submissions must be entirely your own work 
+○ Don’t use other people’s code 
+○ Don’t ask someone else to solve problems for you (even verbally) 
+○ Don’t provide your code to other people
+● 2 lines of code from stack overﬂow is ok
+○ Just make sure to reference your source in a comment
+● Downloading complete code found on github is NOT ok.
+Plagiarism vs Collaboration
+22
+COMP1511/COMP1911
+● You are not permitted to submit code generated by automatic 
+tools such as ChatGPT, GitHub Copilot, Google Gemini (Bard) 
+etc 
+● This is treated the same as plagiarism
+Use of Generative AI Tools
+23
+COMP1521 25T1
+● Will you be able to detect the 
+weird issues and bugs in AI 
+generated C code ? 
+● Will AI generate the same 
+code for other students?
+● What will you do in the ﬁnal 
+exam without AI?
+Generative AI
+24
+
+COMP1511/COMP1911
+● In Person
+○ 3 hours
+○ C programming questions
+● Exam Hurdles 
+○ Parts of the exam are competency hurdles 
+○ Hurdles must be completed satisfactorily to pass the course
+○ Array Hurdle for COMP1511 and COMP1911
+○ Linked List Hurdle for COMP1511 but NOT COMP1911
+(COMP1911 students still do linked list questions for marks). 
+Final Exam: 3 hours 
+25
+COMP1511/COMP1911
+Labs = 15% 
+Assignment 1 = 20% 
+Assignment 2 = 25% 
+Final Exam = 40% 
+To pass the course you must: 
+● Score at least 50/100 overall in the course
+● Pass the exam hurdle/s 
+Total Assessment
+26
+COMP1511/COMP1911
+● COMP1911 is for non-computing majors
+○ is a prerequisite for COMP1521
+○ but not a prerequisite for other COMP courses
+● COMP1911 and COMP1511 have the same classes, 
+assessments and exam except:
+○ COMP1911 does not need to do some of the ﬁnal stages of assn2
+○ Linked List questions in exam are not a hurdle for COMP1911 
+COMP1911 vs COMP1511 Assessment
+27
+COMP1511/COMP1911
+● Support for any issues that impact study and assessments
+○ Feeling unwell or an emergency situation
+○ You will need documentation
+○ Extension for assignment
+○ Supplementary exam
+ 
+https://student.unsw.edu.au/special-consideration 
+Special Consideration
+28
+COMP1511/COMP1911
+● May be offered to students granted Special Consideration  
+● Identical in format to the main exam 
+● Held in January/February  2026 ( exact date pending)
+○ you must make yourself available if you are granted a 
+supplementary exam
+● Fit-to-Sit rule
+Supplementary Exam
+29
+COMP1511/COMP1911
+● Please make sure to have your ELP plans sorted, so we can 
+support you in the best possible way this term.
+● Email your ELP plan pdf to me at:
+angela.f@unsw.edu.au
+● For more info, please visit: 
+Equitable Learning Plans
+30
+https://www.student.unsw.edu.au/equitable-learning
+COMP1511/COMP1911
+● Ask questions in lectures and 
+in lecture chat
+● Ask Questions in tuts and labs!
+● Forum:
+○ Post all your questions here 
+○ Feel free to answer other’s 
+questions 
+○ Don’t post your code publicly 
+in the forum
+Course Content Related Help
+31
+https://discourse01.cse.unsw.edu.au/25T3/COMP1511/
+
+COMP1511/COMP1911
+● Help Sessions: Sessions start in week 3
+○ Good place to get one-on-one help outside of normal lab/tutorial 
+times
+○ There are optional drop in sessions
+○ Schedule will be announced shortly 
+● Revision Sessions: Sessions start in week 4
+○ Optional group sessions to revise relevant topics
+○ Schedule announced shortly
+Course Content Related Help 
+32
+COMP1511/COMP1911
+● Course Administration Issues:
+○ Email:
+cs1511@unsw.edu.au
+● Enrollment Issues: 
+○ UNSW Nucleus Student Hub
+https://nucleus.unsw.edu.au/en/contact-us
+● cse course account issues:
+○ CSE Help Desk:
+http://www.cse.unsw.edu.au/~helpdesk/
+Admin Related Help
+33
+COMP1511/COMP1911 34
+
+COMP1511/COMP1911
+Quick Break. Back Soon…
+35
+
+COMP1511/COMP1911
+Computers, programs, operating systems, Linux, 
+terminals, compilers, C programming language, oh 
+my...
+36
+COMP1511/COMP1911
+What is a Computer?
+37
+COMP1511/COMP1911 38
+● A machine that can be reconﬁgured for different purposes 
+● The key elements: 
+○ A processor to execute commands 
+○ Memory to store information
+What is a computer?
+COMP1511/COMP1911
+What is Programming?
+39
+COMP1511/COMP1911 40
+● Providing a computer with speciﬁc instructions to solve a 
+problem 
+○ Using speciﬁc languages to write those instructions (code)
+● It involves problem solving skills! 
+○ You may need to start with pen and paper planning
+○ Testing and Debugging skills are required
+○ You may go through many iterations before you get it right
+What is Programming?
+COMP1511/COMP1911
+Mistakes and Bugs are Normal
+41
+At times you may require
+● patience
+● perseverance
+The key to success is
+● practice
+
+COMP1511/COMP1911
+What is a Programming Language?
+42
+COMP1511/COMP1911
+● Computers execute precise instructions encoded in binary
+● This language is not easy for humans to read or write
+Computers vs Humans
+43
+0100 0000 0000 0000 0000 0000 0000 0000  
+1011 0110 0000 0000 0000 0000 0000 0010
+0000 0100 0110 0000 1001 0000 0000 0000 
+COMP1511/COMP1911
+Humans speak in languages that are not precise enough for 
+computers
+Programming Languages take the middle ground:
+● Precise enough to be translated to machine code
+● Simple enough that a human can (hopefully) understand it
+Programming Languages
+44
+COMP1511/COMP1911 45
+● Computers often have hundreds of programs executing at the 
+same time!
+● Imagine if your kitchen was used to prepare hundreds of 
+recipes all at once and no-one was in charge.
+How do these programs run?
+COMP1511/COMP1911
+
+COMP1511/COMP1911
+We need a head chef 
+(operating system) to manage 
+resources (computer hardware)
+47
+COMP1511/COMP1911 48
+● An Operating System is the interface between the user and the 
+computer hardware
+○ Execute user programs
+○ Make sure programs do what they're supposed to
+○ Schedules access to limited resources (hardware)
+○ Make the computer system convenient to use
+● Operating systems are themselves programs!
+○ Which one are you using?
+Operating Systems
+COMP1511/COMP1911
+● UNIX-based
+● open-source
+● reliable 
+● lightweight
+● secure
+The Linux Operating System
+49
+
+COMP1511/COMP1911
+● Consistency and fairness
+○ everyone uses the same 
+environment
+● Industry relevance
+○ widely used in servers, research, 
+and development
+● Transparency
+○ open-source tools show how 
+systems really work 
+Why Linux?
+50
+
+COMP1511/COMP1911 51
+How do REAL programmers interact with the 
+Computer?
+
+COMP1511/COMP1911
+The Terminal
+52
+● A graphical application 
+○ sends text commands to 
+the shell
+○ displays shell output
+
+COMP1511/COMP1911
+The Shell
+53
+● The shell, (bash, zsh) is a 
+program that runs in the 
+terminal.
+● It executes commands, 
+and has its own syntax. 
+● It returns output which the 
+terminal can display
+
+COMP1511/COMP1911
+The Command Line Prompt
+54
+● The prompt is controlled 
+by the shell
+● It is the line of text which 
+displays some information 
+often ending in a $
+● Lets you know it is ready 
+for you to type
+
+COMP1511/COMP1911
+Help!!! I don't have a Linux machine!!!
+Don't worry! We have one for you!!!
+55
+COMP1511/COMP1911 56
+● Our labs run Linux with everything you need to get started 
+● Running Linux on your own computer:
+○ VLAB allows you to remotely use CSE’s resources 24/7 
+○ instructions on setting this up available in the ﬁrst laboratory 
+https://cgi.cse.unsw.edu.au/~cs1511/25T3/resources/home_computing.html
+CSE’s Computing Resources
+COMP1511/COMP1911
+● Log into VLAB or CSE lab machine
+○ with zid and zpass
+● Open a terminal
+● Type 1511 setup in the terminal to get everything ready 
+○ you will do this in your ﬁrst Lab. 
+○ you only need to do it once
+Working in your CSE account
+57
+COMP1511/COMP1911 58
+ 
+Important Linux Shell Commands
+ls List all the ﬁles in the current directory
+mkdir dir_name Make a new directory called dir_name
+cd dir_name Changes the current directory to dir_name
+cd .. Move up one directory (folder) level 
+cd Move to your home directory
+pwd Tells you where you are in the directory 
+structure 
+COMP1511/COMP1911 59
+ 
+Important Linux Shell Commands
+cp source destination Copy a ﬁle from the source to the 
+destination 
+mv source destination Move a ﬁle from source to destination 
+directory OR
+Rename source to destination
+rm file_name Remove (delete) ﬁle_name 
+Does not put in trash. 
+Permanently deletes
+Warning: Use rm with caution
+COMP1511/COMP1911 60
+The -r ﬂag can be added to cp or rm commands to recursively go 
+through a directory and perform the command on all the ﬁles
+cp -r source destination
+copy all ﬁles from source to destination directory
+Find out more tips and tricks in the Linux Cheatsheet
+ 
+Important Linux Shell Commands
+COMP1511/COMP1911
+Why C?
+● Many modern programming languages are based on C 
+● Learning C helps in understanding the underlying architecture 
+of computers
+● Windows, Linux, MacOS operating system kernels written 
+almost entirely in C
+● We are learning and using C but really we want you to learn
+○ Logical thinking and problem-solving skills
+○ Skills that will transfer to other languages and areas of computing
+Programming in C
+61
+COMP1511/COMP1911
+// A program showing how to print output in C
+// The first of many C programs you will C
+#include <stdio.h>
+int main(void) {
+    printf("Hello COMP1511 and COMP1911\n");
+    return 0;
+}
+Finally... we get to C some C
+62
+COMP1511/COMP1911
+● // in front of a line makes it a 
+comment
+● If we use /* and */ everything 
+between them will be comments
+● Comments are for humans 
+● The compiler ignores them
+● They help future selves and 
+colleagues understand our code
+● Header comment is a special 
+comment we put at the top of 
+each program
+Let’s Break it Down: Header Comment
+63
+// A program showing how to print output in C
+// The first of many C programs you will C
+#include <stdio.h>
+int main(void) {
+    printf("Hello COMP1511 and COMP1911\n");
+    return 0;
+}
+
+COMP1511/COMP1911
+● #include lets the compiler 
+know what part of the standard 
+C library we want to use
+● In this case, it’s the Standard 
+Input Output Library 
+○ we need it for printf 
+● Almost every C program you 
+will write will have this line
+Let’s Break it Down: #include
+64
+// A program showing how to print output in C
+// The first of many C programs you will C
+#include <stdio.h>
+int main(void) {
+    printf("Hello COMP1511 and COMP1911\n");
+    return 0;
+}
+
+COMP1511/COMP1911
+● Every C program needs exactly 
+1 main function
+● That is where program 
+execution starts
+● Between the { and } are a set 
+of program instructions 
+● Our computer will execute the 
+instructions line by line
+● A main that returns 0 signiﬁes 
+that the program executed 
+successfully. 
+Let’s Break it Down: main function
+65
+// A program showing how to print output in C
+// The first of many C programs you will C
+#include <stdio.h>
+int main(void) {
+    printf("Hello COMP1511 and COMP1911\n");
+    return 0;
+}
+
+COMP1511/COMP1911
+● printf() writes text to 
+standard output (screen). 
+● It is a function from stdio.h 
+which we included
+● Everything between the starting 
+" and ending " gets printed
+● \n is the newline character
+● All executable statements end 
+with a semicolon ;
+Let’s Break it Down: printf
+66
+// A program showing how to print output in C
+// The first of many C programs you will C
+#include <stdio.h>
+int main(void) {
+    printf("Hello COMP1511 and COMP1911\n");
+    return 0;
+}
+
+COMP1511/COMP1911
+Demo: Writing your ﬁrst C program
+67
+● Follow along now or try it later once you have set up VLAB
+● Open a ﬁle called hello_world.c in VSCode from the 
+terminal by typing 
+code hello_world.c
+● Edit the ﬁle and save it
+● You can ﬁnd live lecture code at 
+https://cgi.cse.unsw.edu.au/~cs1511/25T3/code/week_1/
+
+COMP1511/COMP1911
+But how can we actually run our program???
+68
+Reminder: 
+● Computers can’t execute C code
+● Compilers are programs that turn code into machine code
+We use the dcc compiler:
+● dcc was developed at CSE UNSW
+○ Designed for beginners and gives helpful error messages
+
+COMP1511/COMP1911
+Demo: Compiling and running code
+69
+● This compiles a C program hello_world.c into an executable ﬁle 
+called a.out: 
+dcc hello_world.c
+● We can then run our executable ﬁle:
+./a.out
+Note: ./ just means the current directory
+● a.out is not the greatest name. Let’s see a better way…
+
+COMP1511/COMP1911
+Demo: Compiling and running code
+70
+What if we have lots of executable programs and we want to give 
+them names?
+This compiles a C program hello_world.c into an executable ﬁle 
+called hello_world: 
+$ dcc hello_world.c -o hello_world
+We can then run our executable:
+$ ./hello_world
+
+COMP1511/COMP1911
+1. Try to ﬁx the ﬁrst error ﬁrst
+2. Save
+3. Re-compile
+4. Repeat till errors are gone
+Then you can run your program to test that it does what you want!
+You may need to edit it, compile and repeat…
+Compile errors or warnings?
+71
+COMP1511/COMP1911
+Compile errors or warnings?
+72
+
+COMP1511/COMP1911
+dcc-help and dcc-sidekick are tools to help beginners 
+understand compiler error messages to help you ﬁx your code.
+Great to use while learning and doing labs and assignments
+Warning:  dcc-help and dcc-sidekick are not available in the 
+ﬁnal exam. Note that you WILL still have dcc in the ﬁnal exam.
+dcc-help and dcc-sidekick
+73
+COMP1511/COMP1911
+● \ is an escape character
+○ \n is an escape sequence that means newline
+○ \t is an escape sequence that means tab
+○ \” is an escape sequence that allows us to print the “ character
+■ Why would we need this?
+How can we actually print a \ character?
+Why we use \\ of course!
+Escaping
+74
+printf("This is a Backslash \\");
+printf("This is a Backslash followed by a newline \\\n");
+
+COMP1511/COMP1911
+● Requires
+○ practice - labs and 
+assignments are a great way 
+to learn!
+○ trying things and making 
+many many many mistakes!
+○ asking for help when needed
+● It can be challenging but also 
+very rewarding!
+Learning Programming
+75
+● We are here to guide you and support you.
+COMP1511/COMP1911 76
+● Admin: How the course is run
+● Resources: Where the ﬁnd them
+● Help: Where to ﬁnd it
+● Concepts: Computer, Program, Operating System
+● Linux: Some basic commands
+● C: Compiling and running your ﬁrst C program
+○ hello_world.c
+What did we learn today?
+COMP1511/COMP1911 77
+Content Related Questions:  
+Forum
+Admin related Questions email: 
+cs1511@unsw.edu.au
+Reach Out
+
+COMP1511/COMP1911
+The ﬁrst computer in the world, 
+ENIAC, weighed more than 27 
+tonnes and covered an area of 
+about 1800 square feet? 
+Designing the correct conﬁguration 
+for each new problem, and then 
+connecting the wires and setting the 
+switches, took many days
+Computing Trivia: ENIAC
+78
+
+
+================================================================================
+
+[2/6] COMP1511_25T3_Week_1_Lecture_2.pdf
+----------------------------------------
+
+COMP1511/COMP1911
+ 
+COMP1511/1911 Programming Fundamentals
+Variables and Constants
+Week 1 Lecture 2
+COMP1511/COMP1911
+Last Lecture
+● Welcomes and Introductions
+● How COMP1511/COMP1911 works
+● How to get help
+● What is programming?
+● Working in Linux
+● A ﬁrst look into C
+○ printf
+2
+COMP1511/COMP1911
+Today’s Lecture
+● Memory and how we store data
+○ Types and variables
+● Printing out and reading in data
+● Arithmetic Operators and Expressions 
+● Constants
+3
+COMP1511/COMP1911
+https://cgi.cse.unsw.edu.au/~cs1511/25T3/code/week_1/
+Link to Week 1 Live Lecture Code
+4
+
+COMP1511/COMP1911
+A Brief Recap: Our First Program
+5
+// A program showing how to print output in C
+// The first of many C programs you will C
+#include <stdio.h>
+int main(void) {
+    printf("Hello COMP1511 and COMP1911\n");
+    return 0;
+}
+
+COMP1511/COMP1911
+Quick Question: What will this print out?
+6
+// A tricky example with escape characters 
+// Warning: this may hurt your brain
+#include <stdio.h>
+int main(void) {
+    printf("\\\"\\\n");
+    return 0;
+}
+
+COMP1511/COMP1911
+CPU: 
+● processes and executes our instructions 
+● performs arithmetic etc
+RAM: 
+● Stores the instructions and the data we need
+● What we call memory in this course 
+Hard Drive/Solid State Drive: 
+● Persistent storage of data e.g ﬁles
+Basics of Computer Hardware
+7
+
+COMP1511/COMP1911
+How Do Computers Store Data? 
+8
+Computers store everything in binary : 0s and 1s
+Why?
+● Computer memory is a large number of on-off switches
+● We use 0 and 1 to represent the off and on states
+● We call these bits 
+We often collect these together into bunches of 8 bits 
+● We call these bytes
+
+COMP1511/COMP1911
+How can we use memory in our programs?
+9
+COMP1511/COMP1911
+● A name for a piece of memory
+● Can store a speciﬁc type of data
+● Has a speciﬁc size (number of bytes) 
+● Called a variable as we can change what is stored in there!
+Variables
+10
+COMP1511/COMP1911
+We will start out with 3 common primitive types
+Primitive Types
+11
+Type Description Examples
+int Integers (whole numbers) 1, 0, 999, -42
+char Individual characters ‘A’, ‘a’ ,‘?’
+double Floating point numbers 3.14159, -0.001 
+COMP1511/COMP1911
+● Declaring a variable tells C to set aside a chunk of memory for 
+the variable. 
+● We only need to do this once for each variable.
+● To declare a variable, you use the syntax: 
+type name;
+● E.g. the following declares a variable named age, of type int
+int age;
+ 
+Declaring a variable
+12
+COMP1511/COMP1911
+    
+   
+ 
+Assigning values to Variable
+13
+// Declare a variable
+int my_age;
+// Initialise the variable
+my_age = 21;
+● Before using a variable, we need to give it an initial value
+○ Until then, it contains garbage values
+● We use = (the assignment operator) to set values in 
+variables
+// Declare and initialise 
+// a variable in one step
+int my_age = 21;
+
+COMP1511/COMP1911
+● Should describe what the variable is storing
+○ e.g. “age”, “radius”
+○ rather than “a”, “b” 
+● C is case sensitive: 
+○ “ansWer” and “answer” are two different variable names
+● We always use lower case letters to start our variable names
+● We use snake_case
+○ We can split words with underscores: E.g. “long_answer”
+● C reserves some words 
+○ E.g. “return” , “int” and “double” can’t be used as variable names
+Variable Names
+14
+COMP1511/COMP1911
+● Variable names are an important part of programming style 
+● We name variables to make it obvious what we are storing
+● This makes our code more readable for 
+○ ourselves
+○ others such as colleagues
+○ and in your case, your tutors!
+● We have a style guide for the course which you should follow
+https://cgi.cse.unsw.edu.au/~cs1511/25T3/resources/style_guide.html
+Variable Names and Style
+15
+COMP1511/COMP1911
+● We can represent integers with the type int
+○ whole number, with no fractions or decimals places
+● Most commonly uses 32 bits (4 bytes) 
+○ This gives us exactly 232 different possible values 
+● The maximum is very large, but it's not inﬁnite! 
+○ Exact ranges from
+■ -2,147,483,648 (-231) to 
+■  2,147,483,647 (231 - 1)
+○ Hmmm, what could possibly go wrong with this?
+int data type
+16
+COMP1511/COMP1911
+● We use char to store single characters
+● The syntax is to put it in single quotes: ‘a’
+● They are really integers under the hood
+○ char stores a small integer
+○ Usually 8 bits (1 byte)
+○ Guaranteed to be able to store integers 0..127
+● When we assign ‘a’ to a char variable, it really stores the ASCII 
+code 97.
+● Type ascii -d on the command line to see ASCII codes.
+char data type
+17
+COMP1511/COMP1911
+● We use double to store Real numbers 
+○ can only represent a subset of all possible Real 
+numbers
+● Size is 64 bits (8 bytes)
+● Warning: double are approximations and may not be 
+exact!
+○ Hmmm, what could possibly go wrong with this?
+double data type
+18
+COMP1511/COMP1911
+int main(void) {
+    // Declare a variable
+    int my_age;
+    // initialise a variable
+ my_age = 21;  
+ 
+    // We can modify variable values
+    my_age = 25; 
+    
+    // We can also declare and initialise in same line
+    double radius = 3.5;
+    char grade = 'B';
+    return 0;
+}
+Coding with Variables
+19
+COMP1511/COMP1911
+How can we print out the values in our 
+variables?
+20
+COMP1511/COMP1911
+A format speciﬁer is a % symbol 
+followed by some characters to 
+let the compiler know:
+● what data type you want to 
+print
+● where to print the value 
+After the comma you put the 
+variable name/s you want to 
+print
+Printing out variables with printf
+21
+Type Format Specifier
+int %d
+double %lf
+char %c
+int my_age = 21;
+printf("My age is %d\n", my_age);
+
+COMP1511/COMP1911
+● The variables must match the symbols in the same order as 
+they appear! 
+● You can have as many as you want and of different types also!
+Printing out many variables with printf
+22
+int height = 21;
+double radius = 3.5;
+printf("Height is %d and radius is %lf\n", height, radius);
+char letter = 'A';
+printf("The letter %c has ASCII value %d\n", letter, letter);
+
+COMP1511/COMP1911
+print_variables.c
+print_errors.c
+Code Demo
+23
+COMP1511/COMP1911
+Quick Break. Back Soon…
+24
+
+COMP1511/COMP1911
+How can we read in input from the user?
+25
+COMP1511/COMP1911
+Reading input with scanf
+26
+● Uses a similar format to printf
+● Format speciﬁers %d , %lf , %c are used in the same way
+● Difference is we need to use & before each variable
+○ The & symbol tells scanf the address of the variable in memory 
+(where the variable is located) so it knows where to store the 
+value
+● e.g. Reading in an integer
+ int age;
+scanf("%d", &age);
+
+COMP1511/COMP1911
+Example scanf code
+27
+#include <stdio.h>
+int main(void) {
+    char initial;
+    printf("Please enter your first initial: ");
+    scanf("%c", &initial);
+    int age;
+    printf("Please enter your age: ");
+    scanf("%d", &age);
+    double height;
+    printf("Please enter your height in cm: ");
+    scanf("%lf", &height);  
+    return 0;
+}
+
+COMP1511/COMP1911
+scan_variables.c
+scanf_confusion.c
+scanf_magic.c
+Code Demo
+28
+COMP1511/COMP1911
+scanf magical tips and trips
+29
+● scanning an int ignores whitespace 
+○ scanf("%d", &number);
+● scanning a char does not ignore whitespace
+○ scanf("%c", &character);
+○ This is good as sometimes we want to be able to read in spaces 
+and newline characters as they are actually characters!
+● We can ignore leading whitespace when working with chars 
+with the following trick: (note the space before the %c)
+      scanf(" %c", &character);
+
+COMP1511/COMP1911
+● Arithmetic operators will look 
+familiar!
+● Warning: Division may not 
+always give you what you 
+expect…
+○ Result depends on whether 
+dividing integer types or 
+doubles
+● Modulus gives the remainder 
+○ integer types only
+Mathematical Expressions in C
+30
+Operator 
++ addition
+- subtraction
+* multiplication
+/ division
+% modulus 
+COMP1511/COMP1911
+● Precedence is what you would expect from maths e.g.
+○ a + b * c + d / e is the same as
+○ a + (b * c) + (d / e) 
+● Association is what you would expect from maths e.g.
+○ a - b + c is the same as
+○ (a - b) + c 
+● We can also use brackets to force precedence e.g.
+○ (a + b) * c
+Mathematical Expressions in C
+31
+COMP1511/COMP1911
+Precedence: Operators with higher precedence are executed 
+before those with lower precedence
+Associativity:  The direction in which operators of the same 
+precedence level are evaluated in an expression.
+Operator                            Associativity  
+       * / %                               left to right
+       + -                                   left to right
+https://cgi.cse.unsw.edu.au/~cs1511/25T3/resources/c-reference-sheet.pdf
+Precedence and Associativity
+32
+COMP1511/COMP1911
+Example Arithmetic Expressions Code 
+int x = 4; 
+int y = 3;
+int z = (x + y) * 10 - x;
+printf("%d\n", z);
+int x = 3;
+int y = 2;
+int z = x / y;
+printf("%d\n", z);
+33
+int x = 3;
+int y = 2;
+double w = x / y;
+printf("%lf\n", w);
+char c1 = 'a';
+char c2 = c1 + 1;
+printf("%c\n", c2);
+What do you think these will these print? 
+COMP1511/COMP1911
+● Characters are represented as integers
+● You can add or subtract to get different ASCII values
+● For example, you can add 1 to  ‘a’ and get ‘b’ or add 2 to ‘a’ and 
+get ‘c’ or subtract 1 from ‘e’ and get ‘d’
+Doing maths with char
+34
+char letter = 'e';
+letter = letter - 1;
+//This will print out 'd'
+printf("%c\n", letter);
+
+COMP1511/COMP1911
+● If either operand is a double then the result is a double
+○ 2.6/2 gives 1.3
+● If both operands are int then then result is an int
+○ This is integer division and can be surprising when you ﬁrst see it
+○ 3/2 gives 1 not 1.5
+○ What would 1/2 be?
+○ What would 1.0/2 be?
+● You can do this to cast an int to the type of  double
+○ 1/(double)2;
+○ Note: Please only use casts between ints and doubles in this 
+course
+More about division
+35
+COMP1511/COMP1911
+● % is called Modulus (or mod). 
+○ It will give us the remainder from a division between integers e.g. 
+○ 5 % 3 gives 2 (because 5/3 gives 1 remainder 2)
+● We can tell if a number is even by checking the remainder when 
+dividing by 2  e.g.
+○ 10 % 2  is 0
+○   7 % 2 is 1
+○   4 % 2 is 0
+○   3 % 2 is 1
+More about division and modulus
+36
+COMP1511/COMP1911
+Double Division and Mod Examples
+double x = 5;
+double y = 2;
+int z = x / y;
+printf("%d\n", z);
+double x = 5;
+double y = 2;
+double z = x / y;
+printf("%.1lf\n", z);
+37
+int x = 5;
+double y = 2;
+double z = x / y;
+printf("%.1lf\n", z);
+int x = 5;
+int y = 2;
+int z = x % y;
+printf("%d\n", z);
+What will these print? 
+COMP1511/COMP1911
+● There is no such thing as 
+inﬁnite precision
+● We can’t precisely encode a 
+simple number like 1/3 
+● If we divide 1.0 by 3.0, we'll 
+get an approximation of 1/3 
+● The effect of approximation 
+can compound the more 
+operations you perform on 
+them
+double precision
+38
+
+COMP1511/COMP1911
+● What happens if we take the largest int and add 1?
+○ It can wrap around to the minimum value and give us smallest 
+negative number
+● What happens if we take the smallest int and subtract 1?
+○ It can wrap around to the maximum value and give us largest 
+positive number
+● Doing maths on ints and going over the limits is called overﬂow
+○ dcc helps us by giving us runtime errors when this happens with 
+ints
+○ This is better than it wrapping around and giving us hard to debug 
+incorrect answers
+Integer Overﬂow
+39
+COMP1511/COMP1911
+● Boeing 787 that had to be rebooted every 248 days 
+○ 248 days is 231 100ths of a second 
+Integer overﬂow disasters
+40
+https://www.engadget.com/2015-05-01-boeing-787-dreamliner-software-bug.html
+COMP1511/COMP1911
+● A simple integer overﬂow error 
+also caused the Ariane 5 
+rocket explosion 
+● The (different kind of) 
+explosion of the video 
+“Gangham Style” on YouTube 
+maxed out the views counter. 
+They have changed it to an 8 
+byte integer now.
+Integer overﬂow disasters
+41
+https://www.bbc.com/future/article/20150505-the-numbers-that-lead-to-disaster
+COMP1511/COMP1911
+● Constants are like variables, only they never change! 
+● We use #define and follow it with the name of the constant 
+and its value
+● Style Guide: we use UPPERCASE so it is easy to recognise they 
+are constants
+Constants
+42
+#include <stdio.h>
+// Define constants after your #includes 
+// but before your main
+#define MAX_SIZE 12
+#define PI 3.1415
+#define MEANING_OF_LIFE 42
+
+COMP1511/COMP1911
+Write a program convert.c that 
+● prompts the user enter the number of hours
+● calculates how many minutes that is equivalent to
+● prints out the number of minutes
+See sample output below:
+$ ./convert 
+Please enter the number of hours: 2.5
+That is 150.00 minutes
+Coding Exercise
+43
+COMP1511/COMP1911
+Feedback Please!
+Your feedback is valuable! 
+If you have any feedback from 
+today's lecture, please follow the 
+link below or use the QR Code. 
+Please remember to keep your 
+feedback constructive, so I can 
+action it and improve your 
+learning experience.
+44
+https://forms.oﬃce.com/r/maiuL3wEkq
+
+COMP1511/COMP1911 45
+● Recap of escape characters: escaping.c
+● Variables and types: int double char
+● Printing variables using printf
+○ print_variables.c, print_errors.c
+● Reading values into variables using scanf
+○ scan_variables.c, scanf_confusion.c, scanf_magic.c
+● Creating arithmetic expressions (doing maths) with variables
+○ expression_examples.c,  tricky_expressions.c, type_troubles.c
+● Deﬁning constants in C
+○ convert.c
+What did we learn today?
+COMP1511/COMP1911 46
+Content Related Questions:  
+Forum
+Admin related Questions email: 
+cs1511@unsw.edu.au
+Reach Out
+
+COMP1511/COMP1911
+Student Support | I Need Help With…
+47
+—  student.unsw.edu.au/advisorsStudent Support
+Indigenous Student 
+Support
+Equity Diversity and Inclusion 
+(EDI)
+—  edi.unsw.edu.au/sexual-misconduct
+Equitable Learning Service 
+(ELS)
+— student.unsw.edu.au/els
+Academic Language 
+Skills
+— student.unsw.edu.au/skills
+Special Consideration —  student.unsw.edu.au/special-consideration
+My Feelings and Mental 
+Health
+Managing Low Mood, Unusual Feelings & Depression
+Mental Health 
+Connect
+Mind 
+HUB
+student.unsw.edu.au/counselling 
+T elehealth
+student.unsw.edu.au/mind-hub 
+Online Self-Help Resources
+1300 787 026
+5pm-9am
+In Australia Call Afterhours
+UNSW Mental Health Support 
+Line
+Outside Australia 
+Afterhours 24-hour 
+Medibank Hotline
++61 (2) 8905 0307
+Uni and Life Pressures
+Stress, Financial, Visas, Accommodation & More
+Reporting Sexual Assault/Harassment
+Educational Adjustments
+T o Manage my Studies and Disability / Health Condition
+Academic and Study Skills
+Special Consideration
+Because Life Impacts our Studies and Exams
+
+COMP1511/COMP1911 48
+
+
+================================================================================
+
+[3/6] COMP1511_25T3_Week_2_Lecture_1.pdf
+----------------------------------------
+
+COMP1511/COMP1911
+COMP1511 Programming Fundamentals
+Control Flow
+Week 2 Lecture 1
+Angela Finlayson
+COMP1511/COMP1911
+Last Week
+● You went to your ﬁrst tut/lab
+● compiling and running hello_world.c
+● variables and types (int, double, char)
+● printf() and scanf()
+● Arithmetic operators and expressions (maths calculations)
+2
+COMP1511/COMP1911
+● Week 1 lab was not worth any marks
+● Week 2 lab is! 
+○ Exercises are due to be submitted by Monday 6pm the following 
+week
+○ 3 dot questions are challenge questions and are sometimes very 
+diﬃcult and time consuming. These are not essential to get full 
+marks in the labs. 
+Labs this week
+3
+COMP1511/COMP1911
+Today’s Lecture
+Recap of scanf, printf expressions.
+Looking at #deﬁne CONSTANTS which we did not cover last week
+Getting harder…
+● if statements
+● relational and logical operators
+● error checking scanf input
+● while loops (if there is time…)
+4
+COMP1511/COMP1911
+https://cgi.cse.unsw.edu.au/~cs1511/25T3/code/week_2/
+ 
+Link to Week 2 Live Lecture Code
+5
+
+COMP1511/COMP1911
+A Brief Recap: Variables and printf
+6
+int number_of_weeks = 10;
+double distance_in_cm = 95.5;
+char grade = 'B';
+printf("There are %d weeks\n", number_of_weeks);
+printf("The distance is %lf cm\n", distance_in_cm);
+printf("You got a %c!\n", grade);
+distance_in_cm = distance_in_cm - 5; 
+printf("The distance is now %lf cm\n", distance_in_cm);
+ 
+
+COMP1511/COMP1911
+A Brief Recap: Variables scanf
+7
+int x;
+int y;
+printf("Enter an integer: ");
+scanf("%d %d", &x, &y);
+printf("You entered %d %d\n", x, y);
+double real;
+printf("Enter a real number: ");
+scanf("%lf", &real);
+printf("You entered %lf\n", real);
+
+COMP1511/COMP1911
+A Brief Recap: What will this do?
+8
+int x;
+int y;
+printf("Enter 2 integers: ");
+scanf("%d %d", &x, &y);
+int average = (x + y) / 2;
+printf("The average of %d and %d is %d\n", x, y, average);
+int remainder = x % 3;
+int z = y / 0;
+char letter_1 = 'B' - 'A' + 'a';
+char letter_2 = 'e' - 'a' + 'A';
+
+COMP1511/COMP1911
+● Constants are like variables, only they never change! 
+● We use #define and follow it with the name of the constant 
+and its value
+● Style Guide: we use UPPERCASE so it is easy to recognise they 
+are constants
+Constants
+9
+#include <stdio.h>
+// Define constants after your #includes 
+// but before your main
+#define MAX_SIZE 12
+#define PI 3.1415
+#define MEANING_OF_LIFE 42
+
+COMP1511/COMP1911
+Constants: Example Usage
+10
+#include <stdio.h>
+// Define constants after your #includes 
+// but before your main
+#define MINUTES_PER_HOUR 60
+int main(void) {
+    double total_hours = 95.5;
+    double total_minutes = total_hours * MINUTES_PER_HOUR;
+    // etc  
+    return 0;
+}
+Use this code to help implement the convert.c program.
+COMP1511/COMP1911
+Control Flow
+11
+COMP1511/COMP1911
+● if statements allow C to make decisions based upon 
+true/false questions like
+○ is x even
+○ is y greater than 10
+○ is x less than y
+● true and false are ints in C
+○ 0 is false 
+○ 1 or any non-zero value is considered true in C
+Making Decisions with if
+12
+COMP1511/COMP1911
+● Our true/false question is called a condition
+● If the answer to our question i.e. our condition is true
+then we run the code inside the if block’s braces {}
+if statement
+13
+// The code inside the curly brackets only runs if 
+// the condition is true
+if (condition) {
+    // do something;
+    // do more things;
+}
+
+COMP1511/COMP1911
+● To write conditions we need to be 
+able to compare things
+● Relational Operators compare 
+pairs of numbers
+● All of these will result in 0 if false 
+and a 1 if true
+● Be careful not to mix up = and ==
+○ Use = for assigning a value
+○ Use == for comparing 2 values
+● Be careful using == and != for 
+double values 
+Relational Operators
+14
+Operator 
+< Less than
+> Greater than
+<= Less than or equal
+>= Greater than or equal
+== Is equal to
+!= Not equal to
+COMP1511/COMP1911
+Quick Questions: Relational Operators
+true (1) or false (0):
+int x = 4;
+● 5 < 2 
+● x > 2 
+● x <= 4 
+● 3 >= x 
+● x == -4 
+● 'A' != 'B' 
+15
+COMP1511/COMP1911
+What will get printed?
+if (1) {
+    printf("Hooray\n");
+}
+if (0) {
+    printf("Yay!\n");
+}
+if (4 == 4) {
+    printf("I love C!\n");
+}
+   
+if ('Z' == 'z') {
+    printf("I am cool!\n");
+}
+int x = 5;
+int y = 10;
+if (x < 0) {
+    printf("x is negative!\n");
+}
+if (y >= x) {
+    printf("y is greater or equal\n");
+}
+if (x != y) {
+    printf("x and y not equal!\n");
+}
+ 
+}
+16
+COMP1511/COMP1911
+● We can add an else statement to run a block of code when our 
+condition is not true.
+if-else statement
+17
+if (condition) {
+    // this code runs if condition
+    // is true  (non-zero)
+} else {
+    // this code runs if condition
+    // is false (0)
+}
+
+COMP1511/COMP1911
+if-else statement example
+18
+if (temperature <= COLD) {
+    printf("I am cold!\n");
+} else {
+    printf("I am not cold!\n");
+}
+#define COLD 10
+
+COMP1511/COMP1911
+We can chain multiple if statements to check for multiple options
+Chaining if statements
+19
+if (condition_1) {
+    // this code runs if condition_1 is true (non-zero)
+} else if (condition_2) {
+    // this code runs if condition_1 was false 
+    // and condition_2 is true (non-zero)
+} else {
+ // this code runs if condition_1 and condition_2
+    //  are both false (0)
+}
+
+COMP1511/COMP1911
+if (temperature <= COLD) {
+    printf("I am cold!\n");
+} else if (temperature < HOT) {
+    printf("Just right!\n");
+} else {
+    printf("I am hot!\n");
+}
+Chaining if-statements example
+20
+#define COLD 10
+#define HOT 25
+
+COMP1511/COMP1911
+Write a program odd_even.c that 
+● prompts the user enter an integer
+● prints out whether the number is even or odd
+$ ./odd_even 
+Please enter an integer: 8
+Even!
+./odd_even 
+Please enter an integer: 3
+Odd!
+Coding Example
+21
+COMP1511/COMP1911
+Write a program guessing_game.c that 
+● prompts the user enter an integer
+● prints out higher, lower, correct if it is equal to the secret 
+number (42)
+$ ./guessing_game 
+Please enter an integer: 8
+Higher!
+$ ./guessing_game 
+Please enter an integer: 42
+Correct!
+Coding Example
+22
+COMP1511/COMP1911
+if (x > 0) {
+    if (x > 100) {
+        printf("big");
+    } else {
+        printf("small");
+    }
+    printf(" positive");
+}
+Nested If Statements
+23
+● We can have nested if 
+statements 
+○ These are if statements 
+inside if statements! 
+● We don’t want too much nesting 
+though for style!
+○ Maximum 5 levels
+● Note the indentation
+○ Every time we have { we 
+indent a level
+○ Every time we have } we 
+indent one less level
+COMP1511/COMP1911
+Often we want to ask more than one true or false question at 
+the same time 
+● E.g. Is x greater than y and is x less than z?
+Logical Operators
+24
+Operator Name Explanation Example usage
+&& and true if both operands are true x > y && x < z 
+|| or true if least one operand is true x == MAX || y == MAX
+! not true if the operand is false ! (x >= 0)
+COMP1511/COMP1911
+Warning: Don’t do something like 0 < x < 10 
+● It might compile and run but probably does not do what 
+you want
+● It is not checking whether x is between 0 and 10
+● Do something like this instead: x > 0 && x < 10
+Warning: Beginners sometimes get confused with && and || 
+● ((x > 0) || (x < 10))
+○ This is always true
+● ((x < 0) && (x > 10))
+○ This is always false
+Logical Operators
+25
+COMP1511/COMP1911
+Quick Questions: Logical Operators
+true (1) or false (0) 
+char c = 'g';
+int x = 4;
+                   
+● (c >= 'a') && (c <= 'm') 
+●    (x < 0) || (x > 10) 
+●  !((x < 0) || (x > 10)) 
+26
+COMP1511/COMP1911
+Coding Exercise with Logical Operators
+character_cases.c
+Write a program to allow a user to enter a character
+Print out whether the character is an uppercase letter,
+a lowercase letter, or not a letter.
+What test cases should we make sure we check?
+27
+COMP1511/COMP1911
+Short circuit Evaluation
+int x = 3;
+int y = ?;
+if ((x == 3) || (y == 5)) {
+28
+Do we need to know the value of y to know if these conditions 
+are true?
+int x = 4;
+int y = ?;
+if ((x == 3) && (y == 5)) {
+
+COMP1511/COMP1911
+● The operators && and || evaluate
+○ their left-hand-side operand ﬁrst and only evaluate their
+○ right-hand-side operand if necessary
+● Operator && only evaluates its RHS if the LHS is true
+● Operator || only evaluates its RHS if the LHS is false
+● This is very useful because we can safely write:
+   if  ((x != 0) && ((y / x) > 10))
+Short Circuit
+29
+COMP1511/COMP1911
+Breaking Things
+It is really good practice to 
+think about how it is possible 
+to break your code? 
+● What can go wrong? 
+● Important to have good 
+error messages: 
+○ Tells the user exactly 
+what has gone wrong 
+○ How can they ﬁx it? 
+○ What is happening!? 
+30
+
+COMP1511/COMP1911
+Can we check for input errors from 
+scanf?
+31
+COMP1511/COMP1911
+scanf return value and error checking
+32
+● We tell scanf what we want it to scan in
+○ But what if the user types in the wrong type of data?
+● scanf has a way of telling us!
+○ It returns the number of inputs it scanned in successfully and we 
+can assign it to a variable and/or use it for error checking. 
+int inputs_read = scanf("%d %d", &x, &y);
+if (inputs_read != 2) {
+    printf("Incorrect input\n");
+}
+
+COMP1511/COMP1911
+Coding Example
+33
+● Let’s modify guessing_game.c to check that user entered a 
+valid integer…
+
+COMP1511/COMP1911
+While Loops
+34
+while bowl of chips is not empty
+each chip
+while in lecture 
+stay awake
+COMP1511/COMP1911
+● C normally executes line by line 
+● if statements allow us to select 
+parts of our code 
+● But how can we repeat code?
+● Copy-pasting the same code 
+again and again is not a feasible 
+solution 
+Repetition, Repetition, Repetition in C
+35
+
+COMP1511/COMP1911
+While Loops
+● While something is true, do something
+● Here is the general while loop syntax
+36
+while (condition) { 
+    // Code in here runs again and again 
+    // until the condition is false
+    // The program will jump back to the start   
+    // of the while loop when it gets to the closing 
+} 
+
+COMP1511/COMP1911
+● It is very easy to make an inﬁnite while loop
+○ Handy Tip: Type Ctrl + C to end inﬁnite while loops
+Inﬁnite while Loops
+37
+while (1) {
+    printf("I love my COMP1511 lectures!\n");
+}
+int push_ups = 0;
+while (push_ups < 10) {
+    printf("You have done %d push-ups!\n", push_ups);
+}
+
+COMP1511/COMP1911
+● counting loops
+○ The number of iterations is known 
+○ Use a variable as a counter to control how many times a loop runs
+● conditional loops
+○ We may not know how many times we will need to loop
+○ Conditions terminate the loop based on calculations or user input
+● sentinel loops 
+○ Special case of conditional loops
+○ A sentinel loop continues to execute until a special value (the 
+sentinel value) is encountered. 
+3 Ways of Controlling while loops
+38
+COMP1511/COMP1911
+● Use a loop control variable (“loop counter”) to count loop 
+repetitions.
+○ We stop when the loop reaches a certain limit.
+● Useful when we know how many iterations we want.
+Counting while loops
+39
+ // 1. Initialise loop counter before the loop
+ int counter = 0;
+ while (counter < 5) { // 2. check loop counter condition
+    printf("Here we go loop de loop!\n");
+    counter = counter + 1; // 3. update loop counter
+ }
+
+COMP1511/COMP1911
+● Iterate as long as your condition is still true 
+● Used when we don't know how many times we need to loop 
+Conditional Loops
+40
+// 1. Initialise the loop control variable
+int total_kombucha_ml = 0;
+int kombucha_ml;
+while (total_kombucha_ml <= 2000) { // 2. Test the loop condition
+    printf("Please enter the ml of kombucha: ");
+    scanf("%d", &kombucha_ml);
+// 3. Update loop control variable
+    total_kombucha_ml = total_kombucha_ml + kombucha_ml; 
+} 
+printf("Warning! You have had %dml today!!\n", total_kombucha_ml);
+
+COMP1511/COMP1911
+● Process data until reaching a special value (sentinel value)
+○ Special case of conditional loop
+Sentinel Loops
+41
+int number = 0;
+int end_loop = 0;       // 1. Initialise the loop control variable
+while (end_loop == 0) { // 2. Test the loop condition 
+    scanf("%d", &number); 
+    if (number < 0) {   // We want a negative value to end the loop
+        end_loop = 1;   // 3. Update the loop control variable 
+    } else {
+        printf("You entered %d\n", number);
+    }
+}
+
+COMP1511/COMP1911
+while_infinite.c
+while_count.c
+while_condition.c
+while_sentinel.c
+Write a program that reads integers from the user and sums them 
+until a non-integer input is encountered 
+while_scanf_sum.c
+Code Demo
+42
+COMP1511/COMP1911
+Feedback Please!
+Your feedback is valuable! 
+If you have any feedback from 
+today's lecture, please follow the 
+link below or use the QR Code. 
+Please remember to keep your 
+feedback constructive, so I can 
+action it and improve your 
+learning experience.
+43
+https://forms.oﬃce.com/r/t2VfYYbXmR
+
+COMP1511/COMP1911 44
+● Recap and Constants (convert.c)
+● If statements
+○ Conditions and relational operators (odd_even.c 
+guessing_game.c)
+○ Conditions and Logical Operators (character_cases.c)
+○ Error checking scanf input (guessing_game.c)
+● While Loops
+○ while_inﬁnite.c, while_count.c, while_conditional.c, 
+while_sentinel.c, while_scanf_sum.c
+What did we learn today?
+COMP1511/COMP1911 45
+Content Related Questions:  
+Forum
+Admin related Questions email: 
+cs1511@unsw.edu.au
+Reach Out
+
+
+================================================================================
+
+[4/6] COMP1511_25T3_Week_2_Lecture_2.pdf
+----------------------------------------
+
+COMP1511/COMP1911
+COMP1511/1911 Programming Fundamentals
+Loops
+Custom Data Types
+Week 2 Lecture 2
+
+COMP1511/COMP1911
+https://cgi.cse.unsw.edu.au/~cs1511/current/resources/revision_videos.html
+ 
+Revision Videos
+2
+● We’ve created a series of short-form videos 
+to help you quickly revise important topics 
+from the course! 
+● These videos provide concise, 
+easy-to-understand explanations of core 
+concepts in the course, perfect for 
+refreshing your memory!
+● Let us know if there are any topics you’d like 
+us to cover next! 
+COMP1511/COMP1911
+Help Sessions
+Starting next week!
+Schedule out soon!
+3
+COMP1511/COMP1911
+Yesterday’s Lecture
+● Conditions and if statements
+○ Relational Operators, Logical Operators
+○ if-else, chaining if-else, nested if statements
+● While loops
+○ Inﬁnite loops
+○ Intro to counting loops
+4
+COMP1511/COMP1911
+Today’s Lecture
+● More single while loops
+● Nested While Loops 
+● Custom data types
+○ structs
+○ enums 
+5
+COMP1511/COMP1911
+https://cgi.cse.unsw.edu.au/~cs1511/25T3/code/week_2/
+ 
+Link to Week 2 Live Lecture Code
+6
+
+COMP1511/COMP1911
+scanf_return.c
+Recap scanf return
+7
+COMP1511/COMP1911
+● counting loops
+○ The number of iterations is known 
+○ Use a variable as a counter to control how many times a loop runs
+● conditional loops
+○ We may not know how many times we will need to loop
+○ Conditions terminate the loop based on calculations or user input
+● sentinel loops 
+○ Special case of conditional loops
+○ A sentinel loop continues to execute until a special value (the 
+sentinel value) is encountered. 
+3 Ways of Controlling while loops
+8
+COMP1511/COMP1911
+● Use a loop control variable (“loop counter”) to count loop 
+repetitions.
+○ We stop when the loop reaches a certain limit.
+● Useful when we know how many iterations we want.
+Counting while loops
+9
+ // 1. Initialise loop counter before the loop
+ int counter = 0;
+ while (counter < 5) { // 2. check loop counter condition
+    printf("Here we go loop de loop!\n");
+    counter = counter + 1; // 3. update loop counter
+ }
+
+COMP1511/COMP1911
+● Iterate as long as your condition is still true 
+● Used when we don't know how many times we need to loop 
+Conditional Loops
+10
+// 1. Initialise the loop control variable
+int total_kombucha_ml = 0;
+int kombucha_ml;
+while (total_kombucha_ml < MAX_KOMBUCHA) { // 2. Test the loop condition
+    printf("Please enter the ml of kombucha: ");
+    scanf("%d", &kombucha_ml);
+// 3. Update loop control variable
+    total_kombucha_ml = total_kombucha_ml + kombucha_ml; 
+} 
+printf("Warning! You have had %dml today!!\n", total_kombucha_ml);
+
+COMP1511/COMP1911
+● Process data until reaching a special value (sentinel value)
+○ Special case of conditional loop
+Sentinel Loops
+11
+int number = 0;
+int end_loop = 0;       // 1. Initialise the loop control variable
+while (end_loop == 0) { // 2. Test the loop condition 
+    scanf("%d", &number); 
+    if (number < 0) {   // We want a negative value to end the loop
+        end_loop = 1;   // 3. Update the loop control variable 
+    } else {
+        printf("You entered %d\n", number);
+    }
+}
+
+COMP1511/COMP1911
+while_count.c
+while_condition.c
+while_sentinel.c
+Write a program that reads integers from the user and sums them 
+until a non-integer input is encountered 
+while_scanf_sum.c
+Code Demo
+12
+COMP1511/COMP1911
+● A loop in a loop
+● If we put a loop inside a loop . . . 
+● Each time a loop runs 
+○ It runs the other loop 
+● The inside loop ends up running 
+a LOT of times
+● How many times does the 
+second hand go around the clock
+for every minute? For every hour?
+Nested While Loops
+13
+
+COMP1511/COMP1911
+How could we print out 
+something like this?
+Why are nested while loops useful?
+14
+1 2 3 4 5  
+1 2 3 4 5
+1 2 3 4 5
+1 2 3 4 5
+1 2 3 4  5
+1
+1 2
+1 2 3
+1 2 3 4  
+1 2 3 4 5 
+Or this?
+COMP1511/COMP1911
+Code Demo Nested While Loop
+grid.c
+pyramid.c
+clock.c (if we have time)  
+15
+COMP1511/COMP1911
+Quick Break. Back Soon…
+16
+
+COMP1511/COMP1911
+Custom Data Types
+17
+COMP1511/COMP1911
+Organising related data
+18
+Is there a better way of storing related data?
+ char my_first_initial = 'A';
+char my_last_initial = 'F';
+int my_age = 23;
+double my_lab_mark = 2.4;
+char brianna_first_initial = 'B';
+char brianna_last_initial = 'K';
+int brianna_age = 21;
+double brianna_lab_mark = 9.9;
+
+COMP1511/COMP1911
+Organising related data
+19
+Is there a better way of storing related data?
+ char my_first_initial = 'A';
+char my_last_initial = 'F';
+int my_age = 23;
+double my_lab_mark = 2.4;
+char brianna_first_initial = 'B';
+char brianna_last_initial = 'K';
+int brianna_age = 21;
+double brianna_lab_mark = 9.9;
+We could group the 
+data related to a 
+person
+COMP1511/COMP1911
+Organising related data
+20
+Is there a better way of storing related data?
+ int x1 = 0;
+int y1 = 0;
+int z1 = 0;
+int x2 = 10;
+int y2 = -5;
+int z2 = 5;
+
+COMP1511/COMP1911
+int x1 = 0;
+int y1 = 0;
+int z1 = 0;
+int x2 = 10;
+int y2 = -5;
+int z2 = 5;
+Organising related data
+21
+Is there a better way of storing related data?
+ We could group the 
+data related to a 
+coordinate
+COMP1511/COMP1911
+User deﬁned Data Type: struct
+22
+● So far, we have used built-in C data types (int, char, double)
+● These store a single item of that type
+● structs allow us to deﬁne our own data types (structures) to 
+store a collection of types
+● Before we can create struct variables, we need to deﬁne the 
+struct (outside the main)
+○ Note this does not create a variable or set aside any memory. 
+○ It just deﬁnes the type. 
+● Then we declare and use struct variable/s 
+COMP1511/COMP1911
+● We deﬁne our structs before our main function.
+● structs are types that we design, made up of data elements 
+that we decide belong together
+○ we call these elements members or ﬁelds
+○ we need to deﬁne a type and name for each member
+1. Deﬁning a struct
+23
+struct student {
+    char first_initial;
+    char last_initial;
+    int age;
+    double lab_mark;
+};
+COMP1511/COMP1911
+● Creating variables using your custom struct type
+2. Declaring a struct variable
+24
+struct student {
+    char first_initial;
+    char last_initial;
+    int age;
+    double lab_mark;
+};
+        
+int main(void) {
+// Declare a variable
+// of type struct student
+struct student brianna;
+
+COMP1511/COMP1911
+● We access a member of a struct by using the dot operator .
+3. Initialising struct data
+25
+int main(void) {
+// Declare a variable
+// of type struct student
+struct student brianna;
+// Initialise the members of
+// your struct variable
+    brianna.first_initial = 'B';
+    brianna.last_initial = 'K';
+brianna.age = 21;
+brianna.lab_mark = 9.9;
+struct student {
+    char first_initial;
+    char last_initial;
+    int age;
+    double lab_mark;
+};
+    
+    
+
+COMP1511/COMP1911
+● Increment the age ﬁeld
+● Read in updated lab mark 
+from the user.
+● Print out struct data
+Exercise: Using structs
+26
+int main(void) {
+// Declare a variable
+// of type struct student
+struct student brianna;
+// Initialise the members of
+// your struct variable
+    brianna.first_initial = 'B';
+    brianna.last_initial = 'K';
+brianna.age = 21;
+brianna.lab_mark = 9.9;
+struct student {
+    char first_initial;
+    char last_initial;
+    int age;
+    double lab_mark;
+};
+    
+
+COMP1511/COMP1911
+● Enter data for a point
+● Print out the point struct
+Exercise: Using structs
+27
+struct coordinate {
+    int x;
+    int y;
+int z;
+};
+    
+int main(void) {
+// Declare 2 variables of 
+    // type struct coordinate
+    struct coordinate point_1;
+    struct coordinate point_2;
+    
+
+COMP1511/COMP1911
+● Data types that allow you to assign names to integer constants 
+to make it easier to read and maintain your code
+○ By default the enumerated constants will have int values 0, 1, 2, …
+○ Note you can’t have two enums with the same constant names
+Enumerations
+28
+// Example of the syntax used to define an enum
+enum enum_name {STATE0, STATE1, STATE2, ...};
+// E.g. define an enum for day of the week
+enum weekdays {MON, TUE, WED, THU, FRI, SAT, SUN};
+// E.g. define an enum with specified int values
+enum status_code {OK = 200, NOT_FOUND = 404};
+
+COMP1511/COMP1911
+enum code example
+29
+// Define an enum with days of the week
+// make sure it is outside and before the main function
+// MON will have value 0, TUE 1, WED 2, etc
+enum weekdays {MON, TUE, WED, THU, FRI, SAT, SUN};
+int main (void) {
+    enum weekdays day;
+    day = SAT;
+    // This will print out 5
+    printf("The day number is %d\n", day);
+    return 0;
+}
+
+COMP1511/COMP1911
+● enums are useful when we want to deﬁne a speciﬁc ﬁxed set of 
+constants
+● The advantages of using enums over #deﬁnes
+○ Enumerations are automatically assigned values, which makes 
+the code easier to read 
+■ Think of the case where you have a large number of related 
+constants 
+● #deﬁne are useful for other contexts such as constants that are 
+not integers or stand alone constant values
+enum vs #deﬁne
+30
+COMP1511/COMP1911
+Feedback Please!
+Your feedback is valuable! 
+If you have any feedback from 
+today's lecture, please follow the 
+link below or use the QR Code. 
+Please remember to keep your 
+feedback constructive, so I can 
+action it and improve your 
+learning experience.
+31
+https://forms.oﬃce.com/r/F56gV5WHM7
+
+COMP1511/COMP1911 32
+● While loops 
+○ while_count.c, while_conditional.c, 
+while_sentinel.c, while_scanf_sum.c
+● Nested while loops
+○ grid.c, pyramid.c, clock.c
+● structs
+○ struct_student.c, struct_points.c
+● enums
+○ enum_weekdays.c 
+What did we learn today?
+COMP1511/COMP1911 33
+● Functions
+● Style
+Next week
+COMP1511/COMP1911 34
+Content Related Questions:  
+Forum
+Admin related Questions email: 
+cs1511@unsw.edu.au
+Reach Out
+
+
+================================================================================
+
+[5/6] COMP1511_25T3_Week_3_Lecture_1.pdf
+----------------------------------------
+
+COMP1511/COMP1911
+COMP1511 Programming Fundamentals
+FUNctions and Style
+Week 3 Lecture 1
+
+COMP1511/COMP1911
+Last Week
+● if statements
+● scanf returns!
+● while loops
+● nested while loops
+● structs
+● enums
+2
+COMP1511/COMP1911
+This Week
+● Reminder: Lab 2 due tonight 6pm.
+● Help Session Schedule
+○ https://cgi.cse.unsw.edu.au/~cs1511/25T3/help-sessions
+○ Please note that help sessions are not in labs and are BYOD (Bring 
+Your Own Device) sessions. 💻
+○ Please check out this link for more information
+about help sessions(Teams join code:ijnb1b0) 
+3
+
+COMP1511/COMP1911
+Next Monday
+● Public Holiday
+○ Pre-recorded lecture will be uploaded
+○ Students in monday tutorial/labs, will be able to get tickets to 
+attend other time slot in the week. 
+○ Ticketing Link : https://buytickets.at/comp1511unsw/1857310  
+(Access code is “COMP1511”) 
+○ Lab 3 Due Week 4 Tuesday 6pm instead of Monday 6pm
+4
+COMP1511/COMP1911
+Today’s Lecture
+● Recap of nested while loops, structs, enums
+● structs with enums members
+● Functions
+● Style
+Most students start to ﬁnd things are getting hard
+Be patient and keep practicing.
+5
+COMP1511/COMP1911
+https://cgi.cse.unsw.edu.au/~cs1511/25T3/code/week_3/
+Link to Week 3 Live Lecture Code
+6
+
+COMP1511/COMP1911
+A Brief Recap 
+7
+● Nested While Loops
+pattern.c
+● Structs
+struct_student.c
+enum_weekdays.c
+
+COMP1511/COMP1911
+● We can have enum members in our structs!
+struct with enum members!
+8
+enum student_status {
+    ENROLLED, WITHDRAWN, LEAVE
+};
+struct student {
+    enum student_status status;
+    double wam;
+};
+struct student z123456;
+z123456.status = ENROLLED;
+z123456.wam = 95.9;
+
+COMP1511/COMP1911
+pokemon.c
+● We can have enum members in our structs!
+● Create a enum for pokemon types FAIRY, WATER, FIRE etc
+● Create a struct called pokemon with a ﬁeld for the type and 
+some other relevant ﬁelds
+● Make a pokemon variable and set it with data
+● Print out the pokemon data
+Coding Example: 
+9
+COMP1511/COMP1911
+What is a function?
+10
+COMP1511/COMP1911
+● A function is an 
+○ independent 
+○ reusable block of code 
+○ that performs a speciﬁc task
+Functions
+11
+COMP1511/COMP1911
+Have you seen functions before?
+12
+COMP1511/COMP1911
+● Yes you have seen functions before! 
+● You have been writing main functions
+● You have also used functions from the stdio.h library
+○ printf and scanf
+● There are lots of other libraries and library functions
+● And we can write our own functions too
+Functions
+13
+COMP1511/COMP1911
+● We do not need to know how the code in the function works - just 
+what it does and how to use it.
+● To use a function, we do a function call
+○ Pass in the correct sequence of inputs (arguments)
+■ the correct type
+■ the correct order 
+○ If our function has a return value 
+■ we may wish to use or store it
+Using Functions
+14
+
+COMP1511/COMP1911
+● This is a function prototype
+○ it gives programmers and the compiler information about how the 
+function can be used
+Function Prototypes
+15
+int maximum(int x, int y);
+return type:
+What type 
+does this
+ function return? 
+Function name:
+What is the name 
+of the function?
+e 
+Parameters:
+What inputs do I 
+need to give my 
+function
+
+COMP1511/COMP1911
+Here is an example of how we could use our function.  
+Functions calls
+16
+int maximum(int x, int y);
+int main(void) {
+int num = 7;
+int max = maximum(10, num);
+ printf("The maximum value is %d\n", max);
+return 0;
+}
+
+COMP1511/COMP1911
+This is an implementation of our function!
+Function Deﬁnition
+17
+// Returns the maximum of the given values x and y
+int maximum(int x, int y) {
+    int max;
+    if (x > y) {
+        max = x;
+    } else {
+        max = y;
+    } 
+    // returns an int value 
+    return max;
+}
+
+COMP1511/COMP1911
+We want to create a function to print out a square of a given size.
+For example this is a square of size 4
+****
+****
+****
+****
+What would the prototype be?
+Let’s try writing another one
+18
+COMP1511/COMP1911
+Our function does not need to return any values
+It just prints things out to the terminal.
+This is what our prototype might look like
+void functions
+19
+// Prints a square of ‘*’ characters
+// of the given size
+void print_square(int size);
+Note: Functions with void return types are sometimes called procedures
+
+COMP1511/COMP1911
+void functions
+20
+void print_square(int size);
+int main(void) {
+int square_size;
+printf("Enter the size: ");     
+scanf("%d", &square_size);
+print_square(square_size);
+return 0;
+}
+void print_square(int size){
+int row = 0;
+    while (row < size) {
+        int col = 0;
+        while (col < size) {
+            printf("#");
+            col = col + 1;
+        }
+        printf("\n");
+        row = row + 1;
+    }
+}
+
+COMP1511/COMP1911
+We can use the 
+keyword void in the 
+parameter list too!
+Functions that need no arguments
+21
+void print_warning(void);
+int main(void) {
+print_warning();
+return 0;
+}
+// Display a helpful warning on the terminal
+void print_warning(void) {
+    printf("#########################\n");
+    printf("Warning: Don't plagiarise\n");
+    printf("#########################\n");
+}
+
+COMP1511/COMP1911
+● Functions have parameters
+○ deﬁne what type of arguments (inputs) the functions need
+○ void in the parameter list means it needs no arguments 
+● Functions may return a single value
+○ The type of the function is the type that it returns
+○ A return type of void means it does not return a value
+■ return can still be used to end the function without a return value
+Recap: Function Parameters and return 
+22
+COMP1511/COMP1911
+● The code of a function is only executed when requested via a
+function call
+● When a function is called
+○ Current code execution is halted
+○ Execution of the function body begins
+○ Reaching the last statement of the function or reaching a return 
+statement stops execution of a function
+● When the function completes, execution resumes at the 
+instruction after the function call.
+Function Calls and Execution Flow
+23
+COMP1511/COMP1911
+● It is good style to have
+○ main function at the top of the file
+○ implement additional user defined functions below it.
+● To do this we need to write prototypes above main function
+○ the compiler processes the program code top-down
+○ This lets the compiler know that the definition (implementation) for 
+these functions can be found somewhere else.
+○ A compile error occurs if a function call is encountered before the 
+function prototype.
+Prototypes and Style
+24
+COMP1511/COMP1911
+● Every function must have a comment placed before the function 
+implementation describing
+○ the purpose of the function
+○ any side-effects the function has
+● As always, choose meaningful names for your functions
+Function Comments and Style
+25
+COMP1511/COMP1911
+area_triangle.c  
+print_pokemon.c
+Code demo
+26
+COMP1511/COMP1911
+● Modularity: Breaks complex programs into simpler, 
+manageable pieces, easier to read and understand
+● Reusability: Avoids code duplication, as you can reuse the 
+functions
+● Abstraction: Hides the implementation details and allows you 
+to focus on higher-level logic.
+● Allow us to test and debug smaller chunks of code in isolation 
+Beneﬁts of functions
+27
+COMP1511/COMP1911
+Style
+28
+COMP1511/COMP1911
+● The code we write is for human eyes
+● We want to make our code:
+○ easier to read
+○ easier to understand
+Style
+29
+COMP1511/COMP1911
+● less possibility for mistakes
+● helps with faster development time
+● you also get marks for style in assignments
+● if we need to mark your code in the ﬁnal manually it is good if it 
+is not a dog’s breakfast
+Beneﬁts of Good Style
+30
+COMP1511/COMP1911
+● Indentation and Bracketing
+● Names of variables and 
+functions
+● Structuring your code
+● Nesting
+● Repetition
+● Comments 
+● Consistency
+What is Good Style?
+31
+MEME
+
+COMP1511/COMP1911
+Bad Style Demo
+32
+Let’s look at 
+bad_style.c
+● What are some 
+things we should 
+ﬁx?
+COMP1511/COMP1911
+● Often different organisations you work for, will have their own 
+style guides, however, the basics remain the same across
+● Your assignment will have style marks attached to it 
+● We have a style guide in 1511 that we encourage you to use to 
+establish good coding practices early:
+○ https://cgi.cse.unsw.edu.au/~cs1511/25T3/resources/style_guide.html
+Style Guide
+33
+COMP1511/COMP1911
+● Write comments where they are needed 
+● Name your variables based on what that variable is there to do
+● In your block of code surrounded by {}:
+○ Indent 4 spaces
+○ Vertically align closing bracket with statement that opened it 
+● One expression per line 
+● Consistency in spacing 
+● Watch your code width (<= 80 characters)
+● Watch the nesting of IFs - can it be done more eﬃciently? 
+● Break code into functions
+Tips: Clean as you go
+34
+COMP1511/COMP1911
+● If you do not understand something, do not panic! 
+● It is perfectly normal to not understand a concept the ﬁrst time 
+it is explained to you
+○ ask questions in lectures
+○ try and read over the information again
+○ rewatch lectures
+○ ask questions in the tutorial and the lab
+○ ask questions on the forum
+○ go to help sessions
+○ go to revision sessions
+Things are getting harder…
+35
+COMP1511/COMP1911
+● If you can't solve a problem
+○ break down the problem into smaller and smaller steps until there 
+is something that you can do 
+○ ask us lots of questions! 
+● Remember learning is hard and takes time
+● Solving problems is hard and takes practice
+● We are here to help you!!!
+Things are getting harder…
+36
+COMP1511/COMP1911
+Feedback Please!
+Your feedback is valuable! 
+If you have any feedback from 
+today's lecture, please follow the 
+link below or use the QR Code. 
+Please remember to keep your 
+feedback constructive, so I can 
+action it and improve your 
+learning experience.
+37
+https://forms.office.com/r/qK0Z00Y0gX
+
+COMP1511/COMP1911 38
+● Recap of while loops, nested while loops
+○ pattern.c
+● Recap of structs
+○ struct_student.c
+● Enums
+○ enum_weekdays.c
+● Enums and structs
+○ pokemon.c
+What did we learn today?
+COMP1511/COMP1911 39
+● Functions 
+○ max_function.c square_function.c warning_function.c 
+area_triangle.c pokemon_functions.c
+● Style 
+○ bad_style.c
+Coming up next lecture….
+Function recap, more about functions and a very important topic - 
+arrays.
+What did we learn today?
+COMP1511/COMP1911 40
+Content Related Questions:  
+Forum
+Admin related Questions email: 
+cs1511@unsw.edu.au
+Reach Out
+
+
+================================================================================
+
+[6/6] COMP1511_25T3_Week_3_Lecture_2.pdf
+----------------------------------------
+
+COMP1511/COMP1911
+COMP1511/1911 Programming Fundamentals
+ 
+Week 3 Lecture 2
+Arrays
+1
+COMP1511/COMP1911
+Census Date
+About Census Dates | UNSW Current Students
+2
+
+COMP1511/COMP1911
+Public Holiday on Monday
+● Booking for tut/lab
+● Recording for lecture
+● Lab 3 due - week 4 tuesday 6pm
+● Lab 4 due - week 5 tuesday 6pm
+● Assignment released early week 4 
+3
+COMP1511/COMP1911
+● Like a Hybrid tutorial/lab session
+○ structured with lab style questions 
+● Forum post coming soon with more information!! 
+Revision Sessions Week 4
+4
+COMP1511/COMP1911
+https://cgi.cse.unsw.edu.au/~cs1511/25T3/code/week_3/
+Disclaimer: 
+Some live lecture code is not cleaned up and polished!!! 
+It may have some things that are not 100% perfect style.
+I also sometimes have extra comments explaining how 
+C works that would not be needed usually.
+Link to Week 3 Live Lecture Code
+5
+
+COMP1511/COMP1911
+Yesterday’s Lecture
+● Nested while loop, struct, enum recap
+● Functions!
+6
+COMP1511/COMP1911
+Today’s Lecture
+● Function Recap
+● Function, Memory and Scope 
+● Style
+● Handy Shorthand
+● Arrays ( A hurdle topic)
+● If we have time, look at some functions with arrays!
+7
+COMP1511/COMP1911
+Functions Recap
+8
+COMP1511/COMP1911
+● A function is an 
+○ independent 
+○ reusable block of code 
+○ that performs a speciﬁc task
+Functions
+9
+COMP1511/COMP1911
+● Modularity: Breaks complex programs into simpler, 
+manageable pieces, easier to read and understand
+● Reusability: Avoids code duplication, as you can reuse the 
+functions
+● Abstraction: Hides the implementation details and allows you 
+to focus on higher-level logic.
+● Allow us to test and debug smaller chunks of code in isolation
+ 
+Beneﬁts of functions
+10
+COMP1511/COMP1911
+Recap: Simple Functions
+11
+double add_numbers (double x, double y);
+ 
+int main(void) {
+    int x = 9;
+    double answer = add_numbers(1.5, x);
+    printf("The answer is %lf\n", answer);
+    return 0;
+}
+// This function returns the sum of 2 given doubles
+double add_numbers (double x, double y) {
+    double sum;
+    sum = x + y;
+    return sum;
+}
+
+COMP1511/COMP1911
+● Blocks of code in C are delimited by a pair if braces {}. 
+○ The body of a function is a common example of a block.
+● Generally the scope of a variable is
+○  Between where the variable is declared
+○ The end of the block it was declared in
+● Variables declared inside functions are called local variables.
+● Code demos: memory_scope.c
+Memory and Scope
+12
+COMP1511/COMP1911
+● Local variables are created when the function called and 
+destroyed when function returns
+● A function’s variables are not accessible outside the function
+Functions and Local Variables
+13
+double add_numbers(double x, double y) {
+    // sum is a local variable
+    double sum;
+    sum = x + y;
+    return sum;
+}
+
+COMP1511/COMP1911
+● Variables declared outside a function have global scope
+○ Do NOT use these!
+Global Variables
+14
+// result is a global variable BAD DO NOT USE IN COMP1511
+int result; 
+int main(void) {
+    // answer is a local variable GOOD 
+    int answer;
+    return 0;
+}
+COMP1511/COMP1911
+● Primitive types such as int, char, double and also enum and 
+structs are passed by value
+○ A copy of the value of the variable is passed into the function 
+○ This increment function is just modifying its own copy of x
+○ Code demo: pass_by_value.c
+Passing by Value
+15
+void increment(int x) {
+    // modifies the 
+    // local copy of x
+    x = x + 1;
+}
+
+COMP1511/COMP1911
+Passing by Value
+16
+int main(void) {
+    int x = 10;
+    // passes the value 10
+    // into the function
+    increment(x);
+    // x will still be 10
+    printf("Main: %d\n", x);
+    return 0;
+}
+void increment(int x) {
+    // modifies the 
+    // local copy of x
+    x = x + 1;
+    printf("Inc: %d\n", x);
+}
+1110
+COMP1511/COMP1911
+Using Functions in Conditions
+17
+You can call functions inside your if statements or your while 
+loops like this:
+ while (scanf("%d", &n) == 1) {
+    ...
+}
+if (maximum(b, h) < 10) {
+    ...
+}
+ Note: You can’t do this with functions that have void return types
+
+COMP1511/COMP1911
+● The code we write is for human eyes
+● We want to make our code:
+○ easier to read
+○ easier to understand
+Style
+18
+COMP1511/COMP1911
+● Often different organisations you work for, will have their own 
+style guides, however, the basics remain the same across
+● We have a style guide in 1511 that we encourage you to use to 
+establish good coding practices early:
+○ https://cgi.cse.unsw.edu.au/~cs1511/25T3/resources/style_guide.html
+Style Guide
+19
+COMP1511/COMP1911
+● less possibility for mistakes
+● helps with faster development time
+● you also get marks for style in assignments
+● if we need to mark your code in the ﬁnal manually it is good if it 
+is not a dog’s breakfast
+Beneﬁts of Good Style
+20
+COMP1511/COMP1911
+● Indentation and Bracketing
+● Names of variables and 
+functions
+● Structuring your code
+● Nesting
+● Repetition
+● Comments 
+● Consistency
+What is Good Style?
+21
+MEME
+
+COMP1511/COMP1911
+Bad Style Demo
+22
+Let’s look at 
+bad_style.c
+What are some 
+things we should ﬁx?
+COMP1511/COMP1911
+● Write comments where they are needed 
+● Name your variables based on what that variable is there to do
+● In your block of code surrounded by {}:
+○ Indent 4 spaces
+○ Vertically align closing bracket with statement that opened it 
+● One expression per line 
+● Consistency in spacing 
+● Watch your code width (<= 80 characters)
+● Watch the nesting of IFs - can it be done more eﬃciently? 
+● Break code into functions
+Tips: Clean as you go
+23
+COMP1511/COMP1911
+Some handy shorthand!!
+24
+COMP1511/COMP1911
+Increment and Decrement
+25
+// Increment count by 1
+count = count + 1;
+count++;
+// Decrement count by 1
+count = count - 1;
+count--;
+// Increment count by 5
+count = count + 5;
+count += 5;
+// Decrement count by 5
+count = count - 5;
+count -= 5;
+
+COMP1511/COMP1911
+● Very similar to while loops!
+● You can do everything you 
+need with a while loop
+● for loops are really just a 
+short hand for while loops in C 
+● for loops are very handy for 
+loops when you know the 
+number of iterations you need!
+○ counting loops
+for loops
+26
+
+COMP1511/COMP1911
+For loop structure
+27
+for (int count = 0; count < 10; count++) {
+    //Do something
+}
+initialisation:
+Executed before 
+the loop begins
+expression:
+Evaluated before 
+each iteration. 
+exits loop when 
+falsee 
+increment:
+Executed at the 
+end of each 
+iteration
+
+COMP1511/COMP1911
+These two loops do exactly the same thing!
+while loop vs for loop
+28
+int i = 0;
+while (i < 10) {
+    printf("%d\n", i);
+    i++;
+}
+for (int i = 0; i < 10; i++) {
+    printf("%d\n", i);
+}
+COMP1511/COMP1911
+Arrays
+29
+COMP1511/COMP1911
+What if you wanted to store many 
+related values of the same type?
+30
+COMP1511/COMP1911
+Number of Chocolates Eaten
+31
+int day_1 = 2;
+int day_2 = 3;
+int day_3 = 3;
+int day_4 = 5;
+int day_5 = 7;
+int day_6 = 1;
+int day_7 = 3;
+// Any day with 3 or more is too much!
+if (day_1 >= 3){
+    printf("Too many chocolates\n");
+}
+if (day_2 >= 3) {...
+Does this seem repetitive? What if I tracked a year’s worth??!!
+
+COMP1511/COMP1911
+● A data structure is a way of organizing and storing data so that 
+it can be accessed and used eﬃciently
+● In this course we will learn about two very important data 
+structures:
+○ Arrays (NOW!)
+○ Linked Lists (after ﬂexibility week)
+● There are other data structures that you will learn about in 
+further computing courses
+● Choosing the right data structure depends on what the problem 
+is and what you are trying to achieve. 
+Data Structures
+32
+COMP1511/COMP1911
+● A collection of variables all of the same type (homogenous)
+○ Think about how this is very different to a struct
+● A contiguous data structure
+○ All data in an array is stored in consecutive memory locations
+● A random access data structure
+○ We can access any data in the collection directly without having to 
+scan through other data elements
+● An indexed structure
+○ We just have one variable identiﬁer for the whole collection of data
+○ We can uses indexes to access speciﬁc pieces of data
+Arrays!
+33
+COMP1511/COMP1911
+Declaring an Array
+34
+int chocolates_eaten[7];
+type of data 
+stored in array
+name of the array
+size: number of 
+items in the array
+● This declares an array named chocolates_eaten, that can store 
+7 integers
+
+COMP1511/COMP1911
+Declaring and Initialising an Array
+35
+// This declares an array named chocolates_eaten, 
+// that can store 7 integers and initialises
+// their values to 4, 2, 5, 2 and so on.
+int chocolates_eaten[7] = {4, 2, 5, 2, 0, 3, 1}; 
+// This would declare the array and 
+// initialise all values to 0
+int chocolates_eaten[7] = {};
+
+COMP1511/COMP1911
+Declaring and Initialising an Array
+36
+// This is illegal and does not compile
+// You can only use this initialisation syntax
+// when you declare the array
+// NOT later
+int chocolates_eaten[7];
+chocolates_eaten[7] = {4, 2, 5, 2, 0, 3, 1};
+// This is the correct way all in one line
+int chocolates_eaten[7] = {4, 2, 5, 2, 0, 3, 1}; 
+
+COMP1511/COMP1911
+So let's say we have this declared and initialised:
+This is what it looks like visually:
+Note: The array holds 7 elements. Indexes start at 0
+Visualising an Array
+37
+int chocolates_eaten[7] = {4, 2, 5, 2, 0, 3, 1}; 
+int int int int int int int
+0 1 2 3 4 5 6
+4 2 5 2 0 3 1
+COMP1511/COMP1911
+● You can access any element of the array by using its index
+○ Indexes start from 0 
+○ Trying to access an index that does not exist, will result in an error
+chocolates_eaten[2] would access the third element 
+Accessing Elements in an Array
+38
+int chocolates_eaten[7] = {4, 2, 5, 2, 0, 3, 1}; 
+int int int int int int int
+0 1 2 3 4 5 6
+4 2 5 2 0 3 1
+COMP1511/COMP1911
+● You can access any element of the array by using its index
+○ Indexes start from 0 
+○ Trying to access an index that does not exist, will result in an error
+chocolates_eaten[7] would cause a run-time error 
+Accessing Elements in an Array
+39
+int chocolates_eaten[7] = {4, 2, 5, 2, 0, 3, 1}; 
+int int int int int int int
+0 1 2 3 4 5 6
+4 2 5 2 0 3 1
+COMP1511/COMP1911
+● You can't printf() a whole array
+○ but you can print individual elements 
+● You can't scanf() a whole array at once
+○ but you can scanf() individual elements 
+● You can’t assign a whole array to another array variable
+○ but you can create an array and copy the individual elements 
+A closer look at arrays
+40
+int a[7] = {4, 2, 5, 2, 0, 3, 1};
+int b[7] = a;  // You can’t do this!
+
+COMP1511/COMP1911
+Does this look repetitive? 
+Printing elements in an array
+41
+int chocolates_eaten[7] = {4, 2, 5, 2, 0, 3, 1};
+printf("%d ", chocolates_eaten[0]);
+printf("%d ", chocolates_eaten[1]);
+printf("%d ", chocolates_eaten[2]);
+printf("%d ", chocolates_eaten[3]);
+printf("%d ", chocolates_eaten[4]);
+printf("%d ", chocolates_eaten[5]);
+printf("%d ", chocolates_eaten[6]);  
+ 
+How could we do this in a better way?
+
+COMP1511/COMP1911
+Traversing an Array
+42
+int int int int int int int
+0 1 2 3 4 5 6
+4 2 5 2 0 3 1
+int chocolates_eaten[7] = {4, 2, 5, 2, 0, 3, 1};
+int i = 0;
+while (i < 7) {
+    printf("%d ", chocolates_eaten[i]);
+    i++;
+}
+ 
+Start at index 0
+chocolates_eaten[0]
+
+COMP1511/COMP1911
+int chocolates_eaten[7] = {4, 2, 5, 2, 0, 3, 1};
+int i = 0;
+while (i < 7) {
+    printf("%d ", chocolates_eaten[i]);
+    i++;
+}
+ 
+Traversing an Array
+43
+int int int int int int int
+0 1 2 3 4 5 6
+4 2 5 2 0 3 1
+Increment index by 1
+chocolates_eaten[1]
+
+COMP1511/COMP1911
+int chocolates_eaten[7] = {4, 2, 5, 2, 0, 3, 1};
+int i = 0;
+while (i < 7) {
+    printf("%d ", chocolates_eaten[i]);
+    i++;
+}
+ 
+Traversing an Array
+44
+int int int int int int int
+0 1 2 3 4 5 6
+4 2 5 2 0 3 1
+Increment index by 1
+chocolates_eaten[2]
+
+COMP1511/COMP1911
+int chocolates_eaten[7] = {4, 2, 5, 2, 0, 3, 1};
+int i = 0;
+while (i < 7) {
+    printf("%d ", chocolates_eaten[i]);
+    i++;
+}
+ 
+Traversing an Array
+45
+int int int int int int int
+0 1 2 3 4 5 6
+4 2 5 2 0 3 1
+Increment index by 1
+chocolates_eaten[3]
+
+COMP1511/COMP1911
+Traversing an Array
+46
+int int int int int int int
+0 1 2 3 4 5 6
+4 2 5 2 0 3 1
+int chocolates_eaten[7] = {4, 2, 5, 2, 0, 3, 1};
+int i = 0;
+while (i < 7) {
+    printf("%d ", chocolates_eaten[i]);
+    i++;
+}
+ 
+Increment index by 1
+chocolates_eaten[4]
+
+COMP1511/COMP1911
+int chocolates_eaten[7] = {4, 2, 5, 2, 0, 3, 1};
+int i = 0;
+while (i < 7) {
+    printf("%d ", chocolates_eaten[i]);
+    i++;
+}
+ 
+Traversing an Array
+47
+int int int int int int int
+0 1 2 3 4 5 6
+4 2 5 2 0 3 1
+Increment index by 1
+chocolates_eaten[5]
+
+COMP1511/COMP1911
+int chocolates_eaten[7] = {4, 2, 5, 2, 0, 3, 1};
+int i = 0;
+while (i < 7) {
+    printf("%d ", chocolates_eaten[i]);
+    i++;
+}
+ 
+Traversing an Array
+48
+int int int int int int int
+0 1 2 3 4 5 6
+4 2 5 2 0 3 1
+Increment index by 1
+chocolates_eaten[6]
+
+COMP1511/COMP1911
+ Demo arrays!
+simple_array.c
+numbers.c 
+scan in numbers
+print array,  (while loop and for loop)
+sum, 
+add 10 to all values,
+numbers_functions.c
+49
+COMP1511/COMP1911
+Arrays and Functions
+● We can pass arrays into functions!
+● The function needs a way of knowing the size of the array
+50
+// Can pass in array of int of any size 
+void print_array(int size, int array[]);
+
+COMP1511/COMP1911
+Arrays and Functions
+51
+void print_array(int size, int array[]);
+int main(void) {
+int marks[] = {9, 8, 10, 2, 7};
+    int ages[] = {21, 42, 11};
+    print_array(5, marks);
+    print_array(3, ages);
+    return 0;
+}
+void print_array(int size, int array[]) {
+    for (int i = 0; i < size; i++) {
+        printf("%d ", array[i]);
+    }
+}
+
+COMP1511/COMP1911
+Arrays and Functions
+52
+● Functions do not get a copy of all the array values passed into 
+them.
+● They can access the original array from the calling function
+● This means they can modify the values directly from the 
+function
+● More about this in future weeks!
+
+COMP1511/COMP1911
+Arrays and Functions
+● We can pass an 
+array into a 
+function and 
+initialise all the 
+values like this!!
+int main(void) {
+    int marks[SIZE];  
+    scan_marks(SIZE, marks);
+    print_marks(SIZE, marks);
+    return 0;
+}
+void scan_marks(int size, int array[]) {
+    for (int i = 0; i < size; i++) {
+        scanf("%d ", &array[i]);
+    }
+}
+ 53
+COMP1511/COMP1911
+Arrays and Functions
+● Trying to return an array 
+from a function by doing 
+something like this looks 
+ok but fails spectacularly!
+● We will explain this in 
+more detail later in the 
+course
+54
+// You can’t return an array like
+// this from a function
+int[] scan_marks(void) {
+    int array[SIZE];
+    for (int i = 0; i < SIZE; i++) {
+        scanf("%d ", &array[i]);
+    }
+    return array;
+}
+
+COMP1511/COMP1911 55
+● Functions recap (memory_scope.c pass_by_value.c 
+scanf_loop.c)
+● Arrays (simple_array.c numbers.c)
+● Arrays with Functions (numbers_functions.c)
+What did we learn today?
+COMP1511/COMP1911 56
+● Lectures:
+○ 2D arrays
+○ strings
+● Assignment 1 will be released next week 
+○ Material covered in lectures next week will be very important 
+Next Week
+COMP1511/COMP1911
+Feedback Please!
+Your feedback is valuable! 
+If you have any feedback from 
+today's lecture, please follow the 
+link below or use the QR Code. 
+Please remember to keep your 
+feedback constructive, so I can 
+action it and improve your 
+learning experience.
+57
+https://forms.office.com/r/PcEMQSXP61
+
+COMP1511/COMP1911 58
+Content Related Questions:  
+Forum
+Admin related Questions email: 
+cs1511@unsw.edu.au
+Reach Out
+
+
+================================================================================
+

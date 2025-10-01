@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react"
+import { useEffect, useState, type FormEvent } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
 import { Button } from "@/components/ui/button"
@@ -14,7 +14,11 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-const AVAILABLE_SUBJECTS = ["COMP2521"]
+type CourseOption = {
+  code: string
+  name: string
+  description?: string | null
+}
 
 export default function AuthCard() {
   const navigate = useNavigate()
@@ -23,10 +27,10 @@ export default function AuthCard() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
+  const [availableCourses, setAvailableCourses] = useState<CourseOption[]>([])
 
   // Form state
   const [formData, setFormData] = useState({
-    userId: "",
     firstName: "",
     lastName: "",
     email: "",
@@ -34,6 +38,24 @@ export default function AuthCard() {
     confirmPassword: "",
     subjects: [] as string[]
   })
+
+  useEffect(() => {
+    const loadCourses = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/auth/course-options")
+        if (!response.ok) {
+          throw new Error("Failed to load available courses")
+        }
+        const data = await response.json()
+        const courses: CourseOption[] = Array.isArray(data.courses) ? data.courses : []
+        setAvailableCourses(courses)
+      } catch (err) {
+        console.error("Error fetching course catalog", err)
+      }
+    }
+
+    loadCourses()
+  }, [])
 
   const handleSubjectToggle = (subject: string) => {
     setFormData(prev => ({
@@ -87,12 +109,10 @@ export default function AuthCard() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            user_id: formData.userId,
-            first_name: formData.firstName,
-            last_name: formData.lastName,
             email: formData.email,
             password: formData.password,
-            subjects: formData.subjects
+            display_name: `${formData.firstName} ${formData.lastName}`,
+            course_codes: formData.subjects.map((code) => code.toUpperCase())
           })
         })
 
@@ -102,17 +122,11 @@ export default function AuthCard() {
           throw new Error(data.detail || "Signup failed")
         }
 
-        setSuccess("Account created! Please check your email to verify your account.")
-        // Clear form
-        setFormData({
-          userId: "",
-          firstName: "",
-          lastName: "",
-          email: "",
-          password: "",
-          confirmPassword: "",
-          subjects: []
-        })
+        // Store token and user data via AuthContext
+        login(data.access_token, data.user)
+
+        setSuccess("Account created successfully!")
+        navigate("/dashboard", { replace: true })
       }
     } catch (err: any) {
       setError(err.message || "An error occurred")
@@ -149,17 +163,6 @@ export default function AuthCard() {
 
             {!isLogin && (
               <>
-                <div className="grid gap-2">
-                  <Label htmlFor="userId">Student ID</Label>
-                  <Input
-                    id="userId"
-                    type="text"
-                    placeholder="zID"
-                    value={formData.userId}
-                    onChange={(e) => setFormData({...formData, userId: e.target.value})}
-                    required
-                  />
-                </div>
                 <div className="grid gap-2">
                   <Label htmlFor="firstName">First Name</Label>
                   <Input
@@ -199,23 +202,28 @@ export default function AuthCard() {
             
             {!isLogin && (
               <div className="grid gap-2">
-                <Label>Subjects</Label>
-                <div className="flex flex-wrap gap-2">
-                  {AVAILABLE_SUBJECTS.map((subject) => (
-                    <button
-                      key={subject}
-                      type="button"
-                      onClick={() => handleSubjectToggle(subject)}
-                      className={`px-3 py-1 text-sm rounded-full border transition-colors ${
-                        formData.subjects.includes(subject)
-                          ? "bg-orange-500 text-white border-orange-500"
-                          : "bg-white text-gray-700 border-gray-300 hover:border-orange-500"
-                      }`}
-                    >
-                      {subject}
-                    </button>
-                  ))}
-                </div>
+                <Label>Courses</Label>
+                {availableCourses.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">No courses available yet.</p>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {availableCourses.map((course) => (
+                      <button
+                        key={course.code}
+                        type="button"
+                        onClick={() => handleSubjectToggle(course.code)}
+                        className={`px-3 py-1 text-sm rounded-full border transition-colors ${
+                          formData.subjects.includes(course.code)
+                            ? "bg-orange-500 text-white border-orange-500"
+                            : "bg-white text-gray-700 border-gray-300 hover:border-orange-500"
+                        }`}
+                        title={course.description ?? course.name}
+                      >
+                        {course.code} · {course.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
             <div className="grid gap-2">

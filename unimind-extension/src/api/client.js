@@ -1,0 +1,95 @@
+// API client for UniMind backend
+const API_BASE_URL = 'http://localhost:8000';
+
+/**
+ * Get authentication token from Chrome storage
+ */
+async function getAuthToken() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(['access_token'], (result) => {
+      resolve(result.access_token || null);
+    });
+  });
+}
+
+/**
+ * Get user data from Chrome storage
+ */
+async function getUser() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(['user'], (result) => {
+      if (result.user) {
+        try {
+          const user = typeof result.user === 'string' ? JSON.parse(result.user) : result.user;
+          resolve(user);
+        } catch {
+          resolve(null);
+        }
+      } else {
+        resolve(null);
+      }
+    });
+  });
+}
+
+/**
+ * Fetch all questions for the extension with algorithm metadata
+ */
+export async function fetchQuestionsForExtension() {
+  const token = await getAuthToken();
+  const user = await getUser();
+
+  if (!token || !user) {
+    throw new Error('User not authenticated');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/students/${user.id}/questions-for-extension`,
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch questions');
+  }
+
+  return await response.json();
+}
+
+/**
+ * Submit a question attempt
+ */
+export async function submitAttempt(questionId, answerIndex, timeSeconds) {
+  const token = await getAuthToken();
+  const user = await getUser();
+
+  if (!token || !user) {
+    throw new Error('User not authenticated');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/students/${user.id}/attempts`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        question_id: questionId,
+        answer_index: answerIndex,
+        seconds: timeSeconds,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to submit attempt');
+  }
+
+  return await response.json();
+}

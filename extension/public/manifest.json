@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "UniMind",
+  "version": "1.0.0",
+  "description": "Answer questions to access distracting websites",
+  "permissions": [
+    "storage",
+    "tabs",
+    "webNavigation"
+  ],
+  "host_permissions": [
+    "https://unimind-production.up.railway.app"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "index.html"
+  },
+  
+  "externally_connectable": {
+    "matches": ["http://localhost:*/*", "https://uni-mind-inky.vercel.app/*"]
+  }
+}

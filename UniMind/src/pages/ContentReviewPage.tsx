@@ -1,6 +1,7 @@
 // src/pages/ContentReviewPage.tsx
 import '../App.css'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
 import { useAuth } from '@/contexts/AuthContext'
@@ -58,6 +59,7 @@ function accuracyLabel(v: number) {
 
 function ContentReviewPage() {
   const { user } = useAuth()
+  const [searchParams] = useSearchParams()
 
   const [questions, setQuestions] = useState<ReviewQuestion[]>([])
   const [loading, setLoading] = useState(true)
@@ -133,6 +135,18 @@ function ContentReviewPage() {
     for (const q of questions) s.add(q.topic)
     return [...s].sort((a, b) => a.localeCompare(b))
   }, [questions])
+
+  // Auto-select topic from URL parameter
+  useEffect(() => {
+    const topicParam = searchParams.get('topic')
+    if (topicParam && allTopics.length > 0) {
+      // Find matching topic (case-insensitive)
+      const matchingTopic = allTopics.find(t => t.toLowerCase() === topicParam.toLowerCase())
+      if (matchingTopic) {
+        setSelectedTopics(new Set([matchingTopic]))
+      }
+    }
+  }, [searchParams, allTopics])
 
   // Topic helpers
   const toggleTopic = (t: string) =>

@@ -8,7 +8,11 @@ export default defineConfig({
     react(),
     tailwindcss()
   ],
-  
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src')
+    }
+  },
   // Vite is being configured to build a browser extension
   // rather than a standard web application
   base: './',

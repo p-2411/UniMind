@@ -9,7 +9,7 @@
     "webNavigation"
   ],
   "host_permissions": [
-    "https://unimind-production.up.railway.app/*"
+    "https://unimind-production.up.railway.app"
   ],
   "background": {
     "service_worker": "background.js"

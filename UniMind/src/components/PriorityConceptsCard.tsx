@@ -16,10 +16,12 @@ type PriorityTopic = PriorityResult & {
 }
 
 function scoreBand(score: number) {
-  if (score >= 80) return { label: "Urgent", color: "text-red-400", ring: "stroke-red-500" }
-  if (score >= 60) return { label: "High",   color: "text-orange-400", ring: "stroke-orange-500" }
-  if (score >= 40) return { label: "Medium", color: "text-yellow-300", ring: "stroke-yellow-400" }
-  return { label: "Low", color: "text-emerald-400", ring: "stroke-emerald-400" }
+  // High priority (80-100) -> Red
+  if ((Number(score.toFixed(2)) <= 0.2)) return { label: "High Priority", color: "text-red-400", ring: "stroke-red-500" }
+  // Medium priority (40-79) -> Yellow
+  if (Number(score.toFixed(2)) <= 0.6) return { label: "Medium Priority", color: "text-yellow-400", ring: "stroke-yellow-400" }
+  // Low priority (0-39) -> Green
+  return { label: "Low Priority", color: "text-emerald-400", ring: "stroke-emerald-400" }
 }
 
 export function PriorityConceptsCard({ className }: { className?: string }) {
@@ -135,7 +137,7 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
               return (
                 <div
                 key={topic.id}
-                className="flex flex-col justify-between rounded-xl border border-white/20 bg-white/5 backdrop-blur-lg p-5 text-center hover:bg-white/10 hover:border-white/30 transition-all shadow-lg"
+                className="flex flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-5 text-center hover:bg-white/10 transition"
                 >
                 {/* Top section */}
                 <div className="flex flex-col items-center">
@@ -177,19 +179,14 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
                 <div className="mt-4 flex justify-center gap-2">
                   <Button
                     size="sm"
-                    className="bg-orange-500 hover:bg-orange-600 text-white"
+                    className="bg-amber-400 text-slate-900 hover:bg-amber-300
+                              focus-visible:ring-2 focus-visible:ring-amber-300
+                              font-semibold"
                     onClick={() => {
-                      window.location.href = `/review?courseCode=${encodeURIComponent(topic.course_code)}`
+                      window.location.href = `/review?topic=${encodeURIComponent(topic.name)}`
                     }}
                   >
                     Practice
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="border-white/20 text-gray-300 hover:bg-white/10"
-                  >
-                    <Target className="w-4 h-4" />
                   </Button>
                 </div>
               </div>

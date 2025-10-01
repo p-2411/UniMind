@@ -42,9 +42,9 @@
       "description": "Weekly lab on structs and dynamic memory allocation."
     },
     {
-      "title": "Assignment 1 – C Basics",
+      "title": "Assignment 1",
       "weight": 10.0,
-      "due_at": "2025-10-06T18:00:00+11:00",
+      "due_at": "2025-10-27T18:00:00+11:00",
       "description": "Individual assignment reinforcing core C syntax, IO, and branching."
     },
     {
@@ -60,7 +60,7 @@
       "description": "Weekly lab focusing on file IO and project scaffolding."
     },
     {
-      "title": "Assignment 2 – Modular C Programming",
+      "title": "Assignment 2",
       "weight": 15.0,
       "due_at": "2025-11-22T18:00:00+09:00",
       "description": "Individual assignment emphasising modularity, testing, and pointers."

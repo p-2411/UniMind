@@ -1,4 +1,6 @@
+// src/components/PriorityConceptsCard.tsx
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { Target } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useAuth } from "@/contexts/AuthContext"
@@ -13,6 +15,13 @@ type PriorityTopic = PriorityResult & {
   priority_score: number
 }
 
+function scoreBand(score: number) {
+  if (score >= 80) return { label: "Urgent", color: "text-red-400", ring: "stroke-red-500" }
+  if (score >= 60) return { label: "High",   color: "text-orange-400", ring: "stroke-orange-500" }
+  if (score >= 40) return { label: "Medium", color: "text-yellow-300", ring: "stroke-yellow-400" }
+  return { label: "Low", color: "text-emerald-400", ring: "stroke-emerald-400" }
+}
+
 export function PriorityConceptsCard({ className }: { className?: string }) {
   const { user } = useAuth()
   const [topics, setTopics] = useState<PriorityTopic[]>([])
@@ -21,25 +30,17 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
 
   useEffect(() => {
     const fetchPriorityTopics = async () => {
-      if (!user || !user.id) {
-        setLoading(false)
-        return
-      }
-
+      if (!user?.id) { setLoading(false); return }
       try {
         setLoading(true)
         const token = localStorage.getItem("access_token")
+        if (!token) throw new Error("No authentication token found")
 
-        if (!token) {
-          throw new Error('No authentication token found')
-        }
-
-        const baseUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
-        const response = await fetch(`${baseUrl}/students/${user.id}/priority-topics?limit=3`, {
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
+        const baseUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, "") ?? "http://localhost:8000"
+        const res = await fetch(`${baseUrl}/students/${user.id}/priority-topics?limit=3`, {
+          headers: { Authorization: `Bearer ${token}` }
         })
+        if (!res.ok) throw new Error("Failed to fetch priority topics")
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}))
@@ -68,71 +69,109 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
             },
           }
         })
-
-        setTopics(rawTopics)
-      } catch (err) {
-        console.error('Error fetching priority topics:', err)
-        setError(err instanceof Error ? err.message : 'Failed to load priority concepts')
+        setTopics(rows)
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Failed to load priority concepts")
       } finally {
         setLoading(false)
       }
     }
-
     fetchPriorityTopics()
   }, [user])
 
   return (
-    <Card className={`${className} `}>
+    <Card className={className}>
       <CardHeader>
-        <div>
-          <CardTitle className="text-xl">Priority Concepts</CardTitle>
-        </div>
+        <CardTitle className="text-xl">Priority Concepts</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-2">
+      <CardContent>
         {loading && (
-          <div className="p-4 text-center text-muted-foreground">
-            Loading priority concepts...
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[1,2,3].map(i => (
+              <div key={i} className="rounded-xl border border-white/10 bg-white/5 p-6 animate-pulse">
+                <div className="h-20 w-20 mx-auto rounded-full bg-white/10 mb-4" />
+                <div className="h-4 w-2/3 mx-auto bg-white/10 rounded" />
+              </div>
+            ))}
           </div>
         )}
 
-        {error && (
-          <div className="p-4 text-center text-red-400">
-            {error}
-          </div>
-        )}
+        {error && <p className="text-center text-red-400">{error}</p>}
 
         {!loading && !error && topics.length === 0 && (
-          <div className="p-4 text-center text-muted-foreground">
-            No priority concepts to display. Enroll in a course to get started!
-          </div>
+          <p className="text-center text-gray-400">No urgent topics. Keep practicing!</p>
         )}
 
-        {!loading && !error && topics.slice(0, 3).map((topic) => (
-          <div key={topic.id} className="p-2 md:p-3 border rounded-lg hover:bg-gray-800/50 dark:hover:bg-gray-800/50 transition-colors">
-            <div className="flex items-center gap-2">
-              <div className="w-0.5 h-8 bg-blue-500 rounded-full" />
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-wrap items-center gap-1 md:gap-1.5">
-                  <span className="text-sm font-medium">{topic.name}</span>
-                  <span className="hidden md:inline text-xs font-medium">·</span>
-                  <span className="text-xs text-muted-foreground">
-                    {topic.course_code}
-                  </span>
-                  <span className="hidden md:inline text-xs font-medium">·</span>
-                  <span className="text-xs font-semibold text-orange-400 bg-orange-400/10 border border-orange-400/30 px-2 py-0.5 rounded-full">
-                    Score {topic.priority_score}
-                  </span>
+        {!loading && !error && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {topics.map((topic) => {
+              const band = scoreBand(topic.priority_score)
+
+              return (
+                <div
+                key={topic.id}
+                className="flex flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-5 text-center hover:bg-white/10 transition"
+                >
+                {/* Top section */}
+                <div className="flex flex-col items-center">
+                  {/* Circular gauge */}
+                  <div className="relative w-24 h-24 mb-3">
+                    <svg className="w-full h-full transform -rotate-90">
+                      <circle
+                        cx="48" cy="48" r="44"
+                        className="stroke-white/10"
+                        strokeWidth="8"
+                        fill="none"
+                      />
+                      <circle
+                        cx="48" cy="48" r="44"
+                        className={band.ring}
+                        strokeWidth="8"
+                        fill="none"
+                        strokeDasharray={`${2 * Math.PI * 44}`}
+                        strokeDashoffset={`${2 * Math.PI * 44 * (1 - topic.priority_score / 100)}`}
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className={`text-lg font-bold ${band.color}`}>
+                        {topic.priority_score.toFixed(0)}%
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Title + meta */}
+                  <h3 className="font-medium text-white">{topic.name}</h3>
+                  <p className="text-xs text-gray-400 mb-2">{topic.course_code}</p>
+                  {topic.description && (
+                    <p className="text-xs text-gray-500 line-clamp-2">{topic.description}</p>
+                  )}
                 </div>
-                {topic.description && (
-                  <p className="text-xs text-muted-foreground mt-1">{topic.description}</p>
-                )}
+
+                {/* Bottom actions — now pinned to bottom */}
+                <div className="mt-4 flex justify-center gap-2">
+                  <Button
+                    size="sm"
+                    className="bg-orange-500 hover:bg-orange-600 text-white"
+                    onClick={() => {
+                      window.location.href = `/review?courseCode=${encodeURIComponent(topic.course_code)}`
+                    }}
+                  >
+                    Practice
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-white/20 text-gray-300 hover:bg-white/10"
+                  >
+                    <Target className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
-              <button className="p-1 hover:bg-gray-700 rounded transition-colors shrink-0">
-                <Target className="w-3.5 h-3.5 text-gray-400" />
-              </button>
-            </div>
+              )
+            })}
           </div>
-        ))}
+        )}
       </CardContent>
     </Card>
   )

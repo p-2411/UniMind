@@ -48,7 +48,7 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
 
         const rawTopics: PriorityTopic[] = (await response.json()).map((topic: any) => {
           const score = Number.isFinite(topic.priority_score)
-            ? Number(topic.priority_score)
+            ? (1 - Number(topic.priority_score) * 0.01).toFixed(2)
             : 0
 
           return {
@@ -120,7 +120,7 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
                   </span>
                   <span className="hidden md:inline text-xs font-medium">·</span>
                   <span className="text-xs font-semibold text-orange-400 bg-orange-400/10 border border-orange-400/30 px-2 py-0.5 rounded-full">
-                    Score {(1 - topic.priority_score * 0.01).toFixed(2)}
+                    Score {topic.priority_score}
                   </span>
                 </div>
                 {topic.description && (

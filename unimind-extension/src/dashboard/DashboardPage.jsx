@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fetchStreak, getUser, logout } from '../api/client.js'
+import { fetchStreak, fetchTodayStats, getUser, logout } from '../api/client.js'
 import '../styles/popup.css'
 
 const QUOTES = [
@@ -35,6 +35,7 @@ async function getDailyQuote() {
 
 export default function DashboardPage() {
   const [streak, setStreak] = useState({ current_streak: 0, longest_streak: 0 })
+  const [completedToday, setCompletedToday] = useState(0)
   const [quote, setQuote] = useState('')
   const [name, setName] = useState('there')
   const [loading, setLoading] = useState(true)
@@ -55,6 +56,8 @@ export default function DashboardPage() {
           current_streak: data.current_streak ?? 0,
           longest_streak: data.longest_streak ?? 0,
         })
+        const todayStats = await fetchTodayStats()
+        setCompletedToday(todayStats.completed_questions_today ?? 0)
       } catch (err) {
         console.error('Failed to load streak', err)
         setError('Unable to load streak right now.')
@@ -89,6 +92,10 @@ export default function DashboardPage() {
             <div className="streak-tile">
               <div className="count">{streak.longest_streak}</div>
               <div className="label">Longest streak</div>
+            </div>
+            <div className="streak-tile">
+              <div className="count">{completedToday}</div>
+              <div className="label">Completed today</div>
             </div>
           </div>
         )}

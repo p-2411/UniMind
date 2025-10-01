@@ -123,3 +123,27 @@ export async function logout() {
     chrome.storage.local.remove(['access_token', 'user'], () => resolve());
   });
 }
+
+export async function fetchTodayStats() {
+  const token = await getAuthToken();
+  const user = await getUser();
+
+  if (!token || !user) {
+    throw new Error('User not authenticated');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/students/${user.id}/today-stats`,
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch today stats');
+  }
+
+  return await response.json();
+}

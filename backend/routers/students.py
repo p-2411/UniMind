@@ -18,7 +18,8 @@ from backend.models.user import User
 from backend.models.assessment import Assessment
 from backend.models.question_metric import QuestionMetric
 from backend.models.streak import DailyStreak
-from backend.schemas import AttemptCreate, AttemptResult, CourseOut, EnrolRequest, ProgressItem, UserResponse
+from backend.models.blocked_site import BlockedSite
+from backend.schemas import AttemptCreate, AttemptResult, CourseOut, EnrolRequest, ProgressItem, UserResponse, BlockedSiteCreate, BlockedSiteOut
 from backend.schemas.auth import UserUpdate
 from backend.schemas.topic import TopicOut, TopicPriorityOut
 from backend.schemas.assessment import AssessmentOut
@@ -208,7 +209,7 @@ def submit_attempt(
         )
         db.add(metrics)
 
-    EMA_ALPHA = 0.2
+    EMA_ALPHA = 0.15  # ~7 attempts effective window
     prev = metrics.rolling_accuracy or 0.5
     target = 1.0 if is_correct else 0.0
     metrics.rolling_accuracy = max(0.0, min(1.0, EMA_ALPHA * target + (1 - EMA_ALPHA) * prev))
@@ -455,7 +456,7 @@ def get_questions_for_extension(
                 acc = rolling_accuracy
                 for attempt in sorted(question_attempts, key=lambda a: a.answered_at):
                     target = 1.0 if attempt.was_correct else 0.0
-                    acc = 0.2 * target + 0.8 * acc
+                    acc = 0.15 * target + 0.85 * acc  # ~7 attempts effective window
                 rolling_accuracy = acc
             last_seen_at = None
             next_due_at = None
@@ -541,3 +542,112 @@ def get_today_stats(
     return {
         "completed_questions_today": completed_today,
     }
+
+
+@router.get("/{user_id}/blocked-sites", response_model=list[BlockedSiteOut])
+def get_blocked_sites(
+    user_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Get the user's list of blocked sites."""
+    _assert_same_user(user_id, current_user)
+
+    blocked_sites = (
+        db.query(BlockedSite)
+        .filter(BlockedSite.user_id == current_user.id)
+        .order_by(BlockedSite.created_at.asc())
+        .all()
+    )
+
+    # If user has no blocked sites, initialize with defaults
+    if not blocked_sites:
+        DEFAULT_SITES = [
+            'facebook.com',
+            'twitter.com',
+            'instagram.com',
+            'youtube.com',
+            'reddit.com',
+            'tiktok.com',
+            'netflix.com'
+        ]
+
+        for domain in DEFAULT_SITES:
+            site = BlockedSite(user_id=current_user.id, domain=domain)
+            db.add(site)
+            blocked_sites.append(site)
+
+        db.commit()
+
+        # Refresh to get IDs
+        for site in blocked_sites:
+            db.refresh(site)
+
+    return [BlockedSiteOut(id=str(site.id), domain=site.domain) for site in blocked_sites]
+
+
+@router.post("/{user_id}/blocked-sites", status_code=status.HTTP_201_CREATED, response_model=BlockedSiteOut)
+def add_blocked_site(
+    user_id: str,
+    payload: BlockedSiteCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Add a new blocked site for the user."""
+    _assert_same_user(user_id, current_user)
+
+    # Normalize domain (remove www., convert to lowercase)
+    domain = payload.domain.replace("www.", "").lower().strip()
+
+    # Check if already blocked
+    exists = (
+        db.query(BlockedSite)
+        .filter(
+            BlockedSite.user_id == current_user.id,
+            BlockedSite.domain == domain,
+        )
+        .first()
+    )
+
+    if exists:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Site already blocked")
+
+    blocked_site = BlockedSite(user_id=current_user.id, domain=domain)
+    db.add(blocked_site)
+    db.commit()
+    db.refresh(blocked_site)
+
+    return BlockedSiteOut(id=str(blocked_site.id), domain=blocked_site.domain)
+
+
+@router.delete("/{user_id}/blocked-sites/{site_id}", status_code=status.HTTP_204_NO_CONTENT)
+def remove_blocked_site(
+    user_id: str,
+    site_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Remove a blocked site for the user."""
+    _assert_same_user(user_id, current_user)
+
+    try:
+        site_uuid = uuid.UUID(site_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid site_id format") from exc
+
+    blocked_site = (
+        db.query(BlockedSite)
+        .filter(
+            BlockedSite.id == site_uuid,
+            BlockedSite.user_id == current_user.id,
+        )
+        .first()
+    )
+
+    if not blocked_site:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Blocked site not found")
+
+    db.delete(blocked_site)
+    db.commit()
+
+    return

@@ -62,8 +62,15 @@ function MySubjectsPage() {
       setError(null)
       const token = localStorage.getItem('access_token')
       if (!token) throw new Error('No authentication token found')
+      
       const baseUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
-      const response = await fetch(`${baseUrl}/courses`, { headers: { Authorization: `Bearer ${token}` } })
+
+      const response = await fetch(`${baseUrl}/students/${user.id}/enrolments`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
         throw new Error((errorData as { detail?: string }).detail || 'Failed to fetch courses')

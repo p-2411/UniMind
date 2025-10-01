@@ -5,3 +5,4 @@ from .question import QuestionCreate, QuestionOut
 from .attempt import AttemptCreate, AttemptResult
 from .progress import ProgressStage, TopicProgressOut, ProgressItem
 from .gate import GatePolicy, GateQuestion, GateAnswerRequest, GateAnswerResult
+from .blocked_site import BlockedSiteCreate, BlockedSiteOut

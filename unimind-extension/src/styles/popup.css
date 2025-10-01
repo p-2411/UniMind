@@ -82,7 +82,9 @@
 }
 
 .logout-button,
-.primary-button {
+.primary-button,
+.settings-button,
+.back-button {
   width: 100%;
   padding: 0.65rem 1rem;
   border-radius: 0.5rem;
@@ -100,6 +102,25 @@
 
 .logout-button:hover {
   background: rgba(248, 113, 113, 0.95);
+}
+
+.settings-button {
+  background: rgba(59, 130, 246, 0.78);
+  color: #fff;
+}
+
+.settings-button:hover {
+  background: rgba(59, 130, 246, 0.95);
+}
+
+.back-button {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+  margin-bottom: 1rem;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .logout-button:focus-visible,

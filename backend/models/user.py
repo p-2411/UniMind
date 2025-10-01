@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from .attempt import QuestionAttempt
     from .progress import TopicProgress
     from .streak import DailyStreak
+    from .blocked_site import BlockedSite
 
 
 class User(Base):
@@ -47,5 +48,9 @@ class User(Base):
     streak: Mapped["DailyStreak | None"] = relationship(
         back_populates="user",
         uselist=False,
+        cascade="all, delete-orphan",
+    )
+    blocked_sites: Mapped[list["BlockedSite"]] = relationship(
+        back_populates="user",
         cascade="all, delete-orphan",
     )

@@ -42,9 +42,32 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
         })
         if (!res.ok) throw new Error("Failed to fetch priority topics")
 
-        const rows = (await res.json() as any[]).map((t) => {
-          const score = Number.isFinite(t.priority_score) ? Number(t.priority_score) : 0
-          return { ...t, priority_score: Math.max(0, Math.min(100, score)) } as PriorityTopic
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}))
+          throw new Error(errorData.detail || 'Failed to fetch priority topics')
+        }
+
+        const rawTopics: PriorityTopic[] = (await response.json()).map((topic: any) => {
+          const score = Number.isFinite(topic.priority_score)
+            ? (1 - Number(topic.priority_score) * 0.01).toFixed(2)
+            : 0
+
+          return {
+            ...topic,
+            priority_score: score,
+            topic: topic.name,
+            breakdown: {
+              masteryGap: 0,
+              forgettingRisk: 0,
+              coverageDeficit: 0,
+              assessmentUrgency: 0,
+              struggleSpike: 0,
+              novelty: 0,
+              overpractice: 0,
+              score,
+              reasons: [],
+            },
+          }
         })
         setTopics(rows)
       } catch (e) {
@@ -145,7 +168,6 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
                   </Button>
                 </div>
               </div>
-
               )
             })}
           </div>

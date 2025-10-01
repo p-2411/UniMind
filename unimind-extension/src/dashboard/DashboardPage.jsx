@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { fetchStreak, fetchTodayStats, getUser, logout } from '../api/client.js'
+import BlockedSitesManager from './BlockedSitesManager.jsx'
 import '../styles/popup.css'
 
 const QUOTES = [
@@ -40,6 +41,7 @@ export default function DashboardPage() {
   const [name, setName] = useState('there')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [showBlockedSites, setShowBlockedSites] = useState(false)
 
   useEffect(() => {
     ;(async () => {
@@ -75,6 +77,23 @@ export default function DashboardPage() {
     )
   }
 
+  if (showBlockedSites) {
+    return (
+      <div className="popup-root">
+        <div className="card">
+          <button
+            type="button"
+            className="back-button"
+            onClick={() => setShowBlockedSites(false)}
+          >
+            ← Back to Dashboard
+          </button>
+          <BlockedSitesManager />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="popup-root">
       <div className="card">
@@ -100,7 +119,15 @@ export default function DashboardPage() {
           </div>
         )}
 
-        <div className="quote-box">“{quote}”</div>
+        <div className="quote-box">"{quote}"</div>
+
+        <button
+          type="button"
+          className="settings-button"
+          onClick={() => setShowBlockedSites(true)}
+        >
+          Manage Blocked Sites
+        </button>
 
         <button
           type="button"

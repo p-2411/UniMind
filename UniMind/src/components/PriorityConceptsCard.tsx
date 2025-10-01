@@ -135,7 +135,7 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
               return (
                 <div
                 key={topic.id}
-                className="flex flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-5 text-center hover:bg-white/10 transition"
+                className="flex flex-col justify-between rounded-xl border border-white/20 bg-white/5 backdrop-blur-lg p-5 text-center hover:bg-white/10 hover:border-white/30 transition-all shadow-lg"
                 >
                 {/* Top section */}
                 <div className="flex flex-col items-center">

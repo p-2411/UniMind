@@ -209,7 +209,7 @@ def submit_attempt(
         )
         db.add(metrics)
 
-    EMA_ALPHA = 0.1  # ~10 attempts effective window (changed from 0.2 for ~5 attempts)
+    EMA_ALPHA = 0.15  # ~7 attempts effective window
     prev = metrics.rolling_accuracy or 0.5
     target = 1.0 if is_correct else 0.0
     metrics.rolling_accuracy = max(0.0, min(1.0, EMA_ALPHA * target + (1 - EMA_ALPHA) * prev))
@@ -456,7 +456,7 @@ def get_questions_for_extension(
                 acc = rolling_accuracy
                 for attempt in sorted(question_attempts, key=lambda a: a.answered_at):
                     target = 1.0 if attempt.was_correct else 0.0
-                    acc = 0.1 * target + 0.9 * acc  # ~10 attempts effective window
+                    acc = 0.15 * target + 0.85 * acc  # ~7 attempts effective window
                 rolling_accuracy = acc
             last_seen_at = None
             next_due_at = None

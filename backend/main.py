@@ -24,7 +24,7 @@ app.add_middleware(
         "http://localhost:5173",
         "http://localhost:3000",
         "http://localhost:5174",
-        "ljlajflafdipkapoimnpmcnnonfdngci",  # Chrome extension
+        "chrome-extension://ljlajflafdipkapoimnpmcnnonfdngci",  # Chrome extension
     ],
     allow_credentials=True,
     allow_methods=["*"],

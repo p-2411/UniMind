@@ -15,11 +15,11 @@ type PriorityTopic = PriorityResult & {
 }
 
 function scoreBand(score: number) {
-  // High priority (80-100) -> Red
-  if ((Number(score.toFixed(2)) <= 0.2)) return { label: "High Priority", color: "text-red-400", ring: "stroke-red-500" }
-  // Medium priority (40-79) -> Yellow
-  if (Number(score.toFixed(2)) <= 0.6) return { label: "Medium Priority", color: "text-yellow-400", ring: "stroke-yellow-400" }
-  // Low priority (0-39) -> Green
+  // High priority -> Red
+  if ((Number(score.toFixed(2)) <= 30)) return { label: "High Priority", color: "text-red-400", ring: "stroke-red-500" }
+  // Medium priority  -> Yellow
+  if (Number(score.toFixed(2)) <= 70) return { label: "Medium Priority", color: "text-yellow-400", ring: "stroke-yellow-400" }
+  // Low priority -> Green
   return { label: "Low Priority", color: "text-emerald-400", ring: "stroke-emerald-400" }
 }
 
@@ -69,7 +69,7 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
           // Convert score to 0-100 range
           const rawScore = Number(topic.priority_score)
           const score = Number.isFinite(rawScore)
-            ? (1 - rawScore * 0.01)
+            ? (100 - rawScore)
             : 0
 
           return {

@@ -99,7 +99,7 @@ export function DailyStreakCard({ className }: { className?: string }) {
             </div>
 
             {quote && (
-              <div className="w-full mt-2 px-4 py-3 rounded-lg bg-muted/50 border border-border/50">
+              <div className="w-full mt-2 px-4 py-3 rounded-lg bg-muted/50 border border-yellow-300/50">
                 <p className="text-sm text-center text-muted-foreground italic">
                   "{quote}"
                 </p>

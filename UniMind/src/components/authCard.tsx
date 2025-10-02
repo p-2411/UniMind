@@ -2,18 +2,11 @@ import { useEffect, useState, type FormEvent } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-
+import { Eye, EyeOff, Loader2 } from "lucide-react"
+import logo from "@/assets/logo.png"
 type CourseOption = {
   code: string
   name: string
@@ -28,6 +21,7 @@ export default function AuthCard() {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
   const [availableCourses, setAvailableCourses] = useState<CourseOption[]>([])
+  const [showPassword, setShowPassword] = useState(false)
 
   // Form state
   const [formData, setFormData] = useState({
@@ -36,17 +30,18 @@ export default function AuthCard() {
     email: "",
     password: "",
     confirmPassword: "",
-    subjects: [] as string[]
+    subjects: [] as string[],
+    remember: true,
   })
 
   useEffect(() => {
     const loadCourses = async () => {
       try {
-        const baseUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
+        const baseUrl =
+          (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, "") ??
+          "http://localhost:8000"
         const response = await fetch(`${baseUrl}/auth/course-options`)
-        if (!response.ok) {
-          throw new Error("Failed to load available courses")
-        }
+        if (!response.ok) throw new Error("Failed to load available courses")
         const data = await response.json()
         const courses: CourseOption[] = Array.isArray(data.courses) ? data.courses : []
         setAvailableCourses(courses)
@@ -54,7 +49,6 @@ export default function AuthCard() {
         console.error("Error fetching course catalog", err)
       }
     }
-
     loadCourses()
   }, [])
 
@@ -63,7 +57,7 @@ export default function AuthCard() {
       ...prev,
       subjects: prev.subjects.includes(subject)
         ? prev.subjects.filter(s => s !== subject)
-        : [...prev.subjects, subject]
+        : [...prev.subjects, subject],
     }))
   }
 
@@ -74,40 +68,25 @@ export default function AuthCard() {
     setLoading(true)
 
     try {
+      const baseUrl =
+        (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, "") ??
+        "http://localhost:8000"
+
       if (isLogin) {
-        // Login
-        const baseUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
         const response = await fetch(`${baseUrl}/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password
-          })
+          body: JSON.stringify({ email: formData.email, password: formData.password }),
         })
-
         const data = await response.json()
-
-        if (!response.ok) {
-          throw new Error(data.detail || "Login failed")
-        }
-
-        // Store token and user data via AuthContext
+        if (!response.ok) throw new Error(data.detail || "Login failed")
         login(data.access_token, data.user)
-
         setSuccess("Login successful!")
         navigate("/dashboard", { replace: true })
       } else {
-        // Signup
-        if (formData.password !== formData.confirmPassword) {
-          throw new Error("Passwords do not match")
-        }
+        if (formData.password !== formData.confirmPassword) throw new Error("Passwords do not match")
+        if (formData.password.length < 8) throw new Error("Password must be at least 8 characters")
 
-        if (formData.password.length < 8) {
-          throw new Error("Password must be at least 8 characters")
-        }
-
-        const baseUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
         const response = await fetch(`${baseUrl}/auth/signup`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -115,19 +94,12 @@ export default function AuthCard() {
             email: formData.email,
             password: formData.password,
             display_name: `${formData.firstName} ${formData.lastName}`,
-            course_codes: formData.subjects.map((code) => code.toUpperCase())
-          })
+            course_codes: formData.subjects.map(code => code.toUpperCase()),
+          }),
         })
-
         const data = await response.json()
-
-        if (!response.ok) {
-          throw new Error(data.detail || "Signup failed")
-        }
-
-        // Store token and user data via AuthContext
+        if (!response.ok) throw new Error(data.detail || "Signup failed")
         login(data.access_token, data.user)
-
         setSuccess("Account created successfully!")
         navigate("/dashboard", { replace: true })
       }
@@ -139,164 +111,205 @@ export default function AuthCard() {
   }
 
   return (
-    <Card className="w-full max-w-md shadow-xl">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold text-center">
-          {isLogin ? "Welcome back" : "Create an account"}
+    <Card className="w-full max-w-md border-white/10 bg-white/[0.05] shadow-2xl backdrop-blur-md">
+      <CardHeader className="space-y-3">
+        {/* Brand header */}
+        <div className="flex items-center justify-center gap-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl">
+            <img src={logo} />
+          </div>
+          <span className="text-lg font-semibold tracking-tight text-yellow-4 00">UniMind</span>
+        </div>
+
+        {/* Segmented toggle */}
+        <div className="mx-auto inline-flex rounded-full border border-white/10 bg-white/5 p-1">
+          <button
+            type="button"
+            onClick={() => setIsLogin(true)}
+            className={`px-4 py-1.5 text-sm rounded-full transition
+              ${isLogin ? "bg-yellow-400 text-black shadow" : "text-gray-300 hover:text-white"}`}
+          >
+            Login
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsLogin(false)}
+            className={`px-4 py-1.5 text-sm rounded-full transition
+              ${!isLogin ? "bg-yellow-400 text-black shadow" : "text-gray-300 hover:text-white"}`}
+          >
+            Sign Up
+          </button>
+        </div>
+
+        <CardTitle className="text-center text-2xl font-bold text-white/90">
+          {isLogin ? "Welcome" : "Create an account"}
         </CardTitle>
-        <CardDescription className="text-center">
+        <CardDescription className="text-center text-gray-400">
           {isLogin
-            ? "Enter your credentials to access your account"
-            : "Sign up to get started with UniMind"}
+            ? "Practice smarter. Stay on track."
+            : "Join UniMind and turn distractions into study wins."}
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-4">
-            {error && (
-              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded">
-                {error}
-              </div>
-            )}
-            {success && (
-              <div className="p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded">
-                {success}
-              </div>
-            )}
 
-            {!isLogin && (
-              <>
-                <div className="grid gap-2">
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input
-                    id="firstName"
-                    type="text"
-                    placeholder="John"
-                    value={formData.firstName}
-                    onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-                    required
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input
-                    id="lastName"
-                    type="text"
-                    placeholder="Doe"
-                    value={formData.lastName}
-                    onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-                    required
-                  />
-                </div>
-              </>
-            )}
-            <div className="grid gap-2 ">
-              <Label htmlFor="email">Email</Label>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="rounded-md border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-300">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="rounded-md border border-emerald-500/20 bg-emerald-500/10 p-3 text-sm text-emerald-300">
+              {success}
+            </div>
+          )}
+
+          {!isLogin && (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-1.5">
+                <Label htmlFor="firstName" className="text-gray-300">First name</Label>
+                <Input
+                  id="firstName"
+                  placeholder="John"
+                  value={formData.firstName}
+                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                  required
+                  className="bg-black/20 border-white/10 text-white placeholder:text-gray-500"
+                />
+              </div>
+              <div className="grid gap-1.5">
+                <Label htmlFor="lastName" className="text-gray-300">Last name</Label>
+                <Input
+                  id="lastName"
+                  placeholder="Doe"
+                  value={formData.lastName}
+                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                  required
+                  className="bg-black/20 border-white/10 text-white placeholder:text-gray-500"
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="grid gap-1.5">
+            <Label htmlFor="email" className="text-gray-300">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@email.com"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              required
+              className="bg-black/20 border-white/10 text-white placeholder:text-gray-500"
+            />
+          </div>
+
+          <div className="grid gap-1.5">
+            <div className="flex items-center">
+              <Label htmlFor="password" className="text-gray-300">Password</Label>
+              {isLogin && (
+                <a
+                  href="#"
+                  className="ml-auto text-xs text-gray-400 underline-offset-4 hover:text-gray-200 hover:underline"
+                >
+                  Forgot password?
+                </a>
+              )}
+            </div>
+            <div className="relative">
               <Input
-                className="hover:border-2"
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                id="password"
+                type={showPassword ? "text" : "password"}
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 required
+                className="bg-black/20 border-white/10 pr-10 text-white placeholder:text-gray-500"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(v => !v)}
+                className="absolute inset-y-0 right-0 grid w-10 place-items-center text-gray-400 hover:text-gray-200"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+
+          {!isLogin && (
+            <div className="grid gap-1.5">
+              <Label htmlFor="confirm-password" className="text-gray-300">Confirm password</Label>
+              <Input
+                id="confirm-password"
+                type="password"
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                required
+                className="bg-black/20 border-white/10 text-white placeholder:text-gray-500"
               />
             </div>
-            
-            {!isLogin && (
-              <div className="grid gap-2">
-                <Label>Courses</Label>
-                {availableCourses.length === 0 ? (
-                  <p className="text-xs text-muted-foreground">No courses available yet.</p>
-                ) : (
-                  <div className="flex flex-wrap gap-2">
-                    {availableCourses.map((course) => (
+          )}
+
+          {!isLogin && (
+            <div className="grid gap-2">
+              <Label className="text-gray-300">Subjects</Label>
+              {availableCourses.length === 0 ? (
+                <p className="text-xs text-gray-500">No courses available yet.</p>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {availableCourses.map(course => {
+                    const selected = formData.subjects.includes(course.code)
+                    return (
                       <button
                         key={course.code}
                         type="button"
                         onClick={() => handleSubjectToggle(course.code)}
-                        className={`px-3 py-1 text-sm rounded-full border transition-colors ${
-                          formData.subjects.includes(course.code)
-                            ? "bg-orange-500 text-white border-orange-500"
-                            : "bg-white text-gray-700 border-gray-300 hover:border-orange-500"
-                        }`}
                         title={course.description ?? course.name}
+                        className={`rounded-full border px-3 py-1 text-xs transition
+                          ${selected
+                            ? "border-yellow-400/40 bg-yellow-400/20 text-yellow-200"
+                            : "border-white/10 bg-white/5 text-gray-300 hover:text-white"}`}
                       >
-                        {course.code} · {course.name}
+                        <span className="font-mono">{course.code}</span>
+                        <span className="px-1 text-gray-500">·</span>
+                        {course.name}
                       </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-            <div className="grid gap-2">
-              <div className="flex items-center">
-                <Label htmlFor="password">Password</Label>
-                {isLogin && (
-                  <a
-                    href="#"
-                    className="ml-auto inline-block text-sm text-muted-foreground underline-offset-4 hover:underline"
-                  >
-                    Forgot password?
-                  </a>
-                )}
-              </div>
-              <Input
-                className="hover:border-2"
-                id="password"
-                type="password"
-                value={formData.password}
-                onChange={(e) => setFormData({...formData, password: e.target.value})}
-                required
-              />
+                    )
+                  })}
+                </div>
+              )}
             </div>
-            {!isLogin && (
-              <div className="grid gap-2">
-                <Label htmlFor="confirm-password">Confirm Password</Label>
-                <Input
-                  id="confirm-password"
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
-                  required
-                />
-              </div>
+          )}
+
+        
+
+          <Button
+            type="submit"
+            disabled={loading}
+            className="group w-full  bg-yellow-400 text-black hover:from-yellow-400 hover:to-orange-600"
+          >
+            {loading ? (
+              <span className="inline-flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Processing…
+              </span>
+            ) : isLogin ? (
+              "Login"
+            ) : (
+              "Sign Up"
             )}
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-br from-yellow-300 to-orange-500 text-black hover:from-yellow-400 hover:to-orange-600"
-            >
-              {loading ? "Loading..." : (isLogin ? "Login" : "Sign Up")}
-            </Button>
-          </div>
+          </Button>
         </form>
       </CardContent>
-      <CardFooter className="flex flex-col gap-4">
-        {/* <div className="relative w-full">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-[#1b1718] px-2 text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
-        </div> */}
 
-        <div className="text-center text-sm text-muted-foreground">
-          {isLogin ? "Don't have an account? " : "Already have an account? "}
-          <button
-            type="button"
-            onClick={() => setIsLogin(!isLogin)}
-            className="underline underline-offset-4 hover:text-primary font-medium"
-          >
-            {isLogin ? "Sign up" : "Login"}
-          </button>
-        </div>
-        <div className="text-center text-xs text-muted-foreground">
-          By using UniMind you agree to our
-          {' '}<Link to="/privacy" className="underline underline-offset-4 hover:text-primary">Privacy Policy</Link>.
+      <CardFooter className="flex flex-col gap-3">
+
+
+        <div className="text-center text-xs text-gray-500">
+          By using UniMind you agree to our{" "}
+          <Link to="/privacy" className="text-gray-300 underline underline-offset-4 hover:text-white">
+            Privacy Policy
+          </Link>.
         </div>
       </CardFooter>
     </Card>

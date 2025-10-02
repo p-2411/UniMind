@@ -104,7 +104,7 @@ export default function BlockedSitesManager() {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4">
+    <div className="flex min-h-0 flex-1 flex-col gap-4 bg-gradient-to-br from-gray-950 to-[#052334]">
       {/* Heading */}
       <div>
         <h2 className="text-lg font-semibold text-slate-100">Blocked Sites</h2>

@@ -132,6 +132,9 @@ export function UpcomingAssessmentsCard({ className }: { className?: string }) {
                       </span>
                     )}
                   </div>
+                  <p className="text-xs text-muted-foreground mb-1">
+                    <span className=" font-semibold text-yellow-400/90">{assessment.course_code}</span>
+                  </p>
                   {assessment.description && (
                     <p className="text-xs text-muted-foreground">{assessment.description}</p>
                   )}

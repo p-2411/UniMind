@@ -41,10 +41,10 @@ export function AppSidebar() {
           to="/dashboard"
           className="flex items-center gap-2 font-semibold text-xl"
         >
-          <div className="h-10 w-10 rounded-2xl overflow-hidden ring-1 ring-white/15 shadow-md shadow-black/20">
+          <div className="h-9 w-9 rounded-2xl overflow-hidden shadow-md shadow-black/20">
             <img src={logo} alt="UniMind" className="h-full w-full object-contain" />
           </div>
-          <span className="bg-gradient-to-r from-yellow-300 to-orange-400 text-transparent bg-clip-text">
+          <span className=" bg-yellow-300 text-transparent bg-clip-text">
             UniMind
           </span>
         </Link>

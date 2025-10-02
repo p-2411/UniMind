@@ -9,10 +9,14 @@ import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { Course } from '@/types/database'
 import { Link } from 'react-router-dom'
+import { Search } from 'lucide-react'
+// at top
+import { ChevronDown, Check, Filter } from 'lucide-react'
 
 export default function SettingsPage() {
   const { user, login, logout } = useAuth()
   const [displayName, setDisplayName] = useState('')
+  const [filterOpen, setFilterOpen] = useState(false)
   const [email, setEmail] = useState('')
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
@@ -23,6 +27,8 @@ export default function SettingsPage() {
   const [coursesError, setCoursesError] = useState<string | null>(null)
   const [pendingUnenrol, setPendingUnenrol] = useState<string | null>(null)
   const [actionMsg, setActionMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [enrollmentFilter, setEnrollmentFilter] = useState<'all' | 'enrolled' | 'unenrolled'>('all')
 
   useEffect(() => {
     if (user) {
@@ -133,9 +139,26 @@ export default function SettingsPage() {
     }
   }
 
-  const sortedCourses = useMemo(() => {
-    return [...allCourses].sort((a, b) => a.name.localeCompare(b.name))
-  }, [allCourses])
+  const filteredCourses = useMemo(() => {
+    const normalized = searchTerm.trim().toLowerCase()
+    let filtered = allCourses
+
+    // Apply search filter
+    if (normalized) {
+      filtered = filtered.filter(c =>
+        `${c.code} ${c.name} ${c.description ?? ''}`.toLowerCase().includes(normalized)
+      )
+    }
+
+    // Apply enrollment filter
+    if (enrollmentFilter === 'enrolled') {
+      filtered = filtered.filter(c => enrolledCodes.has(c.code))
+    } else if (enrollmentFilter === 'unenrolled') {
+      filtered = filtered.filter(c => !enrolledCodes.has(c.code))
+    }
+
+    return [...filtered].sort((a, b) => a.name.localeCompare(b.name))
+  }, [allCourses, searchTerm, enrollmentFilter, enrolledCodes])
 
   if (!user) {
     return (
@@ -175,8 +198,8 @@ export default function SettingsPage() {
               </div>
               {saveError && <p className="text-sm text-red-400">{saveError}</p>}
               <div className="flex gap-2">
-                <Button type="button" onClick={handleSaveProfile} disabled={saving}>{saving ? 'Saving…' : 'Save changes'}</Button>
-                <Button type="button" variant="outline" onClick={() => logout()}>Log out</Button>
+                <Button type="button" variant="default" onClick={handleSaveProfile} disabled={saving}>{saving ? 'Saving…' : 'Save changes'}</Button>
+                <Button type="button" variant="destructive" onClick={() => logout()}>Log out</Button>
               </div>
             </CardContent>
           </Card>
@@ -192,6 +215,87 @@ export default function SettingsPage() {
                   {actionMsg.text}
                 </div>
               )}
+
+              {/* Search and Filter Controls */}
+              <div className="mb-4 flex flex-col sm:flex-row gap-3">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <Input
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search by course name or code..."
+                    className="pl-9 bg-white/10 border-white/10 text-white placeholder:text-gray-400"
+                  />
+                </div>
+                <div className="w-full sm:w-auto">
+                  {/* Old select removed; new dropdown button */}
+<div className="w-full sm:w-auto">
+  <div className="relative inline-flex">
+    <Button
+      type="button"
+      variant="outline"
+      onClick={() => setFilterOpen(v => !v)}
+      className="inline-flex items-center gap-2"
+    >
+      <Filter className="h-4 w-4 text-gray-400" />
+      Courses
+      {/* current filter label */}
+      <span className="ml-1 rounded-full bg-white/10 px-2 py-0.5 text-xs">
+        {enrollmentFilter === 'all'
+          ? 'All'
+          : enrollmentFilter === 'enrolled'
+          ? 'Enrolled'
+          : 'Not enrolled'}
+      </span>
+      <ChevronDown
+        className={`h-4 w-4 transition-transform ${filterOpen ? 'rotate-180' : ''}`}
+      />
+    </Button>
+
+    {filterOpen && (
+      <div
+        className="absolute left-0 z-20 mt-2 w-56 rounded-lg border border-white/10 bg-slate-900/95 p-1 shadow-xl backdrop-blur-md"
+        onMouseLeave={() => setFilterOpen(false)}
+      >
+        {(
+          [
+            { value: 'all', label: 'All courses' },
+            { value: 'enrolled', label: 'Enrolled only' },
+            { value: 'unenrolled', label: 'Not enrolled' },
+          ] as const
+        ).map(opt => {
+          const active = enrollmentFilter === opt.value
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => {
+                setEnrollmentFilter(opt.value)
+                setFilterOpen(false)
+              }}
+              className={`flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm hover:bg-white/5 ${
+                active ? 'text-white' : 'text-gray-200'
+              }`}
+            >
+              <span
+                className={`grid h-4 w-4 place-items-center rounded border ${
+                  active ? 'border-orange-400 bg-orange-400/20' : 'border-white/20'
+                }`}
+              >
+                {active && <Check className="h-3 w-3 text-orange-300" />}
+              </span>
+              <span className="truncate">{opt.label}</span>
+            </button>
+          )
+        })}
+      </div>
+    )}
+  </div>
+</div>
+
+                </div>
+              </div>
+
               {loadingCourses ? (
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {[1,2,3,4,5,6].map((i) => (
@@ -203,9 +307,13 @@ export default function SettingsPage() {
                 </div>
               ) : coursesError ? (
                 <p className="text-red-400">{coursesError}</p>
+              ) : filteredCourses.length === 0 ? (
+                <div className="p-8 text-center text-gray-400">
+                  <p className="text-sm">No courses found matching your criteria.</p>
+                </div>
               ) : (
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {sortedCourses.map((course) => {
+                  {filteredCourses.map((course) => {
                     const checked = enrolledCodes.has(course.code)
                     return (
                       <div key={course.code} className="flex items-start justify-between gap-3 p-4 border border-white/10 rounded-lg bg-white/5">

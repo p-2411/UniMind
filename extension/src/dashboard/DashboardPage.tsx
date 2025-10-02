@@ -115,7 +115,7 @@ export default function PopupDashboard() {
   }
 
   return (
-    <div className="min-w-[320px] bg-[#0b1320] p-4 text-slate-100">
+    <div className="min-w-[320px] bg-gradient-to-br from-gray-950 to-[#052334] p-4 text-slate-100">
       <Card className="bg-white/5 border-white/10 shadow-xl backdrop-blur rounded-2xl">
         <CardHeader className="pb-2">
           <h1 className="text-xl font-semibold">Welcome, {name}! 👋</h1>

@@ -52,11 +52,6 @@ function formatRelative(ts: number | null, prefix: string, empty: string) {
   return `${prefix}${days} day${days === 1 ? '' : 's'} ${diffMs >= 0 ? 'ago' : 'from now'}`
 }
 
-function accuracyLabel(v: number) {
-  const pct = Math.round(v * 100)
-  return Number.isFinite(pct) ? `${pct}%` : '—'
-}
-
 function ContentReviewPage() {
   const { user } = useAuth()
   const [searchParams] = useSearchParams()
@@ -128,6 +123,7 @@ function ContentReviewPage() {
   useEffect(() => {
     void fetchQuestions()
   }, [fetchQuestions])
+
 
   // Derive unique topic list from fetched questions
   const allTopics = useMemo(() => {
@@ -283,7 +279,7 @@ function ContentReviewPage() {
       <SidebarInset className="p-6 min-h-screen bg-gradient-to-br from-gray-950 to-[#052334]">
         <header className="flex h-12 items-center gap-2 border-b-1 p-8">
           <SidebarTrigger className="md:hidden -ml-8 mr-2" />
-          <h1 className="text-3xl font-semibold bg-gradient-to-r from-yellow-300 to-orange-400 inline-block text-transparent bg-clip-text">
+          <h1 className="text-3xl font-semibold  bg-yellow-400 inline-block text-transparent bg-clip-text">
             Content Review
           </h1>
         </header>
@@ -292,10 +288,6 @@ function ContentReviewPage() {
           {/* Top controls */}
           {/* Top row: title + difficulties + refresh */}
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-white">Ready to practise?</h2>
-              <p className="text-sm text-gray-400">Answer questions from your enrolled topics and keep your mastery sharp.</p>
-            </div>
 
             <div className="flex flex-wrap gap-2">
               {(['all', 'easy', 'medium', 'hard'] as const).map((filter) => (
@@ -316,78 +308,105 @@ function ContentReviewPage() {
             </div>
           </div>
 
-          {/* Second row: Topics filter on its own line */}
-          <div className="flex flex-wrap gap-2 mt-2">
-            <div className="relative">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setTopicsOpen((v) => !v)}
-                className="inline-flex items-center gap-2"
-              >
-                <Filter className="h-4 w-4 text-gray-400 group-hover:text-gray-200 transition-colors" />
-                Topics
-                {selectedTopics.size > 0 && (
-                  <span className="ml-1 rounded-full bg-white/10 px-2 py-0.5 text-xs">
-                    {selectedTopics.size}
-                  </span>
-                )}
-                <ChevronDown className={cn('h-4 w-4 transition-transform', topicsOpen && 'rotate-180')} />
-              </Button>
+           {/* Second row: Topics filter on its own line */}
+<div className="flex flex-wrap items-center gap-2 mt-2">
+  <div className="relative">
+    <Button
+      type="button"
+      variant="outline"
+      onClick={() => setTopicsOpen((v) => !v)}
+      className="inline-flex items-center gap-2"
+    >
+      <Filter className="h-4 w-4 text-gray-400 group-hover:text-gray-200 transition-colors" />
+      Topics
+      {selectedTopics.size > 0 && (
+        <span className="ml-1 rounded-full bg-white/10 px-2 py-0.5 text-xs">
+          {selectedTopics.size}
+        </span>
+      )}
+      <ChevronDown className={cn('h-4 w-4 transition-transform', topicsOpen && 'rotate-180')} />
+    </Button>
 
-              {topicsOpen && (
-                <div
-                  className="absolute left-0 z-20 mt-2 w-72 rounded-lg border border-white/10 bg-slate-900/95 backdrop-blur-md shadow-xl p-2"
-                  onMouseLeave={() => setTopicsOpen(false)}
-                >
-                  <div className="flex items-center justify-between px-2 py-1">
-                    <span className="text-xs uppercase tracking-wide text-gray-400">Filter by topics</span>
-                    <div className="flex gap-2">
-                      <button type="button" onClick={selectAllTopics} className="text-xs text-gray-300 hover:text-white">
-                        Select all
-                      </button>
-                      <button type="button" onClick={clearTopics} className="text-xs text-gray-300 hover:text-white">
-                        Clear
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="max-h-64 overflow-auto pr-1">
-                    {allTopics.length === 0 ? (
-                      <div className="px-3 py-6 text-sm text-gray-400">No topics available</div>
-                    ) : (
-                      allTopics.map((topic) => {
-                        const checked = selectedTopics.has(topic)
-                        return (
-                          <label
-                            key={topic}
-                            className="flex items-center gap-2 cursor-pointer rounded-md px-2 py-1.5 hover:bg-white/5"
-                            onMouseDown={(e) => e.preventDefault()} // keep dropdown open
-                          >
-                            <input
-                              type="checkbox"
-                              checked={checked}
-                              onChange={() => toggleTopic(topic)}
-                              className="peer sr-only"
-                            />
-                            <span
-                              className={cn(
-                                'grid place-items-center h-4 w-4 rounded border',
-                                checked ? 'border-orange-400 bg-orange-400/20' : 'border-white/20 bg-transparent'
-                              )}
-                            >
-                              {checked && <Check className="h-3 w-3 text-orange-300" />}
-                            </span>
-                            <span className="text-sm text-gray-200 truncate">{topic}</span>
-                          </label>
-                        )
-                      })
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
+    {topicsOpen && (
+      <div
+        className="absolute left-0 z-20 mt-2 w-72 rounded-lg border border-white/10 bg-slate-900/95 backdrop-blur-md shadow-xl p-2"
+        onMouseLeave={() => setTopicsOpen(false)}
+      >
+        <div className="flex items-center justify-between px-2 py-1">
+          <span className="text-xs uppercase tracking-wide text-gray-400">Filter by topics</span>
+          <div className="flex gap-2">
+            <button type="button" onClick={selectAllTopics} className="text-xs text-gray-300 hover:text-white">
+              Select all
+            </button>
+            <button type="button" onClick={clearTopics} className="text-xs text-gray-300 hover:text-white">
+              Clear
+            </button>
           </div>
+        </div>
+
+        <div className="max-h-64 overflow-auto pr-1">
+          {allTopics.length === 0 ? (
+            <div className="px-3 py-6 text-sm text-gray-400">No topics available</div>
+          ) : (
+            allTopics.map((topic) => {
+              const checked = selectedTopics.has(topic)
+              return (
+                <label
+                  key={topic}
+                  className="flex items-center gap-2 cursor-pointer rounded-md px-2 py-1.5 hover:bg-white/5"
+                  onMouseDown={(e) => e.preventDefault()} // keep dropdown open
+                >
+                  <input type="checkbox" checked={checked} onChange={() => toggleTopic(topic)} className="peer sr-only" />
+                  <span
+                    className={cn(
+                      'grid place-items-center h-4 w-4 rounded border',
+                      checked ? 'border-orange-400 bg-orange-400/20' : 'border-white/20 bg-transparent'
+                    )}
+                  >
+                    {checked && <Check className="h-3 w-3 text-orange-300" />}
+                  </span>
+                  <span className="text-sm text-gray-200 truncate">{topic}</span>
+                </label>
+              )
+            })
+          )}
+        </div>
+      </div>
+    )}
+  </div>
+
+            {/* Selected topic chips appear here, next to the button */}
+            {selectedTopics.size > 0 && (
+              <div className="flex flex-wrap items-center gap-2">
+                {Array.from(selectedTopics).slice(0, 3).map((t) => (
+                  <span
+                    key={t}
+                    className="inline-flex items-center gap-2 rounded-full border border-yellow-400/40 bg-yellow-400/10 px-2.5 py-1 text-xs text-yellow-100"
+                  >
+                    {t}
+                    <button
+                      type="button"
+                      onClick={() => setSelectedTopics((prev) => {
+                        const next = new Set(prev)
+                        next.delete(t)
+                        return next
+                      })}
+                      aria-label={`Remove ${t}`}
+                      title="Remove"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+
+                {selectedTopics.size > 3 && (
+                  <span className="text-xs text-gray-300">+{selectedTopics.size - 3} more</span>
+                )}
+
+              </div>
+            )}
+          </div>
+
 
 
           {/* Loading skeletons */}
@@ -439,12 +458,7 @@ function ContentReviewPage() {
                         <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-gray-300">
                           Difficulty: {difficultyLabels[q.difficulty]}
                         </span>
-                        <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-gray-300">
-                          Accuracy: {accuracyLabel(q.rollingAccuracy)}
-                        </span>
-                        <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-gray-300">
-                          Attempts: {q.attempts}
-                        </span>
+
                         <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-gray-300">
                           {formatRelative(q.lastSeenAt, 'Seen ', 'Not attempted yet')}
                         </span>

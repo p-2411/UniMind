@@ -488,6 +488,7 @@ def get_questions_for_extension(
         result.append({
             "id": str(question.id),
             "topic": topic.name,
+            "course_code": topic.course_code,
             "prompt": question.prompt,
             "options": question.choices,
             "correctAnswer": question.correct_index,

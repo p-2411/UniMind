@@ -12,10 +12,10 @@ import { cn } from '@/lib/utils'
 import { chooseNextQuestions, updateAfterAnswer } from '@/lib/question-selector'
 import { ChevronDown, Check, Filter } from 'lucide-react'
 
-
 type ReviewQuestion = {
   id: string
   topic: string
+  course_code: string
   prompt: string
   options: string[]
   correctAnswer: number
@@ -52,6 +52,10 @@ function formatRelative(ts: number | null, prefix: string, empty: string) {
   return `${prefix}${days} day${days === 1 ? '' : 's'} ${diffMs >= 0 ? 'ago' : 'from now'}`
 }
 
+/* -------------------- Topic grouping helpers -------------------- */
+type TopicGroup = Record<string, Array<{ questionTopic: string; topicName: string }>>
+/* ---------------------------------------------------------------- */
+
 function ContentReviewPage() {
   const { user } = useAuth()
   const [searchParams] = useSearchParams()
@@ -66,7 +70,7 @@ function ContentReviewPage() {
   const [pageQuestions, setPageQuestions] = useState<ReviewQuestion[]>([])
   const [seenIds, setSeenIds] = useState<Set<string>>(new Set())
 
-  // NEW: topic/class filter state
+  // Topics filter
   const [topicsOpen, setTopicsOpen] = useState(false)
   const [selectedTopics, setSelectedTopics] = useState<Set<string>>(new Set())
 
@@ -97,6 +101,7 @@ function ContentReviewPage() {
       const mapped: ReviewQuestion[] = raw.map((item) => ({
         id: item.id,
         topic: item.topic,
+        course_code: item.course_code || '',
         prompt: item.prompt,
         options: Array.isArray(item.options) ? item.options : [],
         correctAnswer: typeof item.correctAnswer === 'number' ? item.correctAnswer : 0,
@@ -124,49 +129,83 @@ function ContentReviewPage() {
     void fetchQuestions()
   }, [fetchQuestions])
 
-
-  // Derive unique topic list from fetched questions
+  // Unique topics (keyed by topic name for backwards compatibility)
   const allTopics = useMemo(() => {
     const s = new Set<string>()
     for (const q of questions) s.add(q.topic)
     return [...s].sort((a, b) => a.localeCompare(b))
   }, [questions])
 
-  // Auto-select topic from URL parameter
+  // Group topics by course code (authoritative data from backend)
+  const groupedTopics: TopicGroup = useMemo(() => {
+    const groups: TopicGroup = {}
+    for (const q of questions) {
+      const courseCode = q.course_code || 'Other'
+      if (!groups[courseCode]) {
+        groups[courseCode] = []
+      }
+      // Only add unique topic names per course
+      if (!groups[courseCode].some(t => t.questionTopic === q.topic)) {
+        groups[courseCode].push({ questionTopic: q.topic, topicName: q.topic })
+      }
+    }
+    // Sort topics within each course
+    for (const key of Object.keys(groups)) {
+      groups[key].sort((a, b) => a.topicName.localeCompare(b.topicName))
+    }
+    // Sort courses alphabetically
+    return Object.fromEntries(
+      Object.entries(groups).sort(([a], [b]) => a.localeCompare(b))
+    )
+  }, [questions])
+
+  // Pre-select from URL ?topic=
   useEffect(() => {
     const topicParam = searchParams.get('topic')
     if (topicParam && allTopics.length > 0) {
-      // Find matching topic (case-insensitive)
       const matchingTopic = allTopics.find(t => t.toLowerCase() === topicParam.toLowerCase())
-      if (matchingTopic) {
-        setSelectedTopics(new Set([matchingTopic]))
-      }
+      if (matchingTopic) setSelectedTopics(new Set([matchingTopic]))
     }
   }, [searchParams, allTopics])
 
   // Topic helpers
   const toggleTopic = (t: string) =>
-    setSelectedTopics((prev) => {
+    setSelectedTopics(prev => {
       const next = new Set(prev)
       next.has(t) ? next.delete(t) : next.add(t)
       return next
     })
   const clearTopics = () => setSelectedTopics(new Set())
   const selectAllTopics = () => setSelectedTopics(new Set(allTopics))
+  const selectAllInSubject = (subject: string) =>
+    setSelectedTopics(prev => {
+      const next = new Set(prev)
+      groupedTopics[subject]?.forEach(t => next.add(t.questionTopic))
+      return next
+    })
+  const clearSubject = (subject: string) =>
+    setSelectedTopics(prev => {
+      const next = new Set(prev)
+      groupedTopics[subject]?.forEach(t => next.delete(t.questionTopic))
+      return next
+    })
 
-  // Apply filters (difficulty + topics)
+  // Apply filters
   const filteredQuestions = useMemo(() => {
-    const byDiff = difficultyFilter === 'all' ? questions : questions.filter((q) => q.difficulty === difficultyFilter)
+    const byDiff =
+      difficultyFilter === 'all'
+        ? questions
+        : questions.filter(q => q.difficulty === difficultyFilter)
     if (selectedTopics.size === 0) return byDiff
-    return byDiff.filter((q) => selectedTopics.has(q.topic))
+    return byDiff.filter(q => selectedTopics.has(q.topic))
   }, [questions, difficultyFilter, selectedTopics])
 
   const hasNext = useMemo(
-    () => filteredQuestions.some((q) => !seenIds.has(q.id)),
+    () => filteredQuestions.some(q => !seenIds.has(q.id)),
     [filteredQuestions, seenIds]
   )
 
-  // First page whenever filters change
+  // First page when filters change
   useEffect(() => {
     if (filteredQuestions.length === 0) {
       setPageQuestions([])
@@ -175,17 +214,17 @@ function ContentReviewPage() {
     }
     const first = chooseNextQuestions(filteredQuestions, 3)
     setPageQuestions(first)
-    setSeenIds(new Set(first.map((q) => q.id)))
+    setSeenIds(new Set(first.map(q => q.id)))
   }, [filteredQuestions])
 
   const handleNextPage = () => {
     const next = chooseNextQuestions(filteredQuestions, 3, seenIds)
     if (next.length === 0) return
     const newSeen = new Set(seenIds)
-    next.forEach((q) => newSeen.add(q.id))
+    next.forEach(q => newSeen.add(q.id))
     setSeenIds(newSeen)
     setPageQuestions(next)
-    setAttemptStates((prev) => {
+    setAttemptStates(prev => {
       const copy = { ...prev }
       for (const q of next) delete copy[q.id]
       return copy
@@ -201,7 +240,7 @@ function ContentReviewPage() {
   }
 
   const handleAttempt = async (question: ReviewQuestion, optionIndex: number) => {
-    setAttemptStates((p) => ({
+    setAttemptStates(p => ({
       ...p,
       [question.id]: { selectedIndex: optionIndex, submitting: true, error: null, result: p[question.id]?.result ?? null },
     }))
@@ -223,13 +262,13 @@ function ContentReviewPage() {
       }
       const payload: { correct: boolean; explanation: string } = await res.json()
 
-      setAttemptStates((p) => ({
+      setAttemptStates(p => ({
         ...p,
         [question.id]: { selectedIndex: optionIndex, submitting: false, error: null, result: payload },
       }))
-      setPageQuestions((prev) => prev.map((q) => (q.id === question.id ? updateAfterAnswer(q, payload.correct) : q)))
+      setPageQuestions(prev => prev.map(q => (q.id === question.id ? updateAfterAnswer(q, payload.correct) : q)))
     } catch (err) {
-      setAttemptStates((p) => ({
+      setAttemptStates(p => ({
         ...p,
         [question.id]: {
           selectedIndex: optionIndex,
@@ -286,9 +325,7 @@ function ContentReviewPage() {
 
         <div className="p-4 space-y-6">
           {/* Top controls */}
-          {/* Top row: title + difficulties + refresh */}
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-
             <div className="flex flex-wrap gap-2">
               {(['all', 'easy', 'medium', 'hard'] as const).map((filter) => (
                 <Button
@@ -308,106 +345,148 @@ function ContentReviewPage() {
             </div>
           </div>
 
-           {/* Second row: Topics filter on its own line */}
-<div className="flex flex-wrap items-center gap-2 mt-2">
-  <div className="relative">
-    <Button
-      type="button"
-      variant="outline"
-      onClick={() => setTopicsOpen((v) => !v)}
-      className="inline-flex items-center gap-2"
-    >
-      <Filter className="h-4 w-4 text-gray-400 group-hover:text-gray-200 transition-colors" />
-      Topics
-      {selectedTopics.size > 0 && (
-        <span className="ml-1 rounded-full bg-white/10 px-2 py-0.5 text-xs">
-          {selectedTopics.size}
-        </span>
-      )}
-      <ChevronDown className={cn('h-4 w-4 transition-transform', topicsOpen && 'rotate-180')} />
-    </Button>
-
-    {topicsOpen && (
-      <div
-        className="absolute left-0 z-20 mt-2 w-72 rounded-lg border border-white/10 bg-slate-900/95 backdrop-blur-md shadow-xl p-2"
-        onMouseLeave={() => setTopicsOpen(false)}
-      >
-        <div className="flex items-center justify-between px-2 py-1">
-          <span className="text-xs uppercase tracking-wide text-gray-400">Filter by topics</span>
-          <div className="flex gap-2">
-            <button type="button" onClick={selectAllTopics} className="text-xs text-gray-300 hover:text-white">
-              Select all
-            </button>
-            <button type="button" onClick={clearTopics} className="text-xs text-gray-300 hover:text-white">
-              Clear
-            </button>
-          </div>
-        </div>
-
-        <div className="max-h-64 overflow-auto pr-1">
-          {allTopics.length === 0 ? (
-            <div className="px-3 py-6 text-sm text-gray-400">No topics available</div>
-          ) : (
-            allTopics.map((topic) => {
-              const checked = selectedTopics.has(topic)
-              return (
-                <label
-                  key={topic}
-                  className="flex items-center gap-2 cursor-pointer rounded-md px-2 py-1.5 hover:bg-white/5"
-                  onMouseDown={(e) => e.preventDefault()} // keep dropdown open
-                >
-                  <input type="checkbox" checked={checked} onChange={() => toggleTopic(topic)} className="peer sr-only" />
-                  <span
-                    className={cn(
-                      'grid place-items-center h-4 w-4 rounded border',
-                      checked ? 'border-orange-400 bg-orange-400/20' : 'border-white/20 bg-transparent'
-                    )}
-                  >
-                    {checked && <Check className="h-3 w-3 text-orange-300" />}
+          {/* Topics filter (grouped by subject) */}
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            <div className="relative">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setTopicsOpen((v) => !v)}
+                className="inline-flex items-center gap-2"
+              >
+                <Filter className="h-4 w-4 text-gray-400 group-hover:text-gray-200 transition-colors" />
+                Topics
+                {selectedTopics.size > 0 && (
+                  <span className="ml-1 rounded-full bg-white/10 px-2 py-0.5 text-xs">
+                    {selectedTopics.size}
                   </span>
-                  <span className="text-sm text-gray-200 truncate">{topic}</span>
-                </label>
-              )
-            })
-          )}
-        </div>
-      </div>
-    )}
-  </div>
+                )}
+                <ChevronDown className={cn('h-4 w-4 transition-transform', topicsOpen && 'rotate-180')} />
+              </Button>
 
-            {/* Selected topic chips appear here, next to the button */}
+              {topicsOpen && (
+                <div
+                  className="absolute left-0 z-20 mt-2 w-80 rounded-lg border border-white/10 bg-slate-900/95 backdrop-blur-md shadow-xl p-2"
+                  onMouseLeave={() => setTopicsOpen(false)}
+                >
+                  {/* global actions */}
+                  <div className="flex items-center justify-between px-2 py-1">
+                    <span className="text-xs uppercase tracking-wide text-gray-400">Filter by topics</span>
+                    <div className="flex gap-2">
+                      <button type="button" onClick={selectAllTopics} className="text-xs text-gray-300 hover:text-white">
+                        Select all
+                      </button>
+                      <button type="button" onClick={clearTopics} className="text-xs text-gray-300 hover:text-white">
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* grouped list */}
+                  <div className="max-h-72 overflow-auto pr-1">
+                    {Object.keys(groupedTopics).length === 0 ? (
+                      <div className="px-3 py-6 text-sm text-gray-400">No topics available</div>
+                    ) : (
+                      Object.entries(groupedTopics).map(([subject, items]) => (
+                        <div key={subject} className="mb-2">
+                          {/* subject heading + per-group actions */}
+                          <div className="sticky top-0 z-10 flex items-center justify-between bg-slate-900/95 px-2 py-1">
+                            <span className="text-[11px] font-semibold uppercase tracking-wide text-gray-300">
+                              {subject}
+                            </span>
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => selectAllInSubject(subject)}
+                                className="text-[11px] text-gray-300 hover:text-white"
+                              >
+                                Select
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => clearSubject(subject)}
+                                className="text-[11px] text-gray-300 hover:text-white"
+                              >
+                                Clear
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* subtopics */}
+                          <div className="mt-1">
+                            {items.map(({ questionTopic, topicName }) => {
+                              const checked = selectedTopics.has(questionTopic)
+                              return (
+                                <button
+                                  key={questionTopic}
+                                  type="button"
+                                  onMouseDown={(e) => e.preventDefault()} // keep open
+                                  onClick={() => toggleTopic(questionTopic)}
+                                  className={cn(
+                                    'w-full text-left rounded-md px-2 py-1.5 text-sm transition-colors',
+                                    'hover:bg-white/5',
+                                    checked && 'bg-orange-400/10 ring-1 ring-orange-400/40 text-orange-100'
+                                  )}
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <span
+                                      className={cn(
+                                        'inline-block h-4 w-4 rounded border',
+                                        checked ? 'border-orange-400 bg-orange-400/30' : 'border-white/20 bg-transparent'
+                                      )}
+                                    />
+                                    <span className="truncate text-gray-200">{topicName}</span>
+                                  </div>
+                                </button>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Selected topic chips */}
             {selectedTopics.size > 0 && (
               <div className="flex flex-wrap items-center gap-2">
-                {Array.from(selectedTopics).slice(0, 3).map((t) => (
-                  <span
-                    key={t}
-                    className="inline-flex items-center gap-2 rounded-full border border-yellow-400/40 bg-yellow-400/10 px-2.5 py-1 text-xs text-yellow-100"
-                  >
-                    {t}
-                    <button
-                      type="button"
-                      onClick={() => setSelectedTopics((prev) => {
-                        const next = new Set(prev)
-                        next.delete(t)
-                        return next
-                      })}
-                      aria-label={`Remove ${t}`}
-                      title="Remove"
+                {Array.from(selectedTopics).slice(0, 3).map((topicName) => {
+                  // Find the course_code for this topic
+                  const question = questions.find(q => q.topic === topicName)
+                  const courseCode = question?.course_code || 'Other'
+                  return (
+                    <span
+                      key={topicName}
+                      className="inline-flex items-center gap-2 rounded-full border border-yellow-400/40 bg-yellow-400/10 px-2.5 py-1 text-xs text-yellow-100"
                     >
-                      ×
-                    </button>
-                  </span>
-                ))}
-
+                      <span className="font-medium text-yellow-200">{courseCode}</span>
+                      <span className="opacity-70">·</span>
+                      <span className="truncate">{topicName}</span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setSelectedTopics((prev) => {
+                            const next = new Set(prev)
+                            next.delete(topicName)
+                            return next
+                          })
+                        }
+                        aria-label={`Remove ${topicName}`}
+                        title="Remove"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )
+                })}
                 {selectedTopics.size > 3 && (
                   <span className="text-xs text-gray-300">+{selectedTopics.size - 3} more</span>
                 )}
-
               </div>
             )}
           </div>
-
-
 
           {/* Loading skeletons */}
           {loading && (

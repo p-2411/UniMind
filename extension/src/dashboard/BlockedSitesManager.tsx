@@ -95,7 +95,7 @@ export default function BlockedSitesManager() {
 
   if (loading) {
     return (
-      <div className="space-y-2 text-sm text-slate-300">
+      <div className="space-y-2 text-sm text-gray-300">
         <div className="h-5 w-32 animate-pulse rounded bg-white/10" />
         <div className="h-4 w-64 animate-pulse rounded bg-white/10" />
         <div className="h-10 w-full animate-pulse rounded bg-white/10" />
@@ -104,14 +104,8 @@ export default function BlockedSitesManager() {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4 bg-gradient-to-br from-gray-950 to-[#052334]">
-      {/* Heading */}
-      <div>
-        <h2 className="text-lg font-semibold text-slate-100">Blocked Sites</h2>
-        <p className="text-sm text-slate-400">
-          Customize which sites require a question before access
-        </p>
-      </div>
+    <div className="flex min-h-0 flex-1 flex-col gap-4">
+      {/* ❌ Removed the internal "Blocked Sites" header to avoid duplication */}
 
       {/* Error */}
       {error && (
@@ -126,10 +120,10 @@ export default function BlockedSitesManager() {
 
       {/* Add site form */}
       <form onSubmit={handleAddSite} className="space-y-2">
-        <Label htmlFor="domain" className="text-slate-200">
+        <Label htmlFor="domain" className="text-gray-200">
           Add a domain
         </Label>
-        <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto]">
           <Input
             id="domain"
             type="text"
@@ -137,12 +131,12 @@ export default function BlockedSitesManager() {
             onChange={(e) => setNewDomain(e.target.value)}
             placeholder="e.g., youtube.com"
             disabled={isSaving}
-            className="bg-white/5 text-slate-100 placeholder:text-slate-400 border-white/10"
+            className="border-white/10 bg-white/5 text-white placeholder:text-gray-400"
           />
           <Button
             type="submit"
             disabled={isSaving || !newDomain.trim()}
-            className="w-full sm:w-auto whitespace-nowrap bg-white/10 text-slate-100 hover:bg-white/15 font-semibold border border-white/20"
+            className="w-full border border-white/20 bg-white/10 font-semibold text-white hover:bg-white/15 sm:w-auto"
           >
             Add Site
           </Button>
@@ -159,28 +153,26 @@ export default function BlockedSitesManager() {
         )}
       </form>
 
-      {/* Save button row (wrap-safe) */}
+      {/* Save button row */}
       <div className="flex flex-wrap items-center gap-3">
         <Button
           onClick={handleSave}
           disabled={!hasChanges || isSaving}
-          className="flex-1 bg-amber-400 text-black hover:bg-amber-300 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 bg-yellow-400 font-semibold text-black hover:bg-yellow-300 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSaving ? "Saving…" : "Save Changes"}
         </Button>
-        {saveSuccess && (
-          <span className="text-sm text-emerald-400 font-medium">✓ Saved</span>
-        )}
+        {saveSuccess && <span className="text-sm font-medium text-emerald-400">✓ Saved</span>}
       </div>
 
-      {/* List box — consistent size whether empty or not */}
+      {/* List box */}
       <section
         aria-label="Blocked sites"
         role="group"
-        className="rounded-lg border border-white/10 bg-white/5 overflow-hidden h-56"
+        className="h-56 overflow-hidden rounded-lg border border-white/10 bg-white/5"
       >
         {blockedSites.length === 0 ? (
-          <div className="flex h-full items-center justify-center px-3 py-4 text-center text-sm text-slate-300">
+          <div className="flex h-full items-center justify-center px-3 py-4 text-center text-sm text-gray-300">
             No blocked sites yet. Add a site above to get started.
           </div>
         ) : (
@@ -188,10 +180,7 @@ export default function BlockedSitesManager() {
             <ul role="list" className="divide-y divide-white/10">
               {blockedSites.map((site) => (
                 <li key={site.id} className="flex items-center gap-2 px-3 py-3">
-                  <span
-                    className="flex-1 truncate text-slate-100"
-                    title={site.domain}
-                  >
+                  <span className="flex-1 truncate text-gray-100" title={site.domain}>
                     {site.domain}
                   </span>
                   <Button

@@ -86,7 +86,7 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
             <div className="grid h-9 w-9 place-items-center rounded-xl">
               <img src={logo} alt="UniMind" className="h-7 w-7" />
             </div>
-            <span className="bg-gradient-to-r from-yellow-300 via-orange-400 to-orange-500 bg-clip-text text-lg font-semibold tracking-tight text-transparent">
+            <span className=" bg-yellow-300 bg-clip-text text-lg font-semibold tracking-tight text-transparent">
               UniMind
             </span>
           </div>
@@ -166,8 +166,8 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
               disabled={loading}
               className="
                 inline-flex h-10 w-full items-center justify-center rounded-md
-                bg-gradient-to-br from-yellow-300 to-orange-500 text-sm font-semibold text-black
-                hover:from-yellow-400 hover:to-orange-600 disabled:opacity-70
+                bg-gradient-to-br bg-yellow-400 text-sm font-semibold text-black
+                hover:bg-yellow-300  disabled:opacity-70
               "
             >
               {loading ? "Logging in…" : "Log in"}

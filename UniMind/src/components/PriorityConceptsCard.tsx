@@ -161,7 +161,7 @@ export function PriorityConceptsCard({ className }: { className?: string }) {
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
                       <span className={`text-lg font-bold ${band.color}`}>
-                        {topic.priority_score.toFixed(2)}
+                        {topic.priority_score.toFixed(0)}
                       </span>
                     </div>
                   </div>

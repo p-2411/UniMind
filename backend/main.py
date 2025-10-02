@@ -31,6 +31,7 @@ DEFAULT_ALLOWED_ORIGINS = [
     "chrome-extension://pdiblfhdlnnlikbllnkfodhfopkokecm",  # prham extension ID
     "chrome-extension://kjhiacblldmmkpkjlnieaidenajibhhf",  # arnav extension ID
     "chrome-extension://aofknjefemhijhenfpkgijgddceccmjl",  # suman extension ID
+    "chrome-extension://mfkjdhlohllhkbpmgcjlkndoddapdfji"  # anthony extension ID
 ]
 
 

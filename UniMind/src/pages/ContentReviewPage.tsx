@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { chooseNextQuestions, updateAfterAnswer } from '@/lib/question-selector'
-import { ChevronDown, Check, Filter } from 'lucide-react'
+import { ChevronDown, Filter } from 'lucide-react'
 
 type ReviewQuestion = {
   id: string

@@ -5,7 +5,6 @@
   "description": "Answer questions to access distracting websites",
   "permissions": [
     "storage",
-    "tabs",
     "webNavigation"
   ],
   "host_permissions": [
